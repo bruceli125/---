@@ -21,3 +21,6 @@ Thumbs.db
 
 # ---------- 视觉回归预览（由 tools/make-preview.js 生成） ----------
 web-console/.preview/
+
+# ---------- 子代理自检临时目录 ----------
+_bgtest/
