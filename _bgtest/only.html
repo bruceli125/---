@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>氛围层单独校验</title>
+<link rel="stylesheet" href="../web-console/css/tokens.css" />
+<link rel="stylesheet" href="../web-console/css/base.css" />
+<style>
+  html, body { overflow: hidden; }
+  #badge { position: fixed; right: 12px; bottom: 10px; z-index: 99; font: 12px var(--font-mono);
+    color: var(--text-3); background: rgba(4,6,11,.6); padding: 3px 8px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div class="atmos">
+  <div class="atmos__mesh"></div>
+  <div class="atmos__grid"></div>
+  <div class="atmos__grain"></div>
+  <canvas class="atmos__canvas" id="bg-canvas"></canvas>
+  <div class="atmos__vignette"></div>
+</div>
+<div id="badge">mode: –</div>
+<script src="three.r128.min.js"></script>
+<script src="../web-console/js/three-bg.js"></script>
+<script>
+  window.BG.init(document.getElementById('bg-canvas'), { dprLimit: 2 });
+  window.BG.setParallax(0.5, -0.3);
+  document.getElementById('badge').textContent = 'mode: ' + window.BG.mode +
+    ' · dpr: ' + window.devicePixelRatio;
+</script>
+</body>
+</html>

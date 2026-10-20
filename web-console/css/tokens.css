@@ -1,0 +1,130 @@
+/* ============================================================================
+ * 京师家教 · 运营控制台 —— 设计令牌（Design Tokens）
+ * 单一事实来源：所有颜色/间距/圆角/动效曲线只在这里定义，组件层不写魔法值。
+ * 深色科技风：深空底色 + 冷色玻璃面 + 三色强调（蓝/青/紫）。
+ * ========================================================================== */
+:root {
+  /* ---------- 底色层级（越靠上越亮，制造纵深） ---------- */
+  --bg-void: #04060B;
+  --bg-base: #070A12;
+  --bg-raise: #0B1019;
+  --bg-overlay: #0E1420;
+
+  /* ---------- 玻璃面（半透明 + 模糊，叠加微弱高光） ---------- */
+  --glass-1: rgba(255, 255, 255, 0.055);
+  --glass-2: rgba(255, 255, 255, 0.078);
+  --glass-3: rgba(255, 255, 255, 0.108);
+  --glass-hover: rgba(255, 255, 255, 0.1);
+  --glass-active: rgba(255, 255, 255, 0.135);
+
+  /* ---------- 细边框 ---------- */
+  --stroke-1: rgba(255, 255, 255, 0.088);
+  --stroke-2: rgba(255, 255, 255, 0.15);
+  --stroke-3: rgba(255, 255, 255, 0.22);
+  --stroke-inset: rgba(255, 255, 255, 0.075);
+
+  /* ---------- 文字 ---------- */
+  --text-1: #EFF3FF;
+  --text-2: #B3BFDA;
+  --text-3: #7C88A6;
+  --text-4: #586486;
+  --text-on-accent: #05070D;
+
+  /* ---------- 强调色 ---------- */
+  --accent: #5B8CFF;
+  --accent-soft: rgba(91, 140, 255, 0.16);
+  --accent-line: rgba(91, 140, 255, 0.42);
+  --violet: #8B6CFF;
+  --violet-soft: rgba(139, 108, 255, 0.16);
+  --teal: #22D3A6;
+  --teal-soft: rgba(34, 211, 166, 0.15);
+  --amber: #F5A524;
+  --amber-soft: rgba(245, 165, 36, 0.15);
+  --danger: #FF6B6B;
+  --danger-soft: rgba(255, 107, 107, 0.15);
+
+  /* ---------- 渐变网格背景（氛围层，不抢焦点） ---------- */
+  --mesh-1: radial-gradient(58% 52% at 10% 6%, rgba(91, 140, 255, 0.42), transparent 62%),
+    radial-gradient(52% 48% at 90% 4%, rgba(139, 108, 255, 0.36), transparent 60%),
+    radial-gradient(68% 58% at 74% 94%, rgba(34, 211, 166, 0.2), transparent 66%),
+    radial-gradient(52% 46% at 16% 98%, rgba(91, 140, 255, 0.22), transparent 62%);
+
+  /* ---------- 阴影（柔和、多层、低对比） ---------- */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.32), 0 8px 24px -14px rgba(0, 0, 0, 0.6);
+  --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.36), 0 24px 56px -28px rgba(0, 0, 0, 0.72);
+  --shadow-3: 0 40px 90px -40px rgba(0, 0, 0, 0.85);
+  --glow-accent: 0 0 0 1px rgba(91, 140, 255, 0.35), 0 12px 36px -16px rgba(91, 140, 255, 0.5);
+  --glow-teal: 0 0 0 1px rgba(34, 211, 166, 0.3), 0 12px 36px -18px rgba(34, 211, 166, 0.45);
+
+  /* ---------- 圆角 ---------- */
+  --r-xs: 6px;
+  --r-sm: 9px;
+  --r-md: 13px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+  --r-pill: 999px;
+
+  /* ---------- 间距（4pt 栅格） ---------- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-7: 32px;
+  --s-8: 40px;
+  --s-9: 56px;
+
+  /* ---------- 字体 ---------- */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", "Cascadia Mono", ui-monospace, Menlo, Consolas, monospace;
+
+  --fs-11: 11px;
+  --fs-12: 12px;
+  --fs-13: 13px;
+  --fs-14: 14px;
+  --fs-15: 15px;
+  --fs-17: 17px;
+  --fs-20: 20px;
+  --fs-24: 24px;
+  --fs-30: 30px;
+  --fs-38: 38px;
+
+  /* ---------- 模糊与饱和 ---------- */
+  --blur-sm: 10px;
+  --blur-md: 18px;
+  --blur-lg: 28px;
+
+  /* ---------- 动效曲线（弹簧 / 顺滑 / 快出） ---------- */
+  --ease-spring: cubic-bezier(0.22, 1.22, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+  --dur-4: 520ms;
+  --dur-5: 800ms;
+
+  /* ---------- 布局尺寸 ---------- */
+  --sidebar-w: 248px;
+  --sidebar-w-collapsed: 76px;
+  --topbar-h: 62px;
+  --content-max: 1560px;
+
+  /* ---------- 层级 ---------- */
+  --z-bg: 0;
+  --z-base: 1;
+  --z-sticky: 30;
+  --z-drawer: 60;
+  --z-modal: 70;
+  --z-toast: 90;
+  --z-palette: 80;
+}
+
+/* 浅色降级（未启用，仅保证系统强制浅色时不出现白底黑字错乱） */
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: dark;
+  }
+}

@@ -1,0 +1,47 @@
+RESULT {
+ "mode": "three",
+ "logs": [],
+ "pointSizeRange": {
+  "0": 1,
+  "1": 1023
+ },
+ "hasWebGL2": true,
+ "programs": [
+  {
+   "usedTimes": 4,
+   "diag": null
+  },
+  {
+   "usedTimes": 1,
+   "diag": null
+  }
+ ],
+ "renderInfo": {
+  "frame": 4,
+  "calls": 5,
+  "triangles": 0,
+  "points": 800,
+  "lines": 702
+ },
+ "hasScene": true,
+ "buffer": "582x304",
+ "afterRender": {
+  "nonZeroPx": 2142,
+  "maxRGBsum": 585,
+  "avgRGBsum": 1.263
+ },
+ "pointsCount": 800,
+ "hasAttrs": [
+  "position",
+  "aSize",
+  "aAlpha",
+  "aSeed",
+  "aColor"
+ ],
+ "uOpacity": 0.38,
+ "uPixelRatio": 1,
+ "uTime": 0.12076666666666669,
+ "blending": 2,
+ "visible": true,
+ "program": "2 program(s) used"
+}

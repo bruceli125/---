@@ -1,0 +1,168 @@
+/* ============================================================================
+ * anim.css —— 动效层
+ * 原则：只做"有理由"的动画——入场表明层级、反馈表明状态、位移表明因果。
+ *       所有动画都可被 prefers-reduced-motion 一键关闭（见 base.css）。
+ * ========================================================================== */
+
+/* ---------------- 滚动渐入（IntersectionObserver 加 .is-in）---------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity var(--dur-4) var(--ease-out), transform var(--dur-4) var(--ease-out);
+  transition-delay: var(--d, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* 卡片组入场：子项依次进入 */
+.stagger > * {
+  opacity: 0;
+  transform: translateY(12px) scale(0.995);
+  transition: opacity var(--dur-4) var(--ease-out), transform var(--dur-4) var(--ease-spring);
+}
+
+.stagger.is-in > * {
+  opacity: 1;
+  transform: none;
+}
+
+.stagger.is-in > *:nth-child(1) { transition-delay: 0ms; }
+.stagger.is-in > *:nth-child(2) { transition-delay: 55ms; }
+.stagger.is-in > *:nth-child(3) { transition-delay: 110ms; }
+.stagger.is-in > *:nth-child(4) { transition-delay: 165ms; }
+.stagger.is-in > *:nth-child(5) { transition-delay: 220ms; }
+.stagger.is-in > *:nth-child(6) { transition-delay: 275ms; }
+.stagger.is-in > *:nth-child(7) { transition-delay: 330ms; }
+.stagger.is-in > *:nth-child(8) { transition-delay: 385ms; }
+
+/* ---------------- 数字滚动（JS 逐帧写入，这里只保证等宽不抖动） ---------------- */
+.count {
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+  min-width: 1ch;
+}
+
+/* ---------------- 数值变化的高亮脉冲 ---------------- */
+.flash {
+  animation: flash-pulse 720ms var(--ease-out);
+}
+
+@keyframes flash-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(91, 140, 255, 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 12px rgba(91, 140, 255, 0);
+  }
+}
+
+/* ---------------- 悬浮微交互 ---------------- */
+.lift {
+  transition: transform var(--dur-3) var(--ease-spring), box-shadow var(--dur-3) var(--ease-out);
+}
+
+.lift:hover {
+  transform: translateY(-2px);
+}
+
+/* 列表行进入时的左侧高亮扫过 */
+.sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -30%;
+  width: 24%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+  opacity: 0;
+  transition: opacity var(--dur-2) var(--ease-out);
+  pointer-events: none;
+}
+
+.sweep:hover::after {
+  opacity: 1;
+  animation: sweep-move 900ms var(--ease-out);
+}
+
+@keyframes sweep-move {
+  from { left: -30%; }
+  to { left: 110%; }
+}
+
+/* ---------------- 侧栏折叠时图标的弹性回弹 ---------------- */
+.app.is-collapsed .brand__mark,
+.nav__item {
+  transition-timing-function: var(--ease-spring);
+}
+
+/* ---------------- 抽屉内容的逐段进入 ---------------- */
+.drawer.is-open .drawer__body > * {
+  animation: drawer-item var(--dur-4) var(--ease-out) both;
+}
+
+.drawer.is-open .drawer__body > *:nth-child(1) { animation-delay: 60ms; }
+.drawer.is-open .drawer__body > *:nth-child(2) { animation-delay: 120ms; }
+.drawer.is-open .drawer__body > *:nth-child(3) { animation-delay: 180ms; }
+.drawer.is-open .drawer__body > *:nth-child(4) { animation-delay: 240ms; }
+.drawer.is-open .drawer__body > *:nth-child(5) { animation-delay: 300ms; }
+
+@keyframes drawer-item {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------------- 骨架屏淡出 ---------------- */
+.fade-out {
+  animation: fade-out var(--dur-3) var(--ease-out) forwards;
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+    transform: scale(0.99);
+  }
+}
+
+/* ---------------- 风险/成功状态的行内闪动（用于合规拦截提示） ---------------- */
+.alert-pulse {
+  animation: alert-pulse 2.4s var(--ease-in-out) infinite;
+}
+
+@keyframes alert-pulse {
+  0%, 100% {
+    border-color: rgba(255, 107, 107, 0.26);
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.14);
+  }
+  50% {
+    border-color: rgba(255, 107, 107, 0.5);
+    box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.08);
+  }
+}
+
+/* ---------------- 指针跟随光标的柔和光斑（登录/空态装饰） ---------------- */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  opacity: 0.5;
+  pointer-events: none;
+  animation: orb-float 18s var(--ease-in-out) infinite alternate;
+}
+
+@keyframes orb-float {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(24px, -18px, 0) scale(1.08); }
+}

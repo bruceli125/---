@@ -1,0 +1,245 @@
+/* ============================================================================
+ * base.css —— 重置、排版、氛围层（渐变网格 / 颗粒纹理 / 细网格 / 3D 画布）
+ * ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(120% 100% at 50% -18%, #0C1526 0%, #070A12 52%, #04060B 100%);
+  background-attachment: fixed;
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-size: var(--fs-14);
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden; /* 应用式布局：滚动发生在内容区 */
+  text-rendering: optimizeLegibility;
+}
+
+/* 数字统一等宽 + 表格数字对齐，数据看板可读性关键 */
+.num,
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 图标默认按行内元素参与排版：否则 .u-row 里"图标 + 文字"会被拆成两行 */
+svg {
+  display: inline-block;
+  vertical-align: -0.15em;
+}
+
+::selection {
+  background: rgba(91, 140, 255, 0.32);
+  color: #fff;
+}
+
+/* ---------------- 滚动条（细、低对比、悬停变亮） ---------------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: var(--r-pill);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
+  background-clip: content-box;
+}
+
+/* ============================================================================
+ * 氛围层：固定在最底层，四层叠加，全部不接收指针事件
+ *   1) 渐变网格（mesh）  2) 细网格线   3) 颗粒噪声   4) 3D 粒子画布
+ * ========================================================================== */
+.atmos {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-bg);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* 1. 渐变网格：大面积、低饱和，制造冷光纵深 */
+.atmos__mesh {
+  position: absolute;
+  inset: -20%;
+  background: var(--mesh-1);
+  filter: blur(22px) saturate(125%);
+  transform: translate3d(0, 0, 0);
+  animation: mesh-drift 32s var(--ease-in-out) infinite alternate;
+  will-change: transform;
+}
+
+@keyframes mesh-drift {
+  0% {
+    transform: translate3d(-1.2%, -0.8%, 0) scale(1.02);
+  }
+  100% {
+    transform: translate3d(1.6%, 1.1%, 0) scale(1.06);
+  }
+}
+
+/* 2. 细网格线：科技感骨架，极低对比，仅在中心区域可见 */
+.atmos__grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 85% 70% at 50% 0%, #000 0%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 70% at 50% 0%, #000 0%, transparent 78%);
+  opacity: 0.55;
+}
+
+/* 3. 颗粒纹理：用内联 SVG 噪声，避免额外图片请求；叠加混合提亮暗部 */
+.atmos__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* 4. 3D 粒子画布（Three.js，失败时由 canvas2D 兜底，同一节点） */
+.atmos__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.85;
+}
+
+/* 顶部渐晕：把内容区从背景中"抬"出来，保证文字对比度 */
+.atmos__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(130% 95% at 50% -12%, transparent 46%, rgba(4, 6, 11, 0.5) 88%),
+    linear-gradient(180deg, rgba(4, 6, 11, 0.06) 0%, rgba(4, 6, 11, 0.42) 100%);
+}
+
+/* ============================================================================
+ * 通用工具类（极少，优先用组件；避免工具类泛滥）
+ * ========================================================================== */
+.u-row {
+  display: flex;
+  align-items: center;
+}
+
+.u-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.u-gap-1 { gap: var(--s-1); }
+.u-gap-2 { gap: var(--s-2); }
+.u-gap-3 { gap: var(--s-3); }
+.u-gap-4 { gap: var(--s-4); }
+.u-gap-6 { gap: var(--s-6); }
+
+.u-grow { flex: 1 1 auto; min-width: 0; }
+.u-nowrap { white-space: nowrap; }
+.u-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.u-muted { color: var(--text-2); }
+.u-dim { color: var(--text-3); }
+.u-mono { font-family: var(--font-mono); font-size: var(--fs-12); letter-spacing: 0; }
+.u-caps {
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: var(--fs-11);
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+/* 键盘可访问性：仅键盘聚焦时显示焦点环 */
+:focus-visible {
+  outline: 2px solid var(--accent-line);
+  outline-offset: 2px;
+  border-radius: var(--r-xs);
+}
+
+/* 命中区域最小 32px */
+button,
+[role="button"],
+select,
+input {
+  min-height: 32px;
+}
+
+/* 尊重系统的"减少动态效果"偏好：关闭氛围动画与位移 */
+@media (prefers-reduced-motion: reduce) {
+  .atmos__mesh {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

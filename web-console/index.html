@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#04060B" />
+    <title>京师家教 · 可信对接运营控制台</title>
+    <meta
+      name="description"
+      content="京师家教可信对接平台运营控制台：需求工单、双减合规拦截、三重认证审核、智能匹配与履约评价。"
+    />
+
+    <!-- 设计令牌 → 基础层 → 布局 → 组件 → 页面 → 动效（顺序即层叠顺序） -->
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/views.css" />
+    <link rel="stylesheet" href="css/anim.css" />
+  </head>
+
+  <body>
+    <!-- ==================================================================
+         氛围层（3D 粒子 / 漂浮几何体 / 渐变网格 / 颗粒纹理）
+         纯装饰：aria-hidden + pointer-events:none，永不抢内容焦点
+         ================================================================== -->
+    <div class="atmos" aria-hidden="true">
+      <div class="atmos__mesh"></div>
+      <div class="atmos__grid"></div>
+      <canvas class="atmos__canvas" id="bg-canvas"></canvas>
+      <div class="atmos__grain"></div>
+      <div class="atmos__vignette"></div>
+    </div>
+
+    <!-- ==================================================================
+         应用外壳
+         ================================================================== -->
+    <div class="app" id="app">
+      <!-- ---------- 侧边栏 ---------- -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3 3 8l9 5 9-5-9-5Z" />
+              <path d="M7 11v5c0 1.7 2.2 3 5 3s5-1.3 5-3v-5" />
+            </svg>
+          </div>
+          <div class="brand__text">
+            <div class="brand__name">京师家教</div>
+            <div class="brand__sub">可信对接 · 运营台</div>
+          </div>
+        </div>
+
+        <!-- 导航由 app.js 注入（单一数据源：PAGES 配置） -->
+        <nav class="nav" id="nav" aria-label="主导航"></nav>
+
+        <div class="sidebar__foot">
+          <div class="operator" id="operator" role="button" tabindex="0" aria-label="当前运营者">
+            <div class="avatar avatar--lg" id="operator-avatar">运</div>
+            <div class="operator__meta">
+              <div class="operator__name">运营 · 王老师</div>
+              <div class="operator__role">首师大 · 平台运营组</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ---------- 主区域 ---------- -->
+      <main class="main">
+        <header class="topbar">
+          <button class="btn btn--ghost btn--icon btn--sm tip" id="btn-collapse" data-tip="折叠侧栏" aria-label="折叠侧栏">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M4 6h16M4 12h10M4 18h16" />
+            </svg>
+          </button>
+
+          <div class="topbar__title">
+            <div class="topbar__crumb" id="crumb">运营总览</div>
+            <h1 class="topbar__h1" id="page-title">平台运行概览</h1>
+          </div>
+
+          <div class="topbar__actions">
+            <span class="status-dot" id="live-status">数据实时同步</span>
+
+            <button class="cmdk tip" id="btn-cmdk" data-tip="命令面板 · ⌘K / Ctrl K" aria-label="打开命令面板">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-3.2-3.2" />
+              </svg>
+              <span class="cmdk__text">搜索需求、师范生、功能…</span>
+              <span class="cmdk__keys"><span class="kbd">Ctrl</span><span class="kbd">K</span></span>
+            </button>
+
+            <button class="btn btn--ghost btn--icon btn--sm tip" data-tip="消息" aria-label="消息">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+                <path d="M10 21h4" />
+              </svg>
+            </button>
+
+            <button class="btn btn--ghost btn--icon btn--sm tip" data-tip="刷新数据" id="btn-refresh" aria-label="刷新数据">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M21 12a9 9 0 1 1-2.6-6.4" />
+                <path d="M21 4v5h-5" />
+              </svg>
+            </button>
+
+            <div class="avatar" title="运营者">王</div>
+          </div>
+        </header>
+
+        <!-- ---------- 内容区（唯一滚动容器） ---------- -->
+        <div class="content" id="content">
+          <div class="content__inner" id="views"></div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ==================================================================
+         浮层：抽屉 / 遮罩 / 吐司 / 命令面板
+         ================================================================== -->
+    <div class="scrim" id="scrim"></div>
+
+    <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="详情" aria-hidden="true">
+      <div class="drawer__head">
+        <div class="u-grow">
+          <div class="drawer__title" id="drawer-title">详情</div>
+          <div class="drawer__sub" id="drawer-sub"></div>
+        </div>
+        <button class="btn btn--ghost btn--icon btn--sm" id="drawer-close" aria-label="关闭">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M6 6l12 12M18 6 6 18" />
+          </svg>
+        </button>
+      </div>
+      <div class="drawer__body" id="drawer-body"></div>
+      <div class="drawer__foot" id="drawer-foot"></div>
+    </aside>
+
+    <div class="toasts" id="toasts" aria-live="polite" aria-atomic="true"></div>
+
+    <div class="palette-scrim" id="palette-scrim"></div>
+    <div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="命令面板" aria-hidden="true">
+      <input class="palette__input" id="palette-input" placeholder="输入关键字：需求 / 师范生 / 合规 / 评价…" autocomplete="off" spellcheck="false" />
+      <div class="palette__list" id="palette-list"></div>
+      <div class="palette__hint">
+        <span>↑ ↓ 选择</span><span>Enter 打开</span><span>Esc 关闭</span>
+      </div>
+    </div>
+
+    <!-- ==================================================================
+         脚本：Three.js（CDN，可选）→ 数据 → 图标 → 图表 → 组件 → 视图 → 背景 → 应用
+         任一 CDN 失败都不影响功能：three-bg.js 会降级为 Canvas2D 粒子场
+         ================================================================== -->
+    <!-- Three.js：async 加载，绝不阻塞首屏；加载失败或过慢时背景自动降级为 Canvas2D -->
+    <script
+      async
+      src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
+      onerror="window.__THREE_FAILED__=true"
+    ></script>
+    <script src="js/data.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/views.js"></script>
+    <script src="js/three-bg.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
