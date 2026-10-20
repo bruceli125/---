@@ -1,0 +1,199 @@
+/* 师范生详情页样式 */
+.page-with-footer {
+  padding-bottom: 220rpx;
+}
+
+/* ---------- 头部 ---------- */
+.head-card {
+  background: linear-gradient(150deg, #F4F8FF, #ffffff);
+  border: 2rpx solid var(--brand-primary-soft);
+}
+
+.avatar-lg {
+  width: 132rpx;
+  height: 132rpx;
+  border-radius: 50%;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 54rpx;
+  font-weight: 600;
+  background: linear-gradient(135deg, #4F86F7, #1F4FBF);
+}
+
+.price-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 24rpx;
+}
+
+.price-value {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--brand-primary);
+  line-height: 1.2;
+}
+
+.credit-box {
+  text-align: right;
+}
+
+.credit-value {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: var(--trust-green);
+  line-height: 1.2;
+}
+
+.credit-bar {
+  margin-top: 16rpx;
+  height: 12rpx;
+  border-radius: 999rpx;
+  background-color: var(--bg-gray);
+  overflow: hidden;
+}
+
+.credit-bar-inner {
+  height: 100%;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #22C77A, var(--trust-green));
+}
+
+/* ---------- 认证等级提示 ---------- */
+.cert-level-line {
+  margin-top: 20rpx;
+}
+
+.cert-warning {
+  margin-top: 16rpx;
+  padding: 18rpx 20rpx;
+  border-radius: var(--radius-md);
+  background-color: var(--warn-orange-soft);
+  color: var(--warn-orange);
+  font-size: 24rpx;
+  line-height: 1.65;
+}
+
+.cert-pass {
+  margin-top: 16rpx;
+  padding: 18rpx 20rpx;
+  border-radius: var(--radius-md);
+  background-color: var(--trust-green-soft);
+  color: var(--trust-green);
+  font-size: 24rpx;
+  line-height: 1.65;
+}
+
+/* ---------- 认证详情 ---------- */
+.cert-row {
+  padding: 22rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.cert-row:last-child {
+  border-bottom: none;
+}
+
+.cert-type {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.cert-note {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: var(--text-sub);
+  line-height: 1.65;
+}
+
+.field-box {
+  margin-top: 14rpx;
+  padding: 16rpx 20rpx;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-gray);
+}
+
+.field-row {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 6rpx;
+}
+
+.field-label {
+  width: 190rpx;
+  flex-shrink: 0;
+  font-size: 23rpx;
+  color: var(--text-weak);
+}
+
+.field-value {
+  flex: 1;
+  font-size: 23rpx;
+  color: var(--text-main);
+  word-break: break-all;
+}
+
+/* ---------- 教学信息 ---------- */
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 12rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  width: 170rpx;
+  flex-shrink: 0;
+  font-size: 25rpx;
+  color: var(--text-weak);
+}
+
+.info-value {
+  flex: 1;
+  font-size: 26rpx;
+  color: var(--text-main);
+  word-break: break-all;
+}
+
+/* ---------- 简介 ---------- */
+.intro-text {
+  font-size: 26rpx;
+  color: var(--text-sub);
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+/* ---------- 隐私 ---------- */
+.privacy-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 10rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.privacy-label {
+  width: 160rpx;
+  flex-shrink: 0;
+  font-size: 25rpx;
+  color: var(--text-weak);
+}
+
+.privacy-value {
+  flex: 1;
+  font-size: 25rpx;
+  color: var(--text-main);
+}
+
+.empty-btn {
+  width: 360rpx;
+  margin: 24rpx auto 0;
+}

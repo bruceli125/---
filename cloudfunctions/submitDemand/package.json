@@ -1,0 +1,9 @@
+{
+  "name": "submitDemand",
+  "version": "1.0.0",
+  "description": "京师家教 - 发布需求云函数：风险检测通过后写入 demands 集合，支持更新需求状态",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

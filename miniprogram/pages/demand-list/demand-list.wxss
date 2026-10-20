@@ -1,0 +1,91 @@
+/* 需求列表 */
+.list-page {
+  padding-bottom: 180rpx;
+}
+
+.stat-card {
+  margin-bottom: 20rpx;
+}
+
+.stat-grid {
+  display: flex;
+  background-color: var(--bg-gray);
+  border-radius: 16rpx;
+  padding: 20rpx 0;
+}
+
+.stat-cell {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--brand-primary);
+  line-height: 1.2;
+}
+
+.stat-label {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: var(--text-weak);
+}
+
+/* ---------- 筛选 tabs ---------- */
+.tabs {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 14rpx 0;
+  border-radius: 999rpx;
+  background-color: #ffffff;
+  color: var(--text-sub);
+  font-size: 26rpx;
+  border: 2rpx solid var(--border-color);
+}
+
+.tab-active {
+  background-color: var(--brand-primary-soft);
+  color: var(--brand-primary);
+  font-weight: 600;
+  border-color: var(--brand-primary);
+}
+
+.tab-count {
+  font-size: 22rpx;
+  margin-left: 6rpx;
+  color: var(--text-weak);
+}
+
+/* ---------- 空状态 ---------- */
+.empty-sub {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: var(--text-weak);
+}
+
+.empty-btn {
+  width: 320rpx;
+  margin: 28rpx auto 0;
+}
+
+/* ---------- 悬浮按钮 ---------- */
+.float-btn {
+  position: fixed;
+  right: 32rpx;
+  bottom: 60rpx;
+  z-index: 30;
+  padding: 22rpx 36rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(135deg, var(--brand-primary-light), var(--brand-primary));
+  color: #ffffff;
+  font-size: 28rpx;
+  font-weight: 600;
+  box-shadow: 0 12rpx 28rpx rgba(31, 79, 191, 0.32);
+}

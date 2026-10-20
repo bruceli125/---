@@ -1,0 +1,240 @@
+/* 需求详情 */
+.info-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.info-item {
+  width: 50%;
+  padding: 10rpx 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 22rpx;
+  color: var(--text-weak);
+}
+
+.info-value {
+  font-size: 27rpx;
+  color: var(--text-main);
+  margin-top: 2rpx;
+  word-break: break-all;
+}
+
+.info-block {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx solid var(--border-color);
+}
+
+.req-text {
+  font-size: 27rpx;
+  color: var(--text-sub);
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.link-row {
+  display: flex;
+  gap: 24rpx;
+}
+
+.copy-link {
+  font-size: 24rpx;
+  color: var(--brand-primary);
+}
+
+/* ---------- 风险横幅 ---------- */
+.risk-banner {
+  border-radius: 20rpx;
+  border: 2rpx solid transparent;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.risk-banner-head {
+  display: flex;
+  align-items: center;
+}
+
+.risk-badge {
+  color: #ffffff;
+  font-size: 22rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  margin-right: 14rpx;
+}
+
+.risk-count {
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.risk-desc {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  line-height: 1.7;
+  opacity: 0.92;
+}
+
+.risk-high {
+  margin-top: 14rpx;
+  background-color: rgba(240, 68, 56, 0.12);
+  color: #b42318;
+  font-size: 24rpx;
+  font-weight: 600;
+  border-radius: 12rpx;
+  padding: 14rpx 18rpx;
+  line-height: 1.6;
+}
+
+/* ---------- 风险词 / 提示 ---------- */
+.hit-item {
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.hit-item:last-child {
+  border-bottom: none;
+}
+
+.hit-tip {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: var(--text-sub);
+  line-height: 1.7;
+}
+
+.tip-item {
+  font-size: 25rpx;
+  color: var(--text-sub);
+  line-height: 1.75;
+  margin-bottom: 8rpx;
+}
+
+.empty-btn {
+  width: 320rpx;
+  margin: 28rpx auto 0;
+}
+
+/* ================================================================
+ * 二期：履约与互评
+ * ================================================================ */
+.fulfill-card {
+  border: 2rpx solid var(--trust-green);
+  box-shadow: 0 6rpx 20rpx rgba(23, 178, 106, 0.12);
+}
+
+.matched-box {
+  margin-top: 16rpx;
+  background-color: var(--trust-green-soft);
+  border-radius: 16rpx;
+  padding: 20rpx;
+}
+
+.matched-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #05603a;
+  margin-bottom: 6rpx;
+}
+
+.badge-line {
+  margin-top: 12rpx;
+}
+
+.fulfill-sub {
+  margin-top: 20rpx;
+  padding-top: 16rpx;
+  border-top: 2rpx solid var(--border-color);
+}
+
+.fulfill-label {
+  font-size: 27rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.checkin-box {
+  margin-top: 12rpx;
+  background-color: var(--bg-gray);
+  border-radius: 14rpx;
+  padding: 18rpx;
+}
+
+.checkin-summary {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: var(--text-sub);
+  line-height: 1.65;
+}
+
+.fulfill-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 22rpx;
+}
+
+.review-state {
+  display: flex;
+  align-items: center;
+  margin-top: 18rpx;
+  background-color: var(--brand-primary-soft);
+  border-radius: 14rpx;
+  padding: 14rpx 18rpx;
+}
+
+.review-state-label {
+  font-size: 23rpx;
+  color: var(--text-sub);
+  margin-right: 12rpx;
+}
+
+.review-state-value {
+  font-size: 25rpx;
+  font-weight: 600;
+  color: var(--brand-primary);
+}
+
+/* ---------- 确认成单（家长） ---------- */
+.cand-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.cand-item:last-child {
+  border-bottom: none;
+}
+
+.cand-main {
+  flex: 1;
+  min-width: 0;
+  padding-right: 16rpx;
+}
+
+.cand-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.cand-reason {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: var(--text-weak);
+  line-height: 1.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cand-btn {
+  flex: 0 0 auto;
+  min-width: 176rpx;
+}

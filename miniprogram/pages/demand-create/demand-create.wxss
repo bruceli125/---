@@ -1,0 +1,254 @@
+/* 家长发布需求 */
+.read-card {
+  border-left: 8rpx solid var(--warn-orange);
+}
+
+.read-list {
+  margin-top: 12rpx;
+}
+
+.read-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 6rpx 0;
+}
+
+.read-icon {
+  font-size: 24rpx;
+  margin-right: 10rpx;
+  line-height: 1.6;
+}
+
+.read-text {
+  flex: 1;
+  font-size: 24rpx;
+  color: var(--text-sub);
+  line-height: 1.6;
+}
+
+.picker-value {
+  min-height: 60rpx;
+  font-size: 28rpx;
+  color: var(--text-main);
+  line-height: 60rpx;
+}
+
+.address-input {
+  background-color: var(--bg-gray);
+  border-radius: 12rpx;
+  padding: 0 20rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+}
+
+.budget-row {
+  display: flex;
+  align-items: center;
+}
+
+.budget-input {
+  flex: 1;
+  height: 72rpx;
+  line-height: 72rpx;
+  background-color: var(--bg-gray);
+  border-radius: 12rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  text-align: center;
+}
+
+.budget-sep {
+  padding: 0 20rpx;
+  color: var(--text-weak);
+}
+
+.counter {
+  text-align: right;
+  font-size: 22rpx;
+  color: var(--text-weak);
+  margin-top: 6rpx;
+}
+
+/* ---------- 内联风险提示条 ---------- */
+.risk-inline {
+  background-color: var(--danger-red-soft);
+  border: 2rpx solid #fda29b;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.risk-inline-head {
+  display: flex;
+  align-items: center;
+}
+
+.risk-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  margin-right: 12rpx;
+}
+
+.risk-inline-title {
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.risk-words {
+  margin-top: 12rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.risk-tip {
+  font-size: 24rpx;
+  color: var(--text-sub);
+  line-height: 1.7;
+  margin-top: 6rpx;
+}
+
+.risk-more {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--danger-red);
+  font-weight: 600;
+}
+
+/* ---------- 底部按钮 ---------- */
+.reset-btn {
+  width: 160rpx;
+  flex: 0 0 auto;
+}
+
+/* ---------- 二期：双减政策阻断条（红色硬拦） ---------- */
+.policy-block {
+  background-color: var(--danger-red-soft);
+  border: 2rpx solid var(--danger-red);
+  border-left: 10rpx solid var(--danger-red);
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.policy-block-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.policy-block-flag {
+  background-color: var(--danger-red);
+  color: #ffffff;
+  font-size: 20rpx;
+  font-weight: 600;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+  margin-right: 12rpx;
+}
+
+.policy-block-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--danger-red);
+}
+
+.policy-block-msg {
+  margin-top: 12rpx;
+  font-size: 25rpx;
+  color: #b42318;
+  line-height: 1.7;
+  font-weight: 600;
+}
+
+.policy-block-ev {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #b42318;
+  line-height: 1.7;
+}
+
+.policy-block-note {
+  margin-top: 14rpx;
+  padding-top: 14rpx;
+  border-top: 2rpx dashed #fda29b;
+  font-size: 23rpx;
+  color: var(--text-sub);
+  line-height: 1.7;
+}
+
+/* ---------- 二期：培训类型卡片（必选） ---------- */
+.discipline-list {
+  margin-top: 16rpx;
+}
+
+.discipline-card {
+  border: 2rpx solid var(--border-color);
+  border-radius: 20rpx;
+  padding: 22rpx 24rpx;
+  margin-bottom: 16rpx;
+  background-color: var(--bg-card);
+}
+
+.discipline-card:last-child {
+  margin-bottom: 0;
+}
+
+.discipline-active {
+  border-color: var(--brand-primary);
+  background-color: var(--brand-primary-soft);
+  box-shadow: 0 6rpx 16rpx rgba(31, 79, 191, 0.12);
+}
+
+.discipline-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.discipline-label {
+  font-size: 29rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.discipline-check {
+  color: var(--brand-primary);
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.discipline-sub {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  color: var(--text-sub);
+}
+
+.discipline-desc {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: var(--text-weak);
+  line-height: 1.6;
+}
+
+/* ---------- 二期：科目提示 / 休息日提示 ---------- */
+.subject-hint {
+  margin-top: 12rpx;
+  font-size: 23rpx;
+  color: var(--brand-primary);
+  background-color: var(--brand-primary-soft);
+  border-radius: 12rpx;
+  padding: 12rpx 16rpx;
+  line-height: 1.6;
+}
+
+.rest-tip {
+  margin-bottom: 14rpx;
+  font-size: 23rpx;
+  color: #b54708;
+  background-color: var(--warn-orange-soft);
+  border: 2rpx solid #fec84b;
+  border-radius: 12rpx;
+  padding: 12rpx 16rpx;
+  line-height: 1.6;
+}

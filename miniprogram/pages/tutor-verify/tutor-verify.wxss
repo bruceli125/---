@@ -1,0 +1,302 @@
+/* 三重认证页样式 */
+.page {
+  padding-bottom: 60rpx;
+}
+
+/* ---------- 进度条 ---------- */
+.progress {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin: 32rpx 0 8rpx;
+}
+
+.progress-line {
+  position: absolute;
+  top: 28rpx;
+  left: 12%;
+  right: 12%;
+  height: 4rpx;
+  background-color: var(--border-color);
+  z-index: 0;
+}
+
+.progress-item {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.progress-dot {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #ffffff;
+  border: 4rpx solid #ffffff;
+}
+
+.step-done {
+  background: linear-gradient(135deg, #22C77A, var(--trust-green));
+}
+
+.step-pending {
+  background: linear-gradient(135deg, #FFB020, var(--warn-orange));
+}
+
+.step-rejected {
+  background: linear-gradient(135deg, #F97066, var(--danger-red));
+}
+
+.step-todo {
+  background-color: #D0D5DD;
+}
+
+.progress-label {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.progress-status {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+}
+
+/* ---------- 认证完成 ---------- */
+.celebrate {
+  background: linear-gradient(160deg, #F2FBF6, #ffffff);
+  border: 2rpx solid var(--trust-green-soft);
+}
+
+.celebrate-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--trust-green);
+}
+
+.celebrate-desc {
+  font-size: 24rpx;
+  color: var(--text-sub);
+  margin: 10rpx 0 22rpx;
+  line-height: 1.6;
+}
+
+.celebrate-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+/* ---------- 步骤卡 ---------- */
+.step-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.step-head {
+  display: flex;
+  align-items: center;
+  padding: 28rpx;
+}
+
+.step-mark {
+  width: 56rpx;
+  height: 56rpx;
+  flex-shrink: 0;
+  margin-right: 18rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.step-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.step-status {
+  font-size: 23rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.step-toggle {
+  font-size: 23rpx;
+  color: var(--brand-primary);
+  flex-shrink: 0;
+}
+
+.step-body {
+  padding: 0 28rpx 28rpx;
+  border-top: 2rpx solid var(--border-color);
+  padding-top: 24rpx;
+}
+
+.step-btn {
+  margin-top: 8rpx;
+}
+
+.mock-note {
+  margin-top: 16rpx;
+  padding: 16rpx 20rpx;
+  border-radius: var(--radius-sm);
+  background-color: var(--warn-orange-soft);
+  color: var(--warn-orange);
+  font-size: 22rpx;
+  line-height: 1.65;
+}
+
+/* ---------- 认证记录 ---------- */
+.cert-record {
+  margin-top: 20rpx;
+  padding: 20rpx;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-gray);
+}
+
+.cert-record-title {
+  font-size: 25rpx;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 10rpx;
+}
+
+.cert-record-row {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 6rpx;
+}
+
+.cert-record-label {
+  width: 140rpx;
+  flex-shrink: 0;
+  font-size: 23rpx;
+  color: var(--text-weak);
+}
+
+.cert-record-value {
+  flex: 1;
+  font-size: 23rpx;
+  color: var(--text-sub);
+}
+
+.cert-record-note {
+  margin-top: 10rpx;
+  font-size: 23rpx;
+  color: var(--text-sub);
+  line-height: 1.6;
+}
+
+/* ---------- mock OCR 结果 ---------- */
+.ocr-box {
+  margin-top: 18rpx;
+  padding: 20rpx;
+  border-radius: var(--radius-md);
+  background-color: var(--brand-primary-soft);
+}
+
+.ocr-title {
+  font-size: 23rpx;
+  font-weight: 600;
+  color: var(--brand-primary);
+  margin-bottom: 10rpx;
+}
+
+.ocr-row {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 6rpx;
+}
+
+.ocr-label {
+  width: 190rpx;
+  flex-shrink: 0;
+  font-size: 23rpx;
+  color: var(--text-sub);
+}
+
+.ocr-value {
+  flex: 1;
+  font-size: 23rpx;
+  color: var(--text-main);
+  word-break: break-all;
+}
+
+/* ---------- 文件行 ---------- */
+.file-row {
+  display: flex;
+  align-items: center;
+}
+
+.file-thumb {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: var(--radius-sm);
+  margin-right: 16rpx;
+  flex-shrink: 0;
+  background-color: var(--bg-gray);
+}
+
+.file-icon {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: var(--radius-sm);
+  margin-right: 16rpx;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  background-color: var(--bg-gray);
+}
+
+.file-name {
+  font-size: 25rpx;
+  color: var(--text-main);
+}
+
+/* ---------- 隐私 ---------- */
+.privacy-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 10rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.privacy-label {
+  width: 160rpx;
+  flex-shrink: 0;
+  font-size: 25rpx;
+  color: var(--text-weak);
+}
+
+.privacy-value {
+  flex: 1;
+  font-size: 25rpx;
+  color: var(--text-main);
+}
+
+/* ---------- 重置 ---------- */
+.reset-row {
+  text-align: center;
+  padding: 20rpx 0 40rpx;
+  font-size: 24rpx;
+  color: var(--text-weak);
+  text-decoration: underline;
+}

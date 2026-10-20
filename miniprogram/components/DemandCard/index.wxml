@@ -1,0 +1,77 @@
+<!--
+  DemandCard（二期升级）：
+  整卡 catchtap（阻止原生 tap 冒泡到页面，页面只收到一次自定义 tap 事件），
+  申请按钮 catchtap 阻止冒泡到卡片。
+-->
+<view class="demand-card" catchtap="onTap">
+
+  <!-- 右上角状态角标：招募中=绿 / 匹配中=蓝 / 已匹配=紫 -->
+  <view wx:if="{{showStatus}}" class="dc-corner {{cornerClass}}">{{statusText}}</view>
+
+  <!-- 标题行（右侧留出角标空间，避免被遮挡） -->
+  <view class="dc-head">
+    <view class="dc-title-row">
+      <text class="dc-title">{{titleText}}</text>
+      <text wx:if="{{distanceText}}" class="dc-distance">{{distanceText}}</text>
+    </view>
+  </view>
+
+  <!-- 学科类 / 素质拓展 标记 + 今日已打卡徽章 -->
+  <view wx:if="{{groupTag.text || showCheckin}}" class="dc-badge-row">
+    <text wx:if="{{groupTag.text}}" class="dc-group {{groupTag.className}}">{{groupTag.text}}</text>
+    <text wx:if="{{showCheckin}}" class="dc-checkin">✅ {{checkinText}}</text>
+  </view>
+
+  <!-- 已成单提示行（含成交时间） -->
+  <view wx:if="{{showMatchedLine}}" class="dc-matched">🎉 {{matchedText}}</view>
+
+  <!-- 订单进度提示（父组件传入 orderHint 时展示） -->
+  <view wx:if="{{hintText}}" class="dc-hint">{{hintText}}</view>
+
+  <!-- 风险标签（高风险额外展示命中词前 3 个） -->
+  <view wx:if="{{showRiskTag}}" class="dc-risk {{riskClass}}">
+    <text class="dc-risk-text">{{riskText}}</text>
+    <view class="dc-risk-words" wx:if="{{riskWordList.length}}">
+      <text class="dc-risk-word" wx:for="{{riskWordList}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 五项标签：每周频次 / 时间段 / 授课方式 / 区域 / 薪资 -->
+  <view class="dc-tags">
+    <view class="dc-tag {{item.className}}" wx:for="{{tagList}}" wx:key="key">
+      <text class="dc-tag-icon">{{item.icon}}</text>
+      <text class="dc-tag-text">{{item.text}}</text>
+    </view>
+  </view>
+
+  <!-- 地址 -->
+  <view class="dc-address">
+    <text class="dc-address-icon">📍</text>
+    <text class="dc-address-text">{{addressText}}</text>
+  </view>
+
+  <!-- 特殊要求摘要 -->
+  <view class="dc-special">{{specialText}}</view>
+
+  <!-- 匹配度 + 推荐理由（接单池） -->
+  <view wx:if="{{hasScore}}" class="dc-score-row">
+    <text class="dc-score-text">{{scoreText}}</text>
+    <view class="dc-reasons" wx:if="{{reasonList.length}}">
+      <text class="dc-reason" wx:for="{{reasonList}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 底部：时间 + 申请数 + 操作 -->
+  <view class="dc-foot">
+    <view class="dc-foot-left">
+      <text class="dc-time">{{createdAtText}}</text>
+      <text wx:if="{{showMeta}}" class="dc-meta">{{metaText}}</text>
+    </view>
+    <view
+      wx:if="{{showApplyBtn}}"
+      class="dc-apply {{applyDisabled ? 'dc-apply-disabled' : ''}}"
+      catchtap="onApply"
+    >{{applyBtnText}}</view>
+  </view>
+
+</view>

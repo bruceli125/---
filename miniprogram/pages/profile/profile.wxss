@@ -1,0 +1,254 @@
+/* 我的页面样式 */
+.page {
+  padding-bottom: 60rpx;
+}
+
+/* ---------- 用户卡 ---------- */
+.user-card {
+  background: linear-gradient(150deg, #F4F8FF, #ffffff);
+  border: 2rpx solid var(--brand-primary-soft);
+}
+
+.user-avatar {
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 42rpx;
+  font-weight: 600;
+  background: linear-gradient(135deg, #4F86F7, #1F4FBF);
+}
+
+.user-name {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.user-meta {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 10rpx;
+}
+
+.user-meta-label {
+  width: 150rpx;
+  flex-shrink: 0;
+  font-size: 24rpx;
+  color: var(--text-weak);
+}
+
+.user-meta-value {
+  flex: 1;
+  font-size: 24rpx;
+  color: var(--text-sub);
+  word-break: break-all;
+}
+
+/* ---------- 数据卡 ---------- */
+.stat-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  width: 25%;
+  text-align: center;
+  padding: 10rpx 0;
+}
+
+.stat-value {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.stat-value.green {
+  color: var(--trust-green);
+}
+
+.stat-value.warn {
+  color: var(--warn-orange);
+}
+
+.stat-label {
+  font-size: 22rpx;
+  color: var(--text-weak);
+  margin-top: 6rpx;
+}
+
+/* ---------- 功能入口 ---------- */
+.entry-row {
+  display: flex;
+  align-items: center;
+  padding: 22rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.entry-row:last-child {
+  border-bottom: none;
+}
+
+.entry-icon {
+  font-size: 38rpx;
+  margin-right: 18rpx;
+}
+
+.entry-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.entry-arrow {
+  font-size: 26rpx;
+  color: var(--brand-primary);
+  flex-shrink: 0;
+}
+
+/* ---------- 报告列表 ---------- */
+.report-list {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx solid var(--border-color);
+}
+
+.report-item {
+  padding: 20rpx;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-gray);
+  margin-bottom: 16rpx;
+}
+
+.report-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* ---------- 认证 ---------- */
+.cert-hint {
+  margin-top: 20rpx;
+  padding: 18rpx 20rpx;
+  border-radius: var(--radius-md);
+  background-color: var(--warn-orange-soft);
+  color: var(--warn-orange);
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+.cert-item {
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.cert-item:last-child {
+  border-bottom: none;
+}
+
+.cert-type {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.cert-action {
+  font-size: 24rpx;
+  color: var(--brand-primary);
+  text-decoration: underline;
+}
+
+.cert-note {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+  color: var(--text-sub);
+  line-height: 1.6;
+}
+
+/* ---------- 申请列表 ---------- */
+.app-item {
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.app-item:last-child {
+  border-bottom: none;
+}
+
+.app-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* ---------- 关于 ---------- */
+.about-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 10rpx 0;
+}
+
+.about-label {
+  width: 180rpx;
+  flex-shrink: 0;
+  font-size: 25rpx;
+  color: var(--text-weak);
+}
+
+.about-value {
+  flex: 1;
+  font-size: 25rpx;
+  color: var(--text-main);
+  word-break: break-all;
+}
+
+/* ---------- 免责声明 ---------- */
+.disclaimer-item {
+  font-size: 23rpx;
+  color: var(--text-weak);
+  line-height: 1.75;
+  margin-top: 8rpx;
+}
+
+/* ---------- 隐私与授权（与微信后台声明的信息类型一一对应） ---------- */
+.privacy-row {
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.privacy-row:last-child {
+  border-bottom: none;
+}
+
+.privacy-type {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.privacy-purpose {
+  display: block;
+  font-size: 23rpx;
+  color: var(--text-weak);
+  line-height: 1.6;
+  margin-top: 4rpx;
+}
+
+.version-line {
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--text-weak);
+  padding: 20rpx 0 40rpx;
+}
+
+.empty-btn {
+  width: 360rpx;
+  margin: 24rpx auto 0;
+}

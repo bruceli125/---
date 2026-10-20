@@ -1,0 +1,20 @@
+# ---------- 微信开发者工具 ----------
+# 个人 IDE 配置（本机编译设置/调试偏好），官方模板建议不入库
+project.private.config.json
+
+# ---------- 依赖与 npm 构建产物 ----------
+node_modules/
+miniprogram/miniprogram_npm/
+cloudfunctions/**/node_modules/
+
+# ---------- 系统 / 编辑器 ----------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+*.swp
+
+# ---------- 临时文件 ----------
+*.tmp
+*.bak

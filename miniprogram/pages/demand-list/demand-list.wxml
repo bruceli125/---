@@ -1,0 +1,78 @@
+<!-- 需求列表（我的需求） -->
+<view class="page list-page">
+
+  <!-- 统计条 -->
+  <view class="card stat-card">
+    <view class="row-between">
+      <view class="card-title">我的需求</view>
+      <view class="text-weak">共 {{stat.total}} 条</view>
+    </view>
+    <view class="stat-grid mt-16">
+      <view class="stat-cell">
+        <view class="stat-num">{{stat.published}}</view>
+        <view class="stat-label">招募中</view>
+      </view>
+      <view class="stat-cell">
+        <view class="stat-num">{{stat.matching}}</view>
+        <view class="stat-label">匹配中</view>
+      </view>
+      <view class="stat-cell">
+        <view class="stat-num">{{stat.matched}}</view>
+        <view class="stat-label">已匹配</view>
+      </view>
+      <view class="stat-cell">
+        <view class="stat-num {{stat.risk > 0 ? 'text-red' : ''}}">{{stat.risk}}</view>
+        <view class="stat-label">有风险</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 筛选 -->
+  <view class="tabs">
+    <view
+      class="tab {{status === item.value ? 'tab-active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="value"
+      data-value="{{item.value}}"
+      bindtap="onSelectTab"
+    >
+      <text>{{item.label}}</text>
+      <text class="tab-count" wx:if="{{item.count > 0}}">{{item.count}}</text>
+    </view>
+  </view>
+
+  <!-- 列表 -->
+  <block wx:if="{{list.length > 0}}">
+    <demand-card
+      wx:for="{{list}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      demand="{{item}}"
+      show-risk="{{true}}"
+      show-status="{{true}}"
+      show-meta="{{true}}"
+      bindtap="onTapDemand"
+    />
+  </block>
+
+  <!-- 空状态 -->
+  <view class="card" wx:elif="{{!loading}}">
+    <view class="empty">
+      <view class="empty-icon">📋</view>
+      <view class="empty-text">还没有发布过家教需求</view>
+      <view class="empty-sub">发布后可获得智能匹配 Top3 与对接避坑报告</view>
+      <view class="btn btn-primary empty-btn" bindtap="goCreate">去发布需求</view>
+    </view>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">正在加载需求…</view>
+
+  <view class="disclaimer mt-16">
+    <view class="disclaimer-title">提示</view>
+    <view>平台仅提供可信对接与能力认证，不参与资金往来；资金担保结算为二期规划。</view>
+  </view>
+  <platform-notice />
+</view>
+
+<!-- 悬浮发布按钮 -->
+<view class="float-btn" bindtap="goCreate">＋ 发布需求</view>

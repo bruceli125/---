@@ -1,0 +1,35 @@
+<!-- CheckinCard：一条履约打卡记录。展示与事件抛出，业务逻辑在页面 -->
+<view class="cc" bindtap="onTap">
+  <view class="cc-head">
+    <view class="cc-date-wrap">
+      <text class="cc-date">{{dateText}}</text>
+      <text class="cc-time">{{timeRangeText}}</text>
+    </view>
+    <text class="cc-badge" style="color: {{statusColor}}; background-color: {{statusBg}};">{{statusLabel}}</text>
+  </view>
+
+  <view class="cc-meta">
+    <text class="cc-dur" wx:if="{{durationText}}">本次时长 {{durationText}}</text>
+    <text class="cc-dur cc-dur-empty" wx:else>时长待结算</text>
+  </view>
+
+  <view class="cc-loc">
+    <text class="cc-loc-icon">📍</text>
+    <text class="cc-loc-name">{{locationName}}</text>
+    <text class="cc-mock" wx:if="{{isMockLocation}}">mock 定位</text>
+  </view>
+  <view class="cc-addr" wx:if="{{locationAddress}}">{{locationAddress}}</view>
+
+  <view class="cc-summary" wx:if="{{showSummary && hasSummary}}">
+    <view class="cc-summary-title">授课小结</view>
+    <view class="cc-summary-text">{{summaryText}}</view>
+  </view>
+  <view class="cc-summary-empty" wx:if="{{showSummary && !hasSummary}}">尚未填写授课小结</view>
+
+  <view class="cc-confirm">{{confirmText}}</view>
+
+  <view class="cc-actions" wx:if="{{canConfirm || canFinish}}">
+    <view class="cc-btn cc-btn-confirm" wx:if="{{canConfirm}}" catchtap="onConfirm">确认本次履约</view>
+    <view class="cc-btn cc-btn-finish" wx:if="{{canFinish}}" catchtap="onFinish">结束打卡并填写小结</view>
+  </view>
+</view>

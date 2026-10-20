@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "师范生详情",
+  "usingComponents": {
+    "cert-badge": "/components/CertBadge/index"
+  }
+}

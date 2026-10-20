@@ -1,0 +1,78 @@
+<!-- RiskAlert：风险提示弹层。visible=false 时完全卸载，避免遮挡页面点击 -->
+<view
+  wx:if="{{visible}}"
+  class="ra-mask"
+  catchtouchmove="noop"
+  catchtap="onMaskTap"
+>
+  <view class="ra-dialog" catchtap="noop">
+    <!-- 顶部等级色条 -->
+    <view class="ra-bar" style="background-color: {{theme.color}};"></view>
+
+    <!-- 头部：等级徽标 + 标题 + 说明 -->
+    <view class="ra-head">
+      <view class="ra-chip" style="color: {{theme.color}}; background-color: {{theme.bg}};">
+        {{theme.text}}
+      </view>
+      <view class="ra-title">{{alertTitle}}</view>
+      <view class="ra-desc">{{theme.desc}}</view>
+    </view>
+
+    <scroll-view class="{{bodyClass}}" scroll-y="true">
+      <!-- 命中风险词 -->
+      <view class="ra-sec-title">
+        <text>命中风险词</text>
+        <text class="ra-sec-count">{{hitCount}} 项</text>
+      </view>
+
+      <view wx:if="{{hitCount === 0}}" class="ra-empty">
+        未发现风险词，仍建议首次沟通保持基本警惕。
+      </view>
+
+      <view class="ra-hit" wx:for="{{hitList}}" wx:key="word">
+        <view class="ra-hit-head">
+          <text class="ra-hit-word" style="color: {{item.color}}; background-color: {{item.bg}};">
+            {{item.word}}
+          </text>
+          <text class="ra-hit-cat">{{item.category}}</text>
+        </view>
+        <view class="ra-hit-tip">{{item.tip}}</view>
+      </view>
+
+      <!-- 避坑提示 -->
+      <view class="ra-sec-title ra-sec-title-gap">
+        <text>避坑提示</text>
+        <text class="ra-sec-count">{{tipCount}} 条</text>
+      </view>
+
+      <view wx:if="{{tipCount === 0}}" class="ra-empty">暂无额外提示。</view>
+
+      <view class="ra-tip" wx:for="{{tipList}}" wx:key="*this">
+        <view class="ra-dot"></view>
+        <view class="ra-tip-text">{{item}}</view>
+      </view>
+
+      <view wx:if="{{moreTipCount > 0}}" class="ra-more">
+        为保持弹层简洁，另有 {{moreTipCount}} 条建议，可在报告页查看完整版。
+      </view>
+
+      <view class="ra-safe-tip">
+        平台不参与资金往来：任何押金、保证金、培训贷、刷单要求都请直接拒绝并举报。
+      </view>
+    </scroll-view>
+
+    <!-- 底部操作 -->
+    <view class="ra-footer">
+      <view wx:if="{{showCancel}}" class="ra-btn ra-btn-cancel" catchtap="onCancel">
+        {{cancelText}}
+      </view>
+      <view
+        class="ra-btn ra-btn-confirm"
+        style="background-color: {{theme.color}};"
+        catchtap="onConfirm"
+      >
+        {{confirmText}}
+      </view>
+    </view>
+  </view>
+</view>

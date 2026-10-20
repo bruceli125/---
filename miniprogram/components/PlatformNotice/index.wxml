@@ -1,0 +1,9 @@
+<!-- PlatformNotice：平台定位声明。所有页面底部统一展示，合规红线要求 -->
+<view class="pn pn-{{mode}}" bindtap="onTap">
+  <view class="pn-icon">🏛️</view>
+  <view class="pn-body">
+    <view class="pn-text">{{position}}</view>
+    <view wx:if="{{mode === 'full'}}" class="pn-long">{{positionLong}}</view>
+    <view wx:if="{{showMore}}" class="pn-more">查看完整声明 ›</view>
+  </view>
+</view>

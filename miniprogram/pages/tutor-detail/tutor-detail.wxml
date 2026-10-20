@@ -1,0 +1,154 @@
+<!-- 师范生详情：档案 + 认证徽章 + 认证详情 + 教学信息 + 隐私合规 -->
+<view class="page page-with-footer">
+
+  <view wx:if="{{loading}}" class="loading">正在加载师范生档案…</view>
+
+  <block wx:else>
+    <view wx:if="{{notFound}}" class="empty">
+      <view class="empty-icon">🙈</view>
+      <view class="empty-text">{{errorMsg}}</view>
+      <view class="btn btn-primary empty-btn" bindtap="onGoBack">返回</view>
+    </view>
+
+    <block wx:else>
+      <!-- 头部档案 -->
+      <view class="card head-card">
+        <view class="row">
+          <view class="avatar-lg">{{avatarText}}</view>
+          <view class="flex-1">
+            <view class="row gap-16">
+              <text class="title-md">{{name}}</text>
+              <text class="tag">{{genderText}}</text>
+            </view>
+            <view class="text-sub mt-8">{{schoolLine}}</view>
+            <view class="row gap-16 mt-8">
+              <text class="text-weak">距离 {{distanceText}}</text>
+              <text class="text-weak">评分 {{rating}}</text>
+              <text class="text-weak">接单 {{orderCount}} 次</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="price-row">
+          <view class="price-box">
+            <view class="price-value">{{priceText}}</view>
+            <view class="text-weak">{{priceSubText}}</view>
+          </view>
+          <view class="credit-box">
+            <view class="credit-value">{{creditScore}}</view>
+            <view class="text-weak">信用分</view>
+          </view>
+        </view>
+
+        <view class="credit-bar">
+          <view class="credit-bar-inner" style="width:{{creditPercent}}"></view>
+        </view>
+
+        <view wx:if="{{highlights.length}}" class="chip-group mt-16">
+          <text class="tag tag-blue" wx:for="{{highlights}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+
+      <!-- 认证徽章 -->
+      <view class="card">
+        <view class="section-title">认证徽章</view>
+        <cert-badge
+          size="lg"
+          level="{{badge.level}}"
+          name="{{badge.name}}"
+          school="{{badge.school}}"
+          major="{{badge.major}}"
+          grade="{{badge.grade}}"
+          badgeNo="{{badge.badgeNo}}"
+          tags="{{badge.tags}}"
+          abilityTags="{{badge.abilityTags}}"
+          verifiedAt="{{badge.verifiedAt}}"
+          showDetail="{{true}}"
+        />
+        <view class="cert-level-line">
+          <text class="{{certLevelClass}}">认证等级 {{certLevel}} 级 · {{certLevelText}}</text>
+        </view>
+        <view wx:if="{{certLevel < 3}}" class="cert-warning">
+          该师范生尚未完成三重认证，建议优先选择三重认证师范生，或与家长沟通后先安排线上试课。
+        </view>
+        <view wx:else class="cert-pass">该师范生已完成学籍 + 资质 + 能力三重认证，认证编号可在「我的」页面核验。</view>
+      </view>
+
+      <!-- 认证详情 -->
+      <view class="card">
+        <view class="section-title">认证详情</view>
+        <view class="cert-row" wx:for="{{certRows}}" wx:key="type">
+          <view class="row-between">
+            <text class="cert-type">{{item.typeLabel}}</text>
+            <text class="{{item.statusClass}}">{{item.statusText}}</text>
+          </view>
+          <view wx:if="{{item.createdAt}}" class="text-weak mt-8">提交时间：{{item.createdAt}}</view>
+          <view class="cert-note">{{item.reviewNote}}</view>
+
+          <view wx:if="{{item.fieldRows.length}}" class="field-box">
+            <view class="field-row" wx:for="{{item.fieldRows}}" wx:for-item="field" wx:key="label">
+              <text class="field-label">{{field.label}}</text>
+              <text class="field-value">{{field.value}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="text-weak mt-16">TODO(二期)：认证材料原图查看（云存储签名链接）与认证有效期校验。</view>
+      </view>
+
+      <!-- 教学信息 -->
+      <view class="card">
+        <view class="section-title">教学信息</view>
+        <view class="info-row">
+          <text class="info-label">可授科目</text>
+          <text class="info-value">{{subjectsText}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">可带年级</text>
+          <text class="info-value">{{gradesText}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">能力标签</text>
+          <view class="info-value chip-group">
+            <text class="tag tag-green" wx:for="{{tags}}" wx:key="*this">{{item}}</text>
+            <text wx:if="{{!tags.length}}" class="text-weak">暂未填写</text>
+          </view>
+        </view>
+        <view class="info-row">
+          <text class="info-label">可排课时间</text>
+          <text class="info-value">{{timesText}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">授课方式</text>
+          <text class="info-value">{{modesText}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">课时费</text>
+          <text class="info-value">{{priceInfoText}}</text>
+        </view>
+      </view>
+
+      <!-- 个人简介 -->
+      <view class="card">
+        <view class="section-title">个人简介</view>
+        <view class="intro-text">{{intro}}</view>
+      </view>
+
+      <!-- 隐私与合规 -->
+      <view class="card">
+        <view class="section-title">隐私与合规</view>
+        <view class="privacy-row" wx:for="{{privacyRows}}" wx:key="label">
+          <text class="privacy-label">{{item.label}}</text>
+          <text class="privacy-value">{{item.value}}</text>
+        </view>
+        <view class="disclaimer mt-16">{{privacyNotice}}</view>
+        <view class="disclaimer mt-16">{{disclaimerShort}}</view>
+      </view>
+    </block>
+  </block>
+
+  <view wx:if="{{!loading && !notFound}}" class="footer-bar">
+    <button class="btn btn-ghost flex-1" open-type="share">分享</button>
+    <view class="btn btn-primary flex-1" bindtap="onStartContact">发起对接</view>
+  </view>
+  <platform-notice />
+</view>

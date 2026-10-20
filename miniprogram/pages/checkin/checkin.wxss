@@ -1,0 +1,153 @@
+/* 履约打卡页样式（页面不隔离，可直接复用 app.wxss 全局类；这里只补充本页专有样式） */
+
+.order-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--text-main);
+  flex: 1;
+  min-width: 0;
+  margin-right: 16rpx;
+}
+
+.order-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 10rpx 0;
+}
+
+.order-label {
+  width: 150rpx;
+  flex-shrink: 0;
+  font-size: 25rpx;
+  color: var(--text-weak);
+}
+
+.order-value {
+  flex: 1;
+  font-size: 25rpx;
+  color: var(--text-main);
+  word-break: break-all;
+}
+
+/* 说明卡 */
+.notice-card {
+  background: linear-gradient(180deg, #F7FAFF, #FFFFFF);
+}
+
+.evidence {
+  margin-top: 16rpx;
+  font-size: 23rpx;
+  line-height: 1.7;
+  color: var(--brand-primary);
+  background-color: var(--brand-primary-soft);
+  border-radius: var(--radius-md);
+  padding: 16rpx 20rpx;
+}
+
+/* 统计 */
+.stat-row {
+  display: flex;
+  align-items: stretch;
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+  padding: 8rpx 4rpx;
+  border-right: 2rpx solid var(--border-color);
+}
+
+.stat-item:last-child {
+  border-right: none;
+}
+
+.stat-value {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--brand-primary);
+  line-height: 1.4;
+}
+
+.stat-label {
+  font-size: 21rpx;
+  color: var(--text-weak);
+  margin-top: 6rpx;
+}
+
+/* 打卡入口 */
+.action-card {
+  background: linear-gradient(180deg, #F4F8FF, #FFFFFF);
+  border: 2rpx solid var(--brand-primary-soft);
+}
+
+.action-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.action-desc {
+  margin-top: 10rpx;
+  line-height: 1.7;
+}
+
+/* 进行中 */
+.active-card {
+  border: 2rpx solid var(--brand-primary-soft);
+}
+
+.active-meta {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: var(--text-sub);
+  word-break: break-all;
+}
+
+.summary-input {
+  background-color: var(--bg-gray);
+  border-radius: var(--radius-md);
+  padding: 20rpx;
+  box-sizing: border-box;
+  min-height: 200rpx;
+}
+
+.summary-foot {
+  margin-top: 10rpx;
+}
+
+/* 不可打卡 */
+.blocked-card {
+  text-align: center;
+  padding: 40rpx 28rpx;
+}
+
+.blocked-icon {
+  font-size: 72rpx;
+  line-height: 1.2;
+}
+
+.blocked-title {
+  margin-top: 12rpx;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.blocked-card .text-sub {
+  margin-top: 10rpx;
+  line-height: 1.7;
+  text-align: left;
+}
+
+/* 记录列表 */
+.record-list {
+  margin-top: 8rpx;
+}
+
+.hint-line {
+  font-size: 22rpx;
+  color: var(--text-weak);
+  text-align: center;
+  line-height: 1.7;
+  margin: 16rpx 0 8rpx;
+}

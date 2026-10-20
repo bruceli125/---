@@ -1,0 +1,144 @@
+<!-- 对接报告 / 避坑提示 -->
+<view class="page page-with-footer">
+
+  <view wx:if="{{loading}}" class="loading">正在生成对接报告…</view>
+
+  <block wx:else>
+    <view wx:if="{{notFound}}" class="empty">
+      <view class="empty-icon">📄</view>
+      <view class="empty-text">{{errorMsg}}</view>
+      <view class="btn btn-primary empty-btn" bindtap="onGoCreate">去发布需求</view>
+    </view>
+
+    <block wx:else>
+      <!-- 报告头 -->
+      <view class="card report-head">
+        <view class="row-between">
+          <view class="title-md">京师家教 · 对接报告</view>
+          <view class="tag" style="background:{{riskTheme.bg}};color:{{riskTheme.color}}">{{riskTheme.text}}</view>
+        </view>
+        <view class="head-row">
+          <text class="head-label">报告编号</text>
+          <text class="head-value">{{reportNo}}</text>
+        </view>
+        <view class="head-row">
+          <text class="head-label">生成时间</text>
+          <text class="head-value">{{createdAt}}</text>
+        </view>
+        <view class="head-row">
+          <text class="head-label">需求编号</text>
+          <text class="head-value">{{demandNo}}</text>
+        </view>
+        <view class="head-row">
+          <text class="head-label">家长</text>
+          <text class="head-value">{{parentName}}（已脱敏）</text>
+        </view>
+      </view>
+
+      <!-- 一、需求摘要 -->
+      <view class="card">
+        <view class="section-title">一、需求摘要</view>
+        <view class="kv-row" wx:for="{{demandRows}}" wx:key="label">
+          <text class="kv-label">{{item.label}}</text>
+          <text class="kv-value">{{item.value}}</text>
+        </view>
+        <view wx:if="{{summaryLines.length}}" class="summary-box">
+          <view class="summary-line" wx:for="{{summaryLines}}" wx:key="*this">{{item}}</view>
+        </view>
+        <view wx:if="{{highRisk}}" class="risk-strip">
+          <text>⚠️ 该需求命中高风险词「{{riskHitWords}}」，强烈建议先终止资金/证件相关沟通。</text>
+        </view>
+        <view wx:elif="{{showRiskBanner}}" class="risk-strip risk-strip-orange">
+          <text>⚠️ 该需求命中敏感表述「{{riskHitWords}}」，请按下方避坑提示逐条核实。</text>
+        </view>
+      </view>
+
+      <!-- 二、推荐师范生 Top3 -->
+      <view class="card">
+        <view class="section-title">二、推荐师范生 Top{{matchList.length}}</view>
+
+        <view wx:if="{{!matchList.length}}" class="empty">
+          <view class="empty-icon">🙋</view>
+          <view class="empty-text">本报告暂无推荐结果</view>
+        </view>
+
+        <view
+          class="match-item"
+          wx:for="{{matchList}}"
+          wx:key="tutorId"
+          data-tutor-id="{{item.tutorId}}"
+          bindtap="onTutorTap"
+        >
+          <view class="match-head">
+            <view class="rank-badge">Top{{item.rank}}</view>
+            <view class="avatar">{{item.avatarText}}</view>
+            <view class="flex-1">
+              <view class="row-between">
+                <text class="match-name">{{item.name}}</text>
+                <text class="match-score">{{item.scoreText}}</text>
+              </view>
+              <view class="text-sub ellipsis">{{item.schoolLine}}</view>
+            </view>
+          </view>
+
+          <cert-badge
+            size="sm"
+            level="{{item.certLevel}}"
+            name="{{item.name}}"
+            school="{{item.school}}"
+            major="{{item.major}}"
+            grade="{{item.grade}}"
+            badgeNo="{{item.certBadgeNo}}"
+            showDetail="{{false}}"
+          />
+
+          <view class="match-meta">
+            <text class="tag tag-blue">课时费 {{item.priceText}}</text>
+            <text class="tag">信用分 {{item.creditScore}}</text>
+            <text class="tag">{{item.distanceText}}</text>
+            <text class="tag tag-green">{{item.certLevelText}}</text>
+          </view>
+
+          <view class="reason-title">推荐理由</view>
+          <view class="reason-item" wx:for="{{item.reasons}}" wx:for-item="reason" wx:key="*this">· {{reason}}</view>
+          <view class="text-weak cert-no">认证编号：{{item.certBadgeNo}}</view>
+        </view>
+      </view>
+
+      <!-- 三、风险提示与避坑提示 -->
+      <view class="card">
+        <view class="section-title">三、风险提示与避坑提示</view>
+        <view wx:if="{{highRisk}}" class="risk-strip">
+          <text>高风险订单：平台不建议直接对接，请先核实对方身份与收费要求。</text>
+        </view>
+        <view class="tip-item" wx:for="{{riskTips}}" wx:key="*this">
+          <text class="tip-dot">•</text>
+          <text class="tip-text">{{item}}</text>
+        </view>
+      </view>
+
+      <!-- 四、下一步建议 -->
+      <view class="card">
+        <view class="section-title">四、下一步建议</view>
+        <view class="step-item" wx:for="{{nextSteps}}" wx:key="*this">
+          <text class="step-index">{{index + 1}}</text>
+          <text class="step-text">{{item}}</text>
+        </view>
+      </view>
+
+      <!-- 五、免责声明 -->
+      <view class="card">
+        <view class="section-title">五、免责声明</view>
+        <view class="disclaimer-item" wx:for="{{disclaimer}}" wx:key="*this">· {{item}}</view>
+        <view class="disclaimer mt-16">{{disclaimerShort}}</view>
+      </view>
+    </block>
+  </block>
+
+  <view wx:if="{{!loading && !notFound}}" class="footer-bar">
+    <view class="footer-link" bindtap="onRegenerate">再生成</view>
+    <view class="btn btn-gray btn-disabled flex-1" bindtap="onExport">导出 Word/Excel</view>
+    <view class="btn btn-primary flex-1" bindtap="onCopyReport">复制报告文本</view>
+  </view>
+  <platform-notice />
+</view>

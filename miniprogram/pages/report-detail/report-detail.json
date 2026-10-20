@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "对接报告",
+  "usingComponents": {
+    "cert-badge": "/components/CertBadge/index"
+  }
+}

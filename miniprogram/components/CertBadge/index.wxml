@@ -1,0 +1,50 @@
+<!-- CertBadge：showDetail=false 渲染胶囊徽章，showDetail=true 渲染完整认证卡片 -->
+
+<!-- ============ 形态一：完整认证卡片 ============ -->
+<view
+  wx:if="{{showDetail}}"
+  class="cert-card cert-{{meta.theme}} {{sizeClass}} {{clickable ? 'is-clickable' : ''}}"
+  bindtap="onTap"
+>
+  <view class="cc-left">
+    <view class="cc-shield">
+      <text class="cc-shield-icon">{{meta.icon}}</text>
+    </view>
+    <view class="cc-level-tag">{{levelLabel}}</view>
+  </view>
+
+  <view class="cc-right">
+    <view class="cc-name-row">
+      <text class="cc-name">{{name || '待完善姓名'}}</text>
+      <text class="cc-verified-flag">已通过平台认证</text>
+    </view>
+
+    <view class="cc-school" wx:if="{{schoolLine}}">{{schoolLine}}</view>
+    <view class="cc-desc">{{levelDesc}}</view>
+
+    <view class="cc-no-row" wx:if="{{badgeNo}}" catchtap="onCopyBadgeNo">
+      <text class="cc-no-label">认证编号</text>
+      <text class="cc-no-value">{{badgeNo}}</text>
+      <text class="cc-no-copy">复制</text>
+    </view>
+
+    <view class="cc-tags" wx:if="{{tagList.length}}">
+      <text class="cc-tag" wx:for="{{tagList}}" wx:key="*this">{{item}}</text>
+    </view>
+
+    <view class="cc-foot" wx:if="{{verifiedText}}">{{verifiedText}}</view>
+  </view>
+</view>
+
+<!-- ============ 形态二：胶囊徽章 ============ -->
+<view
+  wx:else
+  class="badge badge-{{meta.theme}} {{sizeClass}} {{clickable ? 'is-clickable' : ''}}"
+  bindtap="onTap"
+>
+  <text class="badge-icon">{{meta.icon}}</text>
+  <view class="badge-main">
+    <text class="badge-label">{{levelLabel}}</text>
+    <text class="badge-no" wx:if="{{showBadgeNo}}">{{badgeNo}}</text>
+  </view>
+</view>

@@ -1,0 +1,60 @@
+/* PlatformNotice —— 平台定位声明（组件样式隔离，故自备样式；仍复用全局 CSS 变量） */
+.pn {
+  display: flex;
+  align-items: flex-start;
+  box-sizing: border-box;
+  padding: 20rpx 24rpx;
+  border-radius: var(--radius-md, 16rpx);
+  background-color: var(--bg-gray, #F2F4F7);
+  border: 2rpx dashed var(--border-color, #EAECF0);
+}
+
+/* 底部紧凑版：本身就是页面最后一块，不再额外加外边距 */
+.pn-compact {
+  margin-top: 24rpx;
+}
+
+.pn-inline {
+  margin: 16rpx 0;
+}
+
+.pn-full {
+  margin-top: 24rpx;
+  padding: 24rpx;
+  background-color: #FFFFFF;
+  border-style: solid;
+}
+
+.pn-icon {
+  flex-shrink: 0;
+  font-size: 28rpx;
+  line-height: 1.5;
+  margin-right: 12rpx;
+  opacity: 0.85;
+}
+
+.pn-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.pn-text {
+  font-size: 22rpx;
+  line-height: 1.65;
+  color: var(--text-sub, #475467);
+}
+
+.pn-long {
+  margin-top: 12rpx;
+  padding-top: 12rpx;
+  border-top: 2rpx solid var(--border-color, #EAECF0);
+  font-size: 22rpx;
+  line-height: 1.75;
+  color: var(--text-weak, #98A2B3);
+}
+
+.pn-more {
+  margin-top: 8rpx;
+  font-size: 21rpx;
+  color: var(--brand-primary, #1F4FBF);
+}

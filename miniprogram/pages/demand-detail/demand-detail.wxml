@@ -1,0 +1,229 @@
+<!-- 需求详情 -->
+<view class="page page-with-footer" wx:if="{{!notFound && demand}}">
+
+  <!-- 概览 -->
+  <view class="card">
+    <view class="row-between">
+      <view class="title-md">{{titleText}}</view>
+      <view class="tag {{statusClass}}">{{statusLabel}}</view>
+    </view>
+    <view class="row-between mt-8">
+      <text class="text-weak">{{createdAgo}} 发布 · 编号 {{demandId}}</text>
+      <view class="link-row">
+        <text class="copy-link" bindtap="onCopyId">复制编号</text>
+        <text class="copy-link" wx:if="{{isParent && demand.status !== 'closed'}}" bindtap="onCloseDemand">关闭需求</text>
+      </view>
+    </view>
+
+    <view class="divider"></view>
+
+    <view class="info-grid">
+      <view class="info-item">
+        <text class="info-label">授课方式</text>
+        <text class="info-value">{{teachModeText}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">上课频次</text>
+        <text class="info-value">{{frequencyText}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">期望时间段</text>
+        <text class="info-value">{{timeRangeText}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">课时费</text>
+        <text class="info-value text-blue text-bold">{{budgetText}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">所在区域</text>
+        <text class="info-value">{{districtText}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">期望开始</text>
+        <text class="info-value">{{deadline}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">申请人数</text>
+        <text class="info-value">{{applyCount}} 人</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">浏览次数</text>
+        <text class="info-value">{{viewCount}} 次</text>
+      </view>
+    </view>
+
+    <view class="info-block">
+      <text class="info-label">上课地点</text>
+      <view class="info-value">{{addressText}}</view>
+    </view>
+    <view class="info-block">
+      <text class="info-label">联系方式</text>
+      <view class="info-value">{{parentName}} · {{contactPhone}}</view>
+      <view class="text-weak">平台内对接，号码已脱敏展示</view>
+    </view>
+  </view>
+
+  <!-- 特殊要求 -->
+  <view class="card">
+    <view class="section-title">特殊要求</view>
+    <view class="req-text" wx:if="{{demand.specialRequirements}}">{{demand.specialRequirements}}</view>
+    <view class="text-weak" wx:else>家长未填写特殊要求</view>
+  </view>
+
+  <!-- 风险横幅 -->
+  <view class="risk-banner" style="background:{{riskBg}};border-color:{{riskColor}}">
+    <view class="risk-banner-head">
+      <text class="risk-badge" style="background:{{riskColor}}">{{riskLevelText}}</text>
+      <text class="risk-count" style="color:{{riskColor}}">命中 {{riskHits.length}} 处风险表述</text>
+    </view>
+    <view class="risk-desc" style="color:{{riskColor}}">{{riskDesc}}</view>
+    <view class="risk-high" wx:if="{{highRisk}}">⚠️ 该需求命中高风险词，平台建议谨慎对接或直接终止</view>
+  </view>
+
+  <!-- 命中风险词 -->
+  <view class="card" wx:if="{{riskHits.length > 0}}">
+    <view class="section-title">命中风险词</view>
+    <view class="hit-item" wx:for="{{riskHits}}" wx:key="word">
+      <view class="row-between">
+        <text class="tag tag-red">{{item.word}}</text>
+        <text class="text-weak">{{item.category}}</text>
+      </view>
+      <view class="hit-tip">{{item.tip}}</view>
+    </view>
+  </view>
+
+  <!-- 避坑提示 -->
+  <view class="card">
+    <view class="section-title">避坑提示</view>
+    <view class="tip-item" wx:for="{{riskTips}}" wx:key="*this">· {{item}}</view>
+  </view>
+
+  <!-- 合规提示 -->
+  <view class="card">
+    <view class="section-title">平台合规提示</view>
+    <view class="tip-item" wx:for="{{complianceItems}}" wx:key="*this">· {{item}}</view>
+  </view>
+
+  <!-- ============ 二期：履约与互评（已成单） ============ -->
+  <view class="card fulfill-card" wx:if="{{isMatched}}">
+    <view class="row-between">
+      <view class="section-title-plain">履约与互评</view>
+      <view class="tag tag-green">已成单</view>
+    </view>
+
+    <!-- 成单信息 -->
+    <view class="matched-box">
+      <view class="matched-name">已成单 · 服务师范生：{{matchedTutorName}}</view>
+      <view class="text-weak" wx:if="{{acceptedAtText}}">成单时间：{{acceptedAtText}}</view>
+      <view class="text-weak" wx:if="{{matchedTutorMajor}}">{{matchedTutorMajor}}</view>
+      <view class="text-weak" wx:if="{{hasMatchedTutorProfile}}">信用分 {{matchedTutorCredit}}</view>
+      <view class="badge-line" wx:if="{{hasMatchedTutorProfile}}">
+        <cert-badge
+          level="{{matchedTutorCertLevel}}"
+          name="{{matchedTutorName}}"
+          badge-no="{{matchedTutorBadgeNo}}"
+          size="sm"
+        />
+      </view>
+    </view>
+
+    <!-- 最近一条打卡摘要 -->
+    <view class="fulfill-sub">
+      <view class="row-between">
+        <text class="fulfill-label">最近打卡</text>
+        <text class="text-weak">共 {{checkinCount}} 次记录</text>
+      </view>
+      <view class="checkin-box" wx:if="{{!checkinEmpty}}">
+        <view class="row-between">
+          <text class="text-sub">{{checkinLatestTime}}</text>
+          <text class="tag {{checkinLatestStatusClass}}">{{checkinLatestStatus}}</text>
+        </view>
+        <view class="checkin-summary">{{checkinLatest}}</view>
+      </view>
+      <view class="text-weak" wx:else>还没有打卡记录</view>
+    </view>
+
+    <!-- 履约操作 -->
+    <view class="fulfill-actions">
+      <view class="btn btn-green btn-sm" wx:if="{{isTutor && canCheckin}}" bindtap="onGoCheckin">上课打卡</view>
+      <view class="btn btn-ghost btn-sm" wx:if="{{isTutor && canCheckin}}" bindtap="onGoCheckin">填写 / 查看授课小结</view>
+      <view class="btn btn-ghost btn-sm" wx:if="{{isParent}}" bindtap="onGoCheckin">查看打卡与小结</view>
+      <view class="btn btn-primary btn-sm" bindtap="onGoReview">双向评价</view>
+    </view>
+    <view class="text-weak" wx:if="{{isTutor && !canCheckin}}">当前订单不可打卡：仅「已成单」且你是本次成单人时可打卡，其余情况仅可查看记录。</view>
+
+    <!-- 评价状态 -->
+    <view class="review-state">
+      <text class="review-state-label">评价状态</text>
+      <text class="review-state-value">{{reviewStateText}}</text>
+    </view>
+    <view class="text-weak">双向盲评：双方都提交后才能看到对方评价内容。</view>
+  </view>
+
+  <!-- ============ 二期：确认成单（匹配中 / 招募中，家长视角） ============ -->
+  <view class="card" wx:if="{{isMatching && isParent}}">
+    <view class="row-between">
+      <view class="section-title-plain">确认成单</view>
+      <view class="tag tag-blue">可成单</view>
+    </view>
+    <view class="text-weak">以下为平台推荐的可成单师范生（按匹配度排序）。确认后需求进入「已匹配」，不可再确认其他师范生。</view>
+
+    <view class="cand-item" wx:for="{{candidates}}" wx:key="tutorId">
+      <view class="cand-main">
+        <view class="cand-name">{{item.name}}</view>
+        <view class="text-weak">匹配度 {{item.score}} 分 · 信用分 {{item.creditScore}} · {{item.certLevelText}}</view>
+        <view class="cand-reason" wx:if="{{item.reasonText}}">{{item.reasonText}}</view>
+      </view>
+      <view
+        class="btn btn-green btn-sm cand-btn"
+        data-tutorid="{{item.tutorId}}"
+        data-name="{{item.name}}"
+        bindtap="onConfirmTutor"
+      >{{acceptingTutorId === item.tutorId ? '确认中…' : '确认成单'}}</view>
+    </view>
+
+    <view class="text-weak" wx:if="{{candidatesEmpty}}">暂无推荐名单，可点击下方「查看智能匹配 Top3」先生成匹配结果。</view>
+  </view>
+
+  <!-- 师范生视角 -->
+  <view class="card" wx:if="{{isTutor}}">
+    <view class="section-title">接单信息</view>
+    <view class="text-sub">申请人：{{tutorName}}（信用分 {{tutorCredit}} · 认证等级 {{tutorCertLevel}} 级）</view>
+    <view class="text-weak mt-8">平台不收取中介费与押金；请勿向家长索要或提供身份证、学生证原件。</view>
+  </view>
+
+  <!-- 免责声明 -->
+  <view class="disclaimer">
+    <view class="disclaimer-title">免责声明</view>
+    <view>{{disclaimerShort}}</view>
+    <view class="mt-8">非学历培训 · 非办学资质 · 非医疗建议</view>
+    <view class="mt-8">未成年人线下上课需监护人知情，建议优先线上或校内认证场地。</view>
+  </view>
+
+  <!-- 平台定位声明（合规红线，必须出现在页面最底部） -->
+  <platform-notice />
+</view>
+
+<!-- 需求不存在 -->
+<view class="page" wx:if="{{notFound && !loading}}">
+  <view class="card">
+    <view class="empty">
+      <view class="empty-icon">🔍</view>
+      <view class="empty-text">需求不存在或已删除</view>
+      <view class="btn btn-primary empty-btn" bindtap="goBack">返回上一页</view>
+    </view>
+  </view>
+</view>
+
+<view class="loading" wx:if="{{loading}}">正在加载需求详情…</view>
+
+<!-- 底部操作：家长 -->
+<view class="footer-bar" wx:if="{{!loading && !notFound && isParent}}">
+  <view class="btn btn-ghost flex-1" bindtap="onGenerateReport">{{generating ? '生成中…' : '生成对接报告'}}</view>
+  <view class="btn btn-primary flex-1" bindtap="goMatch">查看智能匹配 Top3</view>
+</view>
+
+<!-- 底部操作：师范生 -->
+<view class="footer-bar" wx:if="{{!loading && !notFound && isTutor}}">
+  <view class="btn {{applyBtnClass}} flex-1" bindtap="onApply">{{applyBtnText}}</view>
+</view>

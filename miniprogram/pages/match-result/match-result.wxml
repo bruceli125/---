@@ -1,0 +1,99 @@
+<!-- 智能匹配结果页：需求摘要 + 风险横幅 + 评分规则 + Top3 推荐 -->
+<view class="page page-with-footer">
+
+  <view wx:if="{{loading}}" class="loading">正在按平台规则引擎计算匹配度…</view>
+
+  <block wx:else>
+    <!-- 匹配失败 / 需求不存在 -->
+    <view wx:if="{{!demand}}" class="empty">
+      <view class="empty-icon">🔍</view>
+      <view class="empty-text">{{errorMsg || '暂无匹配结果，请调整需求后重试'}}</view>
+      <view class="btn btn-primary empty-btn" bindtap="onRematch">重新匹配</view>
+      <view class="btn btn-ghost empty-btn" bindtap="onGoDemandList">去需求列表</view>
+    </view>
+
+    <block wx:else>
+      <!-- 1. 需求摘要 -->
+      <view class="card">
+        <view class="row-between">
+          <view class="card-title">{{demandTitle}}</view>
+          <view class="tag tag-blue">{{statusLabel}}</view>
+        </view>
+
+        <view class="summary-row" wx:for="{{demandRows}}" wx:key="label">
+          <text class="summary-label">{{item.label}}</text>
+          <text class="summary-value">{{item.value}}</text>
+        </view>
+
+        <!-- 高风险：醒目红色警示 + 避坑提示入口 -->
+        <view wx:if="{{highRisk}}" class="risk-banner risk-high">
+          <text class="risk-icon">⚠️</text>
+          <view class="flex-1">
+            <view class="risk-title">{{riskTheme.text}}：命中「{{riskHitWords}}」</view>
+            <view class="risk-desc">{{riskTheme.desc}}</view>
+          </view>
+          <view class="risk-action" catchtap="onViewRiskTips">避坑提示</view>
+        </view>
+
+        <!-- 中风险：橙色提示 -->
+        <view wx:elif="{{showRiskBanner}}" class="risk-banner risk-medium">
+          <text class="risk-icon">⚠️</text>
+          <view class="flex-1">
+            <view class="risk-title">{{riskTheme.text}}：命中「{{riskHitWords}}」</view>
+            <view class="risk-desc">{{riskTheme.desc}}</view>
+          </view>
+          <view class="risk-action" catchtap="onViewRiskTips">避坑提示</view>
+        </view>
+      </view>
+
+      <!-- 2. 评分规则说明 -->
+      <view class="card">
+        <view class="section-title">平台匹配规则（总分 100）</view>
+        <view class="weight-grid">
+          <view class="weight-item" wx:for="{{weightItems}}" wx:key="key">
+            <text class="weight-label">{{item.label}}</text>
+            <text class="weight-score">{{item.score}} 分</text>
+          </view>
+        </view>
+        <view class="weight-formula">{{weightsFormula}}</view>
+        <view class="text-weak mt-8">评分由平台规则引擎自动计算；推荐理由当前由模板生成（TODO 二期接入 LLM 生成推荐理由）。</view>
+      </view>
+
+      <!-- 3. Top3 推荐列表 -->
+      <view class="list-head">
+        <view class="section-title-plain">推荐师范生 Top{{totalMatches}}</view>
+        <text class="text-weak">共匹配到 {{totalMatches}} 位，按匹配度从高到低排序</text>
+      </view>
+
+      <view wx:if="{{!list.length}}" class="empty">
+        <view class="empty-icon">🙋</view>
+        <view class="empty-text">暂无匹配结果，请调整需求后重试</view>
+        <view class="btn btn-primary empty-btn" bindtap="onRematch">重新匹配</view>
+      </view>
+
+      <tutor-card
+        wx:for="{{list}}"
+        wx:key="tutorId"
+        tutor="{{item.tutor}}"
+        rank="{{item.rank}}"
+        score="{{item.score}}"
+        reasons="{{item.reasons}}"
+        distanceKm="{{item.distanceKm}}"
+        showCertBadge="{{true}}"
+        showApply="{{showApply}}"
+        applied="{{item.applied}}"
+        bindtap="onTutorTap"
+        bindapply="onTutorApply"
+      />
+
+      <view wx:if="{{list.length}}" class="tip-line">点击卡片可查看师范生详情、认证材料与信用分</view>
+    </block>
+  </block>
+
+  <!-- 底部固定操作条 -->
+  <view wx:if="{{!loading && demand}}" class="footer-bar">
+    <view class="btn btn-gray flex-1" bindtap="onRematch">重新匹配</view>
+    <view class="btn btn-primary flex-1" bindtap="onGenerateReport">{{reportBtnText}}</view>
+  </view>
+  <platform-notice />
+</view>

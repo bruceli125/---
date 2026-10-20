@@ -1,0 +1,142 @@
+/* 智能匹配结果页样式 */
+.page-with-footer {
+  padding-bottom: 240rpx;
+}
+
+/* ---------- 需求摘要 ---------- */
+.summary-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 10rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-label {
+  width: 150rpx;
+  flex-shrink: 0;
+  color: var(--text-weak);
+  font-size: 25rpx;
+}
+
+.summary-value {
+  flex: 1;
+  font-size: 26rpx;
+  color: var(--text-main);
+  word-break: break-all;
+}
+
+/* ---------- 风险横幅 ---------- */
+.risk-banner {
+  display: flex;
+  align-items: center;
+  margin-top: 20rpx;
+  padding: 20rpx 22rpx;
+  border-radius: var(--radius-md);
+}
+
+.risk-high {
+  background-color: var(--danger-red-soft);
+  border-left: 8rpx solid var(--danger-red);
+}
+
+.risk-medium {
+  background-color: var(--warn-orange-soft);
+  border-left: 8rpx solid var(--warn-orange);
+}
+
+.risk-icon {
+  font-size: 36rpx;
+  margin-right: 14rpx;
+}
+
+.risk-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.risk-high .risk-title {
+  color: var(--danger-red);
+}
+
+.risk-medium .risk-title {
+  color: var(--warn-orange);
+}
+
+.risk-desc {
+  font-size: 23rpx;
+  color: var(--text-sub);
+  margin-top: 4rpx;
+}
+
+.risk-action {
+  flex-shrink: 0;
+  margin-left: 16rpx;
+  padding: 10rpx 20rpx;
+  border-radius: 999rpx;
+  background-color: #ffffff;
+  font-size: 23rpx;
+  color: var(--danger-red);
+  border: 2rpx solid var(--danger-red);
+}
+
+/* ---------- 评分规则 ---------- */
+.weight-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.weight-item {
+  width: calc(50% - 8rpx);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14rpx 18rpx;
+  border-radius: var(--radius-sm);
+  background-color: var(--brand-primary-soft);
+}
+
+.weight-label {
+  font-size: 24rpx;
+  color: var(--text-sub);
+}
+
+.weight-score {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--brand-primary);
+}
+
+.weight-formula {
+  margin-top: 18rpx;
+  padding: 16rpx 20rpx;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-gray);
+  font-size: 23rpx;
+  color: var(--text-sub);
+  line-height: 1.7;
+}
+
+/* ---------- 列表头 ---------- */
+.list-head {
+  margin: 8rpx 4rpx 20rpx;
+}
+
+.tip-line {
+  text-align: center;
+  font-size: 23rpx;
+  color: var(--text-weak);
+  padding: 10rpx 0 30rpx;
+}
+
+/* ---------- 空状态按钮 ---------- */
+.empty-btn {
+  width: 400rpx;
+  margin: 24rpx auto 0;
+}

@@ -1,0 +1,237 @@
+<!-- 家长发布家教需求 -->
+<view class="page page-with-footer">
+
+  <!-- 双减政策阻断条（命中即硬拦，无法通过"确认"放行） -->
+  <view class="policy-block" wx:if="{{policyBlocked}}">
+    <view class="policy-block-head">
+      <text class="policy-block-flag">政策红线</text>
+      <text class="policy-block-title">{{policyTitle}}</text>
+    </view>
+    <view class="policy-block-msg">{{policyMessage}}</view>
+    <view class="policy-block-ev" wx:for="{{policyEvidence}}" wx:key="*this">· {{item}}</view>
+    <view class="policy-block-note">该红线为政策硬性拦截，不能通过"确认"放行：请修改上课时段（改为工作日），或改为「非学科类（素质拓展）」。修改后本条自动消失。</view>
+  </view>
+
+  <!-- 发布前必读 -->
+  <view class="card read-card">
+    <view class="row-between">
+      <view class="card-title">发布前必读</view>
+      <view class="tag tag-orange">反诈提醒</view>
+    </view>
+    <view class="read-list">
+      <view class="read-item" wx:for="{{readTips}}" wx:key="*this">
+        <text class="read-icon">🚫</text>
+        <text class="read-text">{{item}}</text>
+      </view>
+    </view>
+    <view class="text-weak mt-8" bindtap="onShowRiskWords">遇到以上情形请立即终止对接 → 查看通用避坑提示</view>
+  </view>
+
+  <!-- 培训类型（必选，放在科目之前：它决定科目提示与双减判定） -->
+  <view class="card">
+    <view class="row-between">
+      <view class="section-title-plain">是否为学科类培训</view>
+      <view class="tag tag-red">必选 · 双减红线</view>
+    </view>
+    <view class="text-weak">学科类受双减约束，不得安排在周末 / 法定节假日 / 寒暑假；素质拓展类不受限制。</view>
+
+    <view class="discipline-list">
+      <view
+        class="discipline-card {{isDiscipline === item.value ? 'discipline-active' : ''}}"
+        wx:for="{{disciplineOptions}}"
+        wx:key="value"
+        data-value="{{item.value}}"
+        bindtap="onSelectDiscipline"
+      >
+        <view class="discipline-head">
+          <text class="discipline-label">{{item.label}}</text>
+          <text class="discipline-check" wx:if="{{isDiscipline === item.value}}">✓</text>
+        </view>
+        <view class="discipline-sub">{{item.sub}}</view>
+        <view class="discipline-desc">{{item.desc}}</view>
+      </view>
+    </view>
+    <view class="form-tip" wx:if="{{!disciplineSelected}}">请先选择培训类型，未选择时无法提交</view>
+  </view>
+
+  <!-- 基本需求 -->
+  <view class="card">
+    <view class="section-title">辅导需求</view>
+
+    <view class="form-label form-label-required">辅导科目</view>
+    <view class="chip-group">
+      <view
+        class="chip {{subject === item.value ? 'chip-active' : ''}}"
+        wx:for="{{subjects}}"
+        wx:key="value"
+        data-value="{{item.value}}"
+        bindtap="onSelectSubject"
+      >{{item.label}}</view>
+    </view>
+    <view class="subject-hint" wx:if="{{subjectHint}}">{{subjectHint}}</view>
+
+    <view class="form-label form-label-required mt-24">学段</view>
+    <view class="chip-group">
+      <view
+        class="chip {{stageValue === item.value ? 'chip-active' : ''}}"
+        wx:for="{{stages}}"
+        wx:key="value"
+        data-value="{{item.value}}"
+        bindtap="onSelectStage"
+      >{{item.label}}</view>
+    </view>
+
+    <view class="form-label form-label-required mt-24">年级</view>
+    <view class="chip-group" wx:if="{{gradeOptions.length > 0}}">
+      <view
+        class="chip {{grade === item ? 'chip-active' : ''}}"
+        wx:for="{{gradeOptions}}"
+        wx:key="*this"
+        data-value="{{item}}"
+        bindtap="onSelectGrade"
+      >{{item}}</view>
+    </view>
+    <view class="form-tip" wx:else>请先选择学段，再选择具体年级</view>
+  </view>
+
+  <!-- 上课安排 -->
+  <view class="card">
+    <view class="section-title">上课安排</view>
+
+    <view class="form-label form-label-required">上课频次</view>
+    <view class="chip-group">
+      <view
+        class="chip {{frequency === item.value ? 'chip-active' : ''}}"
+        wx:for="{{frequencies}}"
+        wx:key="value"
+        data-value="{{item.value}}"
+        bindtap="onSelectFrequency"
+      >{{item.label}}</view>
+    </view>
+
+    <view class="form-label mt-24">期望时间段（可多选）</view>
+    <!-- 学科类专属提示：选「学科类」后出现 -->
+    <view class="rest-tip" wx:if="{{showRestDayTip}}">
+      ⚠️ 学科类不得安排在周末 / 法定节假日 / 寒暑假，勾选这些时段将无法发布
+    </view>
+    <view class="chip-group">
+      <view
+        class="chip {{item.active ? 'chip-active' : ''}}"
+        wx:for="{{timeRangeOptions}}"
+        wx:key="value"
+        data-index="{{index}}"
+        bindtap="onToggleTimeRange"
+      >{{item.label}}</view>
+    </view>
+    <view class="form-tip">已选 {{timeRange.length}} 个时间段，未选择时按「时间面议」匹配</view>
+
+    <view class="form-label form-label-required mt-24">授课方式</view>
+    <view class="chip-group">
+      <view
+        class="chip {{teachMode === item.value ? 'chip-active' : ''}}"
+        wx:for="{{teachModes}}"
+        wx:key="value"
+        data-value="{{item.value}}"
+        bindtap="onSelectTeachMode"
+      >{{item.icon}} {{item.label}}</view>
+    </view>
+
+    <view class="form-label mt-24">所在区域</view>
+    <picker mode="selector" range="{{districtLabels}}" value="{{districtIndex < 0 ? 0 : districtIndex}}" bindchange="onDistrictChange">
+      <view class="picker-value {{districtLabel ? '' : 'placeholder'}}">{{districtLabel || '请选择区域（用于距离匹配）'}}</view>
+    </picker>
+
+    <view class="form-label {{addressRequired ? 'form-label-required' : ''}} mt-24">上课地点</view>
+    <input
+      class="form-input address-input"
+      value="{{address}}"
+      placeholder="{{addressRequired ? '如：海淀区西三环北路 105 号院 3 号楼' : '线上授课可不填（也可填写常用区域）'}}"
+      bindinput="onAddressInput"
+    />
+    <view class="form-tip">{{addressTip}}</view>
+    <!-- TODO(二期)：接入 wx.chooseLocation 真实选点 + 逆地址解析，当前为文本输入 + 区域粗粒度匹配 -->
+  </view>
+
+  <!-- 预算与要求 -->
+  <view class="card">
+    <view class="section-title">预算与特殊要求</view>
+
+    <view class="form-label">期望课时费（元/小时）</view>
+    <view class="budget-row">
+      <input class="budget-input" type="number" value="{{budgetMin}}" data-field="budgetMin" placeholder="最低" bindinput="onBudgetInput" />
+      <text class="budget-sep">—</text>
+      <input class="budget-input" type="number" value="{{budgetMax}}" data-field="budgetMax" placeholder="最高" bindinput="onBudgetInput" />
+    </view>
+    <view class="form-tip">当前填写：{{budgetText}}（平台不参与资金往来，仅作匹配参考）</view>
+
+    <view class="form-label mt-24">特殊要求</view>
+    <textarea
+      class="form-textarea"
+      value="{{specialRequirements}}"
+      maxlength="300"
+      placeholder="如：孩子函数与几何压轴题薄弱，希望老师带做专项突破；请勿填写押金、身份证等要求，平台不采集此类信息"
+      bindinput="onRequirementInput"
+    />
+    <view class="counter">{{reqLength}}/300</view>
+  </view>
+
+  <!-- 联系方式 -->
+  <view class="card">
+    <view class="section-title">联系方式（可选）</view>
+    <input
+      class="form-input"
+      type="number"
+      maxlength="11"
+      value="{{phone}}"
+      placeholder="请输入 11 位手机号，便于平台内对接"
+      bindinput="onPhoneInput"
+    />
+    <view class="form-tip" wx:if="{{maskedPhone}}">脱敏展示效果：{{maskedPhone}}（存储时同样按脱敏写入）</view>
+    <view class="form-tip" wx:else>仅用于平台内对接与匹配通知，展示时自动脱敏，不对外公开完整号码</view>
+  </view>
+
+  <!-- 内联风险提示条 -->
+  <view class="risk-inline" wx:if="{{hasRisk}}">
+    <view class="risk-inline-head">
+      <text class="risk-dot" style="background:{{riskColor}}"></text>
+      <text class="risk-inline-title" style="color:{{riskColor}}">{{riskLevelText}}：检测到 {{riskHits.length}} 处风险表述</text>
+    </view>
+    <view class="risk-words">
+      <text class="tag tag-red" wx:for="{{riskHits}}" wx:key="word">{{item.word}}</text>
+    </view>
+    <view class="risk-tip" wx:for="{{riskTipsTop}}" wx:key="*this">· {{item}}</view>
+    <view class="risk-more" bindtap="onShowRiskDetail">查看全部 {{riskTipCount}} 条避坑提示 ›</view>
+  </view>
+
+  <!-- 平台定位声明（合规红线） -->
+  <platform-notice />
+
+  <!-- 免责声明 -->
+  <view class="disclaimer">
+    <view class="disclaimer-title">免责声明</view>
+    <view>{{disclaimerShort}}</view>
+    <view class="mt-8">平台不参与资金往来；未成年人线下上课需监护人知情，建议优先线上或校内认证场地。</view>
+  </view>
+</view>
+
+<!-- 底部提交 -->
+<view class="footer-bar">
+  <view class="btn btn-gray reset-btn" bindtap="onResetForm">重置</view>
+  <view class="btn flex-1 {{policyBlocked || submitting ? 'btn-disabled' : 'btn-primary'}}" bindtap="onSubmit">
+    {{submitting ? '提交中…' : submitText}}
+  </view>
+</view>
+
+<!-- 风险提示弹层（高风险必须二次确认才允许发布；政策红线不走这里，用阻断弹窗） -->
+<risk-alert
+  visible="{{riskVisible}}"
+  level="{{riskLevel}}"
+  title="{{riskMode === 'confirm' ? '风险提示：请确认后再发布' : '风险与避坑提示'}}"
+  hits="{{riskHits}}"
+  tips="{{riskTipsAll}}"
+  confirm-text="{{riskConfirmText}}"
+  cancel-text="{{riskCancelText}}"
+  show-cancel="{{riskShowCancel}}"
+  bindconfirm="onRiskConfirm"
+  bindclose="onRiskCancel"
+/>

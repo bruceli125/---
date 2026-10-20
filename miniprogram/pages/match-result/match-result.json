@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "智能匹配 Top3",
+  "usingComponents": {
+    "tutor-card": "/components/TutorCard/index",
+    "cert-badge": "/components/CertBadge/index"
+  }
+}

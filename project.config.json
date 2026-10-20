@@ -1,0 +1,91 @@
+{
+  "description": "京师家教可信对接平台 —— 高校主导的家教可信对接小程序（MVP）",
+  "projectname": "jingshi-tutor-platform",
+  "appid": "wxb921d6701948eebb",
+  "compileType": "miniprogram",
+  "libVersion": "3.5.5",
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": false,
+    "coverView": true,
+    "nodeModules": false,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "scopeDataCheck": false,
+    "uglifyFileName": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "compileHotReLoad": false,
+    "lazyloadPlaceholderEnable": false,
+    "useMultiFrameRuntime": true,
+    "useApiHook": true,
+    "useApiHostProcess": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "useIsolateContext": true,
+    "userConfirmedBundleSwitch": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "disableUseStrict": false,
+    "minifyWXML": true,
+    "showES6CompileOption": false,
+    "useCompilerPlugins": false,
+    "ignoreUploadUnusedFiles": true,
+    "compileWorklet": false,
+    "localPlugins": false,
+    "condition": false
+  },
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "首页-角色选择",
+          "pathName": "pages/index/index",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "家长-发布需求",
+          "pathName": "pages/demand-create/demand-create",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "家长-匹配结果",
+          "pathName": "pages/match-result/match-result",
+          "query": "demandId=demo_demand_001",
+          "scene": null
+        },
+        {
+          "name": "师范生-三重认证",
+          "pathName": "pages/tutor-verify/tutor-verify",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "师范生-接单池",
+          "pathName": "pages/tutor-pool/tutor-pool",
+          "query": "",
+          "scene": null
+        }
+      ]
+    }
+  },
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {}
+}

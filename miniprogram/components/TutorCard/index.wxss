@@ -1,0 +1,288 @@
+/* TutorCard 师范生卡片：干净、可信、卡片式 */
+
+.tutor-card {
+  position: relative;
+  background-color: var(--bg-card, #ffffff);
+  border-radius: var(--radius-lg, 24rpx);
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: var(--shadow-card, 0 4rpx 20rpx rgba(16, 24, 40, 0.06));
+  border: 2rpx solid var(--border-color, #eaecf0);
+}
+
+.tutor-card:active {
+  background-color: #fbfcfe;
+}
+
+/* ---------- 头部 ---------- */
+.tc-head {
+  display: flex;
+  align-items: flex-start;
+}
+
+.tc-avatar {
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-right: 20rpx;
+  overflow: hidden;
+  background: linear-gradient(135deg, #2b6de5, #1f4fbf);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4rpx solid #ffffff;
+  box-shadow: 0 6rpx 16rpx rgba(31, 79, 191, 0.22);
+}
+
+.tc-avatar-img {
+  width: 100%;
+  height: 100%;
+}
+
+.tc-avatar-text {
+  color: #ffffff;
+  font-size: 44rpx;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.tc-head-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.tc-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.tc-name {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--text-main, #1d2939);
+}
+
+.tc-rank {
+  font-size: 20rpx;
+  font-weight: 700;
+  color: #ffffff;
+  padding: 2rpx 12rpx;
+  border-radius: 8rpx;
+  background-color: #98a2b3;
+}
+
+.rank-1 {
+  background: linear-gradient(135deg, #f7b500, #e08600);
+  box-shadow: 0 4rpx 10rpx rgba(224, 134, 0, 0.3);
+}
+
+.rank-2 {
+  background: linear-gradient(135deg, #2b6de5, #1f4fbf);
+}
+
+.rank-3 {
+  background: linear-gradient(135deg, #7a5af8, #5b34e0);
+}
+
+.rank-n {
+  background-color: #98a2b3;
+}
+
+.tc-school {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: var(--text-sub, #475467);
+}
+
+.tc-tags {
+  margin-top: 12rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tc-tag {
+  font-size: 20rpx;
+  border-radius: 999rpx;
+  padding: 4rpx 14rpx;
+  margin: 0 10rpx 8rpx 0;
+}
+
+.tc-tag-subject {
+  background-color: var(--brand-primary-soft, #eaf1ff);
+  color: var(--brand-primary, #1f4fbf);
+}
+
+.tc-tag-grade {
+  background-color: var(--bg-gray, #f2f4f7);
+  color: var(--text-sub, #475467);
+}
+
+.tc-tag-ability {
+  background-color: var(--trust-green-soft, #e7f8f0);
+  color: var(--trust-green, #17b26a);
+}
+
+/* ---------- 数据行 ---------- */
+.tc-stats {
+  display: flex;
+  align-items: center;
+  margin-top: 22rpx;
+  padding: 18rpx 0;
+  background-color: #f8fafd;
+  border-radius: var(--radius-md, 16rpx);
+}
+
+.tc-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.tc-stat-value {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--text-main, #1d2939);
+  white-space: nowrap;
+}
+
+.tc-price {
+  color: var(--danger-red, #f04438);
+}
+
+.tc-star {
+  font-size: 22rpx;
+  color: #f7b500;
+}
+
+.tc-stat-label {
+  margin-top: 4rpx;
+  font-size: 20rpx;
+  color: var(--text-weak, #98a2b3);
+  white-space: nowrap;
+}
+
+.tc-stat-split {
+  width: 2rpx;
+  height: 40rpx;
+  background-color: var(--border-color, #eaecf0);
+}
+
+/* ---------- 简介 ---------- */
+.tc-intro {
+  margin-top: 18rpx;
+  font-size: 24rpx;
+  color: var(--text-sub, #475467);
+  line-height: 1.6;
+}
+
+/* ---------- 匹配度 ---------- */
+.tc-score {
+  display: flex;
+  align-items: center;
+  margin-top: 18rpx;
+}
+
+.tc-score-bar {
+  flex: 1;
+  height: 14rpx;
+  border-radius: 999rpx;
+  background-color: #e9eef7;
+  overflow: hidden;
+  margin-right: 16rpx;
+}
+
+.tc-score-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #2b6de5, #17b26a);
+  transition: width 0.3s ease;
+}
+
+.tc-score-text {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--brand-primary, #1f4fbf);
+  white-space: nowrap;
+}
+
+/* ---------- 推荐理由 ---------- */
+.tc-reasons {
+  margin-top: 18rpx;
+  background-color: #f4f8ff;
+  border-left: 6rpx solid var(--brand-primary-light, #2b6de5);
+  border-radius: 12rpx;
+  padding: 18rpx 20rpx;
+}
+
+.tc-reasons-title {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--brand-primary, #1f4fbf);
+  margin-bottom: 8rpx;
+}
+
+.tc-reason {
+  display: flex;
+  align-items: flex-start;
+}
+
+.tc-reason-dot {
+  color: var(--brand-primary-light, #2b6de5);
+  font-weight: 700;
+  margin-right: 10rpx;
+  line-height: 1.6;
+}
+
+.tc-reason-text {
+  flex: 1;
+  font-size: 23rpx;
+  color: var(--text-sub, #475467);
+  line-height: 1.65;
+}
+
+/* ---------- 底部操作 ---------- */
+.tc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 22rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx solid var(--border-color, #eaecf0);
+}
+
+.tc-hint {
+  font-size: 21rpx;
+  color: var(--text-weak, #98a2b3);
+  flex: 1;
+  min-width: 0;
+}
+
+.tc-apply {
+  flex-shrink: 0;
+  height: 68rpx;
+  padding: 0 34rpx;
+  border-radius: 999rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2b6de5, #1f4fbf);
+  box-shadow: 0 6rpx 16rpx rgba(31, 79, 191, 0.24);
+}
+
+.tc-apply:active {
+  opacity: 0.86;
+}
+
+.tc-apply-disabled {
+  background: #d0d5dd;
+  color: #ffffff;
+  box-shadow: none;
+}

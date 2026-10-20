@@ -1,0 +1,9 @@
+{
+  "name": "submitCheckin",
+  "version": "1.0.0",
+  "description": "京师家教 - 履约打卡云函数：开始打卡（mock 定位）、结束写授课小结、家长确认履约",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

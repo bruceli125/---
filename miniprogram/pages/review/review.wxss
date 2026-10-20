@@ -1,0 +1,327 @@
+/* 双向盲评页样式（页面不隔离，复用 app.wxss 全局类；此处只补充本页专有样式） */
+
+.order-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--text-main);
+  flex: 1;
+  min-width: 0;
+  margin-right: 16rpx;
+}
+
+.order-sub {
+  margin-top: 14rpx;
+  font-size: 26rpx;
+  color: var(--text-sub);
+}
+
+.order-status {
+  margin-top: 6rpx;
+  font-size: 23rpx;
+  color: var(--text-weak);
+}
+
+/* 盲评说明 */
+.blind-card {
+  background: linear-gradient(180deg, #F7FAFF, #FFFFFF);
+  border: 2rpx solid var(--brand-primary-soft);
+}
+
+.blind-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.blind-icon {
+  font-size: 30rpx;
+  margin-right: 10rpx;
+}
+
+.blind-title {
+  font-size: 29rpx;
+  font-weight: 700;
+  color: var(--brand-primary);
+}
+
+.blind-text {
+  font-size: 25rpx;
+  color: var(--text-sub);
+  line-height: 1.7;
+}
+
+/* 对方已评价提示 */
+.locked-tip-card {
+  background-color: var(--warn-orange-soft);
+  border: 2rpx solid #FDE4C0;
+}
+
+.locked-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+.locked-row-icon {
+  font-size: 34rpx;
+  margin-right: 16rpx;
+  line-height: 1.3;
+}
+
+.locked-row-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.locked-row-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #B54708;
+}
+
+.locked-row-text {
+  font-size: 23rpx;
+  color: #B54708;
+  margin-top: 6rpx;
+  opacity: 0.85;
+}
+
+.locked-row-hint {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--text-sub);
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: var(--radius-sm);
+  padding: 10rpx 14rpx;
+}
+
+/* 星级 */
+.stars {
+  display: flex;
+  align-items: center;
+  margin-top: 8rpx;
+}
+
+.star {
+  font-size: 64rpx;
+  line-height: 1.1;
+  color: #D0D5DD;
+  margin-right: 12rpx;
+  padding: 4rpx 6rpx;
+}
+
+.star-on {
+  color: #F5A524;
+}
+
+.rating-text {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: var(--text-sub);
+  font-weight: 600;
+}
+
+.comment-input {
+  background-color: var(--bg-gray);
+  border-radius: var(--radius-md);
+  padding: 20rpx;
+  box-sizing: border-box;
+  min-height: 180rpx;
+}
+
+.comment-foot {
+  margin-top: 10rpx;
+}
+
+.credit-rule {
+  margin-top: 20rpx;
+  font-size: 22rpx;
+  line-height: 1.7;
+  color: var(--text-weak);
+  background-color: var(--bg-gray);
+  border-radius: var(--radius-md);
+  padding: 16rpx 20rpx;
+}
+
+/* 等待对方 */
+.waiting-banner {
+  display: flex;
+  align-items: center;
+  background-color: var(--brand-primary-soft);
+  border-radius: var(--radius-md);
+  padding: 20rpx 24rpx;
+}
+
+.waiting-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.waiting-text {
+  font-size: 27rpx;
+  font-weight: 600;
+  color: var(--brand-primary);
+}
+
+/* 评价内容展示 */
+.rv-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.rv-stars {
+  font-size: 30rpx;
+  color: #F5A524;
+  letter-spacing: 2rpx;
+}
+
+.rv-rating {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-left: 12rpx;
+}
+
+.rv-time {
+  font-size: 22rpx;
+  color: var(--text-weak);
+  margin-left: auto;
+}
+
+.rv-from {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: var(--text-weak);
+}
+
+.rv-tags {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 14rpx;
+}
+
+.rv-tag {
+  font-size: 22rpx;
+  color: var(--trust-green);
+  background-color: var(--trust-green-soft);
+  border-radius: 999rpx;
+  padding: 4rpx 16rpx;
+  margin: 0 12rpx 8rpx 0;
+}
+
+.rv-comment {
+  margin-top: 12rpx;
+  font-size: 25rpx;
+  color: var(--text-main);
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.rv-comment-empty {
+  margin-top: 12rpx;
+  font-size: 23rpx;
+  color: var(--text-weak);
+}
+
+.rv-revealed {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: var(--text-weak);
+}
+
+/* 锁定占位 */
+.locked-box {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-gray);
+  border: 2rpx dashed var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 28rpx 24rpx;
+}
+
+.locked-box-icon {
+  font-size: 40rpx;
+  margin-right: 16rpx;
+}
+
+.locked-box-text {
+  flex: 1;
+  font-size: 24rpx;
+  color: var(--text-sub);
+  line-height: 1.7;
+}
+
+/* 信用分 */
+.credit-card {
+  background: linear-gradient(180deg, #F2FBF6, #FFFFFF);
+  border: 2rpx solid #C7EDD9;
+}
+
+.credit-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.credit-icon {
+  font-size: 30rpx;
+  margin-right: 10rpx;
+}
+
+.credit-title {
+  font-size: 29rpx;
+  font-weight: 700;
+  color: var(--trust-green);
+}
+
+.credit-line {
+  font-size: 25rpx;
+  color: var(--text-main);
+  line-height: 1.8;
+}
+
+.credit-note {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: var(--text-weak);
+  line-height: 1.7;
+}
+
+/* 不可评价 */
+.blocked-card {
+  text-align: center;
+  padding: 40rpx 28rpx;
+}
+
+.blocked-icon {
+  font-size: 72rpx;
+  line-height: 1.2;
+}
+
+.blocked-title {
+  margin-top: 12rpx;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.blocked-card .text-sub {
+  margin-top: 10rpx;
+  line-height: 1.7;
+  text-align: left;
+}
+
+/* 全部已揭晓 */
+.link {
+  font-size: 24rpx;
+  color: var(--brand-primary);
+  font-weight: 600;
+  padding: 4rpx 8rpx;
+}
+
+.all-item {
+  margin-top: 20rpx;
+  padding-top: 18rpx;
+  border-top: 2rpx solid var(--border-color);
+}

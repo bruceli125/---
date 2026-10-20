@@ -1,0 +1,14 @@
+<!-- ReviewTags：印象标签多选。受控组件，选中态由页面传入 selected 决定 -->
+<view class="rt">
+  <view
+    class="rt-item rt-{{theme}} {{item.active ? 'rt-active' : ''}} {{readonly ? 'rt-readonly' : ''}}"
+    wx:for="{{items}}"
+    wx:key="label"
+    data-label="{{item.label}}"
+    catchtap="onTap"
+  >
+    <text class="rt-label">{{item.label}}</text>
+    <text class="rt-check" wx:if="{{item.active}}">✓</text>
+  </view>
+  <view class="rt-empty" wx:if="{{!items.length}}">暂无可选标签</view>
+</view>

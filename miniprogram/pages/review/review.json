@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "双向评价",
+  "navigationBarBackgroundColor": "#1F4FBF",
+  "navigationBarTextStyle": "white",
+  "usingComponents": {
+    "review-tags": "/components/ReviewTags/index"
+  }
+}

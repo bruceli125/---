@@ -1,0 +1,236 @@
+<!-- 我的：家长 / 师范生双视角 -->
+<view class="page">
+
+  <view wx:if="{{loading}}" class="loading">正在加载我的数据…</view>
+
+  <block wx:else>
+    <!-- 用户卡 -->
+    <view class="card user-card">
+      <view class="row-between">
+        <view class="row">
+          <view class="user-avatar">{{avatarText}}</view>
+          <view>
+            <view class="user-name">{{nickname}}</view>
+            <view class="text-weak">{{roleLabel}}</view>
+          </view>
+        </view>
+        <view class="btn btn-ghost btn-sm" bindtap="onSwitchRole">切换身份</view>
+      </view>
+      <view class="divider"></view>
+      <view class="user-meta">
+        <text class="user-meta-label">手机号</text>
+        <text class="user-meta-value">{{phoneText}}</text>
+      </view>
+      <view class="user-meta">
+        <text class="user-meta-label">openid</text>
+        <text class="user-meta-value">……{{openidShort}}（openid 仅本地演示展示）</text>
+      </view>
+    </view>
+
+    <!-- ============ 家长视角 ============ -->
+    <block wx:if="{{isParent}}">
+      <view class="card">
+        <view class="section-title">我的数据</view>
+        <view class="stat-grid">
+          <view class="stat-item">
+            <view class="stat-value">{{parentStats.demandCount}}</view>
+            <view class="stat-label">我的需求</view>
+          </view>
+          <view class="stat-item">
+            <view class="stat-value">{{parentStats.publishedCount}}</view>
+            <view class="stat-label">发布中</view>
+          </view>
+          <view class="stat-item">
+            <view class="stat-value">{{parentStats.reportCount}}</view>
+            <view class="stat-label">对接报告</view>
+          </view>
+          <view class="stat-item">
+            <view class="stat-value warn">{{parentStats.riskCount}}</view>
+            <view class="stat-label">有风险提示</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">功能入口</view>
+        <view class="entry-row" bindtap="onGoDemandList">
+          <text class="entry-icon">📋</text>
+          <view class="flex-1">
+            <view class="entry-title">我的需求</view>
+            <view class="text-weak">查看需求状态、匹配与申请情况</view>
+          </view>
+          <text class="entry-arrow">›</text>
+        </view>
+        <view class="entry-row" bindtap="onGoCreate">
+          <text class="entry-icon">➕</text>
+          <view class="flex-1">
+            <view class="entry-title">发布新需求</view>
+            <view class="text-weak">提交前自动做风险词检测</view>
+          </view>
+          <text class="entry-arrow">›</text>
+        </view>
+        <view class="entry-row" bindtap="onToggleReports">
+          <text class="entry-icon">📄</text>
+          <view class="flex-1">
+            <view class="entry-title">我的对接报告</view>
+            <view class="text-weak">共 {{parentStats.reportCount}} 份，含避坑提示</view>
+          </view>
+          <text class="entry-arrow">{{reportToggleText}}</text>
+        </view>
+
+        <view wx:if="{{showReports}}" class="report-list">
+          <view wx:if="{{!reports.length}}" class="empty">
+            <view class="empty-icon">📄</view>
+            <view class="empty-text">还没有对接报告，先发布一条需求吧</view>
+            <view class="btn btn-primary empty-btn" bindtap="onGoCreate">去发布需求</view>
+          </view>
+          <view
+            class="report-item"
+            wx:for="{{reports}}"
+            wx:key="id"
+            data-report-id="{{item.id}}"
+            bindtap="onReportTap"
+          >
+            <view class="row-between">
+              <text class="report-title">{{item.title}}</text>
+              <text class="{{item.riskClass}}">{{item.riskText}}</text>
+            </view>
+            <view class="text-weak mt-8">生成时间：{{item.createdAt}}</view>
+            <view class="text-sub mt-8">Top3 首位：{{item.topName}}</view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ============ 师范生视角 ============ -->
+    <block wx:if="{{isTutor}}">
+      <view class="card">
+        <view class="section-title">我的数据</view>
+        <view class="stat-grid">
+          <view class="stat-item">
+            <view class="stat-value green">{{creditScore}}</view>
+            <view class="stat-label">信用分</view>
+          </view>
+          <view class="stat-item">
+            <view class="stat-value">{{certLevel}}</view>
+            <view class="stat-label">认证等级</view>
+          </view>
+          <view class="stat-item">
+            <view class="stat-value">{{orderCount}}</view>
+            <view class="stat-label">累计接单</view>
+          </view>
+          <view class="stat-item">
+            <view class="stat-value">{{applyCount}}</view>
+            <view class="stat-label">我的申请</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">我的认证徽章</view>
+        <cert-badge
+          size="lg"
+          level="{{badge.level}}"
+          name="{{badge.name}}"
+          school="{{badge.school}}"
+          major="{{badge.major}}"
+          grade="{{badge.grade}}"
+          badgeNo="{{badge.badgeNo}}"
+          tags="{{badge.tags}}"
+          abilityTags="{{badge.abilityTags}}"
+          verifiedAt="{{badge.verifiedAt}}"
+          showDetail="{{true}}"
+        />
+        <view wx:if="{{certLevel < 3}}" class="cert-hint">
+          完成三重认证后，匹配排序更靠前，家长信任度更高。
+        </view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">我的认证</view>
+        <view class="cert-item" wx:for="{{certRows}}" wx:key="type">
+          <view class="row-between">
+            <text class="cert-type">{{item.typeLabel}}</text>
+            <view class="row gap-16">
+              <text class="{{item.statusClass}}">{{item.statusText}}</text>
+              <text wx:if="{{item.needVerify}}" class="cert-action" bindtap="onGoVerify">去认证</text>
+            </view>
+          </view>
+          <view wx:if="{{item.createdAt}}" class="text-weak mt-8">提交时间：{{item.createdAt}}</view>
+          <view wx:if="{{item.reviewNote}}" class="cert-note">{{item.reviewNote}}</view>
+        </view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">我的接单</view>
+        <view wx:if="{{!applications.length}}" class="empty">
+          <view class="empty-icon">📮</view>
+          <view class="empty-text">{{appEmptyText}}</view>
+          <view class="btn btn-primary empty-btn" bindtap="onGoPool">去接单池</view>
+        </view>
+        <view
+          class="app-item"
+          wx:for="{{applications}}"
+          wx:key="id"
+          data-demand-id="{{item.demandId}}"
+          bindtap="onApplicationTap"
+        >
+          <view class="row-between">
+            <text class="app-title">{{item.title}}</text>
+            <text class="{{item.statusClass}}">{{item.statusText}}</text>
+          </view>
+          <view class="text-weak mt-8">申请时间：{{item.createdAt}}</view>
+          <view class="text-sub mt-8">需求状态：{{item.demandStatusText}}</view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ============ 通用区块 ============ -->
+    <view class="card">
+      <view class="section-title">关于平台</view>
+      <view class="about-row">
+        <text class="about-label">平台名称</text>
+        <text class="about-value">{{about.name}}</text>
+      </view>
+      <view class="about-row">
+        <text class="about-label">版本</text>
+        <text class="about-value">v{{about.version}}</text>
+      </view>
+      <view class="about-row">
+        <text class="about-label">平台定位</text>
+        <text class="about-value">{{about.slogan}}</text>
+      </view>
+      <view class="about-row">
+        <text class="about-label">当前数据源</text>
+        <text class="about-value">{{about.sourceText}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="section-title">隐私与授权</view>
+      <view class="text-sub">平台仅在实现功能所必需的范围内处理信息，已授权的信息类型与用途如下：</view>
+      <view class="privacy-row" wx:for="{{privacyItems}}" wx:key="type">
+        <text class="privacy-type">{{item.type}}</text>
+        <text class="privacy-purpose">{{item.purpose}}</text>
+      </view>
+      <view class="disclaimer-item">· 撤回方式：可在本页清除本地数据，或在微信「小程序右上角 … → 设置」中关闭已授权信息。</view>
+      <view class="disclaimer-item">· {{privacyNote}}</view>
+      <view class="btn btn-ghost mt-16" bindtap="onPrivacySettingTip">如何管理微信授权</view>
+      <view class="btn btn-gray mt-16" bindtap="onClearLocalData">清除本地全部数据</view>
+    </view>
+
+    <view class="card">
+      <view class="section-title">免责声明与合规说明</view>
+      <view class="disclaimer-item" wx:for="{{disclaimerFull}}" wx:key="*this">· {{item}}</view>
+    </view>
+
+    <view class="card">
+      <view class="section-title">演示工具</view>
+      <view class="text-sub">重置后会恢复初始演示数据（需求 / 匹配 / 报告 / 认证 / 申请），便于反复演示完整流程。</view>
+      <view class="btn btn-gray mt-16" bindtap="onResetMock">重置演示数据</view>
+    </view>
+
+    <view class="version-line">{{about.name}} · v{{about.version}} · MVP 演示版</view>
+  </block>
+  <platform-notice />
+</view>

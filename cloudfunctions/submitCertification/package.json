@@ -1,0 +1,9 @@
+{
+  "name": "submitCertification",
+  "version": "1.0.0",
+  "description": "京师家教 - 三重认证云函数：写入 certifications（mock OCR）并重算认证等级/徽章/信用分",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

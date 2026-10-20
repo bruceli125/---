@@ -1,0 +1,373 @@
+<!-- 师范生三重认证：学籍 -> 资质 -> 能力 -> 认证徽章 -->
+<view class="page">
+
+  <view wx:if="{{loading}}" class="loading">正在加载认证档案…</view>
+
+  <block wx:else>
+    <!-- 认证进度 -->
+    <view class="card">
+      <view class="row-between">
+        <view class="card-title">三重认证进度</view>
+        <text class="text-blue">{{progressText}}</text>
+      </view>
+
+      <view class="progress">
+        <view class="progress-item" wx:for="{{steps}}" wx:key="key">
+          <view class="progress-dot {{item.markClass}}">{{item.progressMark}}</view>
+          <view class="progress-label">{{item.label}}</view>
+          <view class="progress-status {{item.statusTextClass}}">{{item.statusText}}</view>
+        </view>
+        <view class="progress-line"></view>
+      </view>
+
+      <view class="divider"></view>
+
+      <view class="row-between">
+        <view class="flex-1">
+          <view class="row gap-16">
+            <text class="text-bold">认证等级：{{certLevel}} 级</text>
+            <text class="tag {{levelTagClass}}">{{certLevelText}}</text>
+          </view>
+          <view class="text-weak mt-8">{{certLevelDesc}}</view>
+        </view>
+        <cert-badge
+          size="sm"
+          level="{{badge.level}}"
+          badgeNo="{{badge.badgeNo}}"
+          showDetail="{{false}}"
+        />
+      </view>
+    </view>
+
+    <!-- 三重认证完成：完整徽章 -->
+    <view wx:if="{{allPassed}}" class="card celebrate">
+      <view class="celebrate-title">🎉 恭喜，您已完成三重认证</view>
+      <view class="celebrate-desc">认证徽章已生成，可在「我的」页面查看，家长也能在你的档案里核验编号。</view>
+
+      <cert-badge
+        size="lg"
+        level="{{badge.level}}"
+        name="{{badge.name}}"
+        school="{{badge.school}}"
+        major="{{badge.major}}"
+        grade="{{badge.grade}}"
+        badgeNo="{{badge.badgeNo}}"
+        tags="{{badge.tags}}"
+        abilityTags="{{badge.abilityTags}}"
+        verifiedAt="{{badge.verifiedAt}}"
+        showDetail="{{true}}"
+      />
+
+      <view class="celebrate-btns">
+        <view class="btn btn-ghost btn-sm" bindtap="onCopyBadgeNo">复制认证编号</view>
+        <view class="btn btn-primary btn-sm" bindtap="onGoPool">进入接单池</view>
+        <view class="btn btn-gray btn-sm" bindtap="onGoProfile">查看我的徽章</view>
+      </view>
+    </view>
+
+    <!-- ============ 1. 学籍认证 ============ -->
+    <view class="card step-card">
+      <view class="step-head" data-key="student" bindtap="onToggleStep">
+        <view class="step-mark {{ui.student.markClass}}">{{ui.student.mark}}</view>
+        <view class="flex-1">
+          <view class="step-title">1. 学籍认证</view>
+          <view class="text-weak">校验在校学籍，确认首师大师范生身份</view>
+        </view>
+        <view class="step-status {{studentCert.statusTextClass}}">{{studentCert.statusText}}</view>
+        <text class="step-toggle">{{ui.student.toggleText}}</text>
+      </view>
+
+      <view wx:if="{{ui.student.expanded}}" class="step-body">
+        <view class="form-item">
+          <view class="form-label">学校</view>
+          <input class="form-input" value="{{studentForm.school}}" disabled />
+          <view class="form-tip">MVP 只支持首都师范大学（高校白名单，二期开放更多合作高校）。</view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">学号</view>
+          <input
+            class="form-input"
+            type="number"
+            placeholder="请输入 8 位以上学号"
+            placeholder-class="placeholder"
+            value="{{studentForm.studentNo}}"
+            data-field="studentNo"
+            bindinput="onStudentInput"
+          />
+          <view class="form-tip">开发阶段仅做位数规则校验，不采集、不上传真实学号。</view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">校园邮箱</view>
+          <input
+            class="form-input"
+            type="text"
+            placeholder="例如 xiaoming@cnu.edu.cn"
+            placeholder-class="placeholder"
+            value="{{studentForm.email}}"
+            data-field="email"
+            bindinput="onStudentInput"
+          />
+          <view class="form-tip">建议使用 @cnu.edu.cn 校园邮箱，校验通过后仅脱敏展示。</view>
+        </view>
+
+        <view class="{{studentBtnClass}}" bindtap="onSubmitStudent">{{studentBtnText}}</view>
+
+        <view class="mock-note">mock 说明：提交后 1.2 秒自动模拟「审核通过」，真实学籍校验需对接学校统一身份认证（TODO 二期）。</view>
+
+        <view wx:if="{{studentCert.has}}" class="cert-record">
+          <view class="cert-record-title">认证记录</view>
+          <view class="cert-record-row">
+            <text class="cert-record-label">状态</text>
+            <text class="cert-record-value {{studentCert.statusTextClass}}">{{studentCert.statusText}}</text>
+          </view>
+          <view class="cert-record-row">
+            <text class="cert-record-label">提交时间</text>
+            <text class="cert-record-value">{{studentCert.createdAt}}</text>
+          </view>
+          <view wx:if="{{studentCert.reviewedAt}}" class="cert-record-row">
+            <text class="cert-record-label">审核时间</text>
+            <text class="cert-record-value">{{studentCert.reviewedAt}}</text>
+          </view>
+          <view class="cert-record-note">{{studentCert.reviewNote}}</view>
+        </view>
+
+        <view wx:if="{{ocrBlocks.student.length}}" class="ocr-box">
+          <view class="ocr-title">mock OCR / 校验结果（TODO 二期接入真实学籍库）</view>
+          <view class="ocr-row" wx:for="{{ocrBlocks.student}}" wx:key="label">
+            <text class="ocr-label">{{item.label}}</text>
+            <text class="ocr-value">{{item.value}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 2. 资质认证 ============ -->
+    <view class="card step-card">
+      <view class="step-head" data-key="qualification" bindtap="onToggleStep">
+        <view class="step-mark {{ui.qualification.markClass}}">{{ui.qualification.mark}}</view>
+        <view class="flex-1">
+          <view class="step-title">2. 资质认证</view>
+          <view class="text-weak">教师资格证 / 普通话证书 / 获奖证明</view>
+        </view>
+        <view class="step-status {{qualCert.statusTextClass}}">{{qualCert.statusText}}</view>
+        <text class="step-toggle">{{ui.qualification.toggleText}}</text>
+      </view>
+
+      <view wx:if="{{ui.qualification.expanded}}" class="step-body">
+        <view class="form-item">
+          <view class="form-label">证书类型</view>
+          <view class="chip-group">
+            <view
+              class="{{item.className}}"
+              wx:for="{{certTypeOptions}}"
+              wx:key="value"
+              data-value="{{item.value}}"
+              bindtap="onCertTypeTap"
+            >{{item.value}}</view>
+          </view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label form-label-required">证书名称</view>
+          <input
+            class="form-input"
+            placeholder="例如 高级中学教师资格证（数学）"
+            placeholder-class="placeholder"
+            value="{{qualForm.certName}}"
+            data-field="certName"
+            bindinput="onQualInput"
+          />
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">证书学科</view>
+          <input
+            class="form-input"
+            placeholder="例如 数学 / 普通话"
+            placeholder-class="placeholder"
+            value="{{qualForm.certSubject}}"
+            data-field="certSubject"
+            bindinput="onQualInput"
+          />
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">证书等级</view>
+          <view class="chip-group">
+            <view
+              class="{{item.className}}"
+              wx:for="{{qualLevelOptions}}"
+              wx:key="value"
+              data-value="{{item.value}}"
+              bindtap="onQualLevelTap"
+            >{{item.value}}</view>
+          </view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">证书图片</view>
+          <view class="row-between">
+            <view class="flex-1">
+              <view wx:if="{{qualFile.name}}" class="file-row">
+                <image wx:if="{{qualFile.path}}" class="file-thumb" src="{{qualFile.path}}" mode="aspectFill"></image>
+                <view class="flex-1">
+                  <view class="file-name ellipsis">{{qualFile.name}}</view>
+                  <view class="text-weak">{{qualFile.sizeText}}（本地临时文件，未上传）</view>
+                </view>
+              </view>
+              <view wx:else class="text-weak">尚未选择图片（本地预览用，不采集真实证件信息）</view>
+            </view>
+            <view class="btn btn-ghost btn-sm" bindtap="onChooseQualImage">选择图片</view>
+          </view>
+          <view class="form-tip">TODO(二期)：接入云存储上传 + 真实 OCR（教资证 / 普通话证字段识别），当前为 mock 结果。</view>
+        </view>
+
+        <view class="{{qualBtnClass}}" bindtap="onSubmitQualification">{{qualBtnText}}</view>
+
+        <view class="mock-note">mock 说明：提交后 1.2 秒自动模拟「审核通过」，OCR 字段为模拟识别结果。</view>
+
+        <view wx:if="{{qualCert.has}}" class="cert-record">
+          <view class="cert-record-title">认证记录</view>
+          <view class="cert-record-row">
+            <text class="cert-record-label">状态</text>
+            <text class="cert-record-value {{qualCert.statusTextClass}}">{{qualCert.statusText}}</text>
+          </view>
+          <view class="cert-record-row">
+            <text class="cert-record-label">提交时间</text>
+            <text class="cert-record-value">{{qualCert.createdAt}}</text>
+          </view>
+          <view wx:if="{{qualCert.reviewedAt}}" class="cert-record-row">
+            <text class="cert-record-label">审核时间</text>
+            <text class="cert-record-value">{{qualCert.reviewedAt}}</text>
+          </view>
+          <view class="cert-record-note">{{qualCert.reviewNote}}</view>
+        </view>
+
+        <view wx:if="{{ocrBlocks.qualification.length}}" class="ocr-box">
+          <view class="ocr-title">mock OCR 识别结果（TODO 二期接入真实 OCR）</view>
+          <view class="ocr-row" wx:for="{{ocrBlocks.qualification}}" wx:key="label">
+            <text class="ocr-label">{{item.label}}</text>
+            <text class="ocr-value">{{item.value}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 3. 能力认证 ============ -->
+    <view class="card step-card">
+      <view class="step-head" data-key="ability" bindtap="onToggleStep">
+        <view class="step-mark {{ui.ability.markClass}}">{{ui.ability.mark}}</view>
+        <view class="flex-1">
+          <view class="step-title">3. 能力认证</view>
+          <view class="text-weak">试讲视频 + 教学能力标签</view>
+        </view>
+        <view class="step-status {{abilityCert.statusTextClass}}">{{abilityCert.statusText}}</view>
+        <text class="step-toggle">{{ui.ability.toggleText}}</text>
+      </view>
+
+      <view wx:if="{{ui.ability.expanded}}" class="step-body">
+        <view class="form-item">
+          <view class="form-label">试讲视频链接</view>
+          <input
+            class="form-input"
+            placeholder="粘贴试讲视频链接（可选，二选一）"
+            placeholder-class="placeholder"
+            value="{{abilityForm.videoUrl}}"
+            data-field="videoUrl"
+            bindinput="onAbilityInput"
+          />
+          <view class="form-tip">TODO(二期)：接入云存储上传、转码与真实视频评审，当前不做真实播放与评分。</view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">或上传本地试讲视频</view>
+          <view class="row-between">
+            <view class="flex-1">
+              <view wx:if="{{abilityVideo.name}}" class="file-row">
+                <view class="file-icon">🎬</view>
+                <view class="flex-1">
+                  <view class="file-name ellipsis">{{abilityVideo.name}}</view>
+                  <view class="text-weak">{{abilityVideo.durationText}}（本地临时文件，未上传）</view>
+                </view>
+              </view>
+              <view wx:else class="text-weak">尚未选择视频</view>
+            </view>
+            <view class="btn btn-ghost btn-sm" bindtap="onChooseVideo">选择视频</view>
+          </view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">视频时长（分钟）</view>
+          <input
+            class="form-input"
+            type="number"
+            placeholder="例如 8"
+            placeholder-class="placeholder"
+            value="{{abilityForm.durationMin}}"
+            data-field="durationMin"
+            bindinput="onAbilityInput"
+          />
+          <view class="form-tip">用于 mock 评审规则（3-15 分钟视为合格）。</view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label form-label-required">教学能力标签（可多选，建议 2-3 个）</view>
+          <view class="chip-group">
+            <view
+              class="chip {{item.active ? 'chip-active' : ''}}"
+              wx:for="{{tagOptions}}"
+              wx:key="value"
+              data-tag="{{item.value}}"
+              bindtap="onTagTap"
+            >{{item.value}}</view>
+          </view>
+        </view>
+
+        <view class="{{abilityBtnClass}}" bindtap="onSubmitAbility">{{abilityBtnText}}</view>
+
+        <view class="mock-note">mock 说明：提交后 1.2 秒模拟「规则评审通过（时长 / 清晰度 / 标签完整性）」，不做真实视频评审。</view>
+
+        <view wx:if="{{abilityCert.has}}" class="cert-record">
+          <view class="cert-record-title">认证记录</view>
+          <view class="cert-record-row">
+            <text class="cert-record-label">状态</text>
+            <text class="cert-record-value {{abilityCert.statusTextClass}}">{{abilityCert.statusText}}</text>
+          </view>
+          <view class="cert-record-row">
+            <text class="cert-record-label">提交时间</text>
+            <text class="cert-record-value">{{abilityCert.createdAt}}</text>
+          </view>
+          <view wx:if="{{abilityCert.reviewedAt}}" class="cert-record-row">
+            <text class="cert-record-label">审核时间</text>
+            <text class="cert-record-value">{{abilityCert.reviewedAt}}</text>
+          </view>
+          <view class="cert-record-note">{{abilityCert.reviewNote}}</view>
+        </view>
+
+        <view wx:if="{{ocrBlocks.ability.length}}" class="ocr-box">
+          <view class="ocr-title">mock 评审结果（TODO 二期接入真实视频评审）</view>
+          <view class="ocr-row" wx:for="{{ocrBlocks.ability}}" wx:key="label">
+            <text class="ocr-label">{{item.label}}</text>
+            <text class="ocr-value">{{item.value}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 隐私脱敏说明 -->
+    <view class="card">
+      <view class="section-title">隐私与合规说明</view>
+      <view class="privacy-row" wx:for="{{privacyRows}}" wx:key="label">
+        <text class="privacy-label">{{item.label}}</text>
+        <text class="privacy-value">{{item.value}}</text>
+      </view>
+      <view class="disclaimer mt-16">{{privacyNotice}}</view>
+    </view>
+
+    <!-- 演示用重置 -->
+    <view class="reset-row" bindtap="onResetCert">重置认证（演示用）</view>
+  </block>
+  <platform-notice />
+</view>

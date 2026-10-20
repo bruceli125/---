@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "上课打卡",
+  "navigationBarBackgroundColor": "#1F4FBF",
+  "navigationBarTextStyle": "white",
+  "usingComponents": {
+    "checkin-card": "/components/CheckinCard/index"
+  }
+}

@@ -1,0 +1,198 @@
+/* 首页 / 角色选择 */
+.index-page {
+  min-height: 100vh;
+  padding-bottom: 48rpx;
+  box-sizing: border-box;
+}
+
+/* ---------- 品牌区 ---------- */
+.hero {
+  padding: 48rpx 40rpx 56rpx;
+  background: linear-gradient(150deg, #2b6de5 0%, #1f4fbf 58%, #17398c 100%);
+  border-radius: 0 0 40rpx 40rpx;
+  color: #ffffff;
+}
+
+.hero-badge {
+  display: inline-block;
+  padding: 6rpx 18rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  background-color: rgba(255, 255, 255, 0.18);
+  color: #eaf1ff;
+}
+
+.hero-title {
+  margin-top: 20rpx;
+  font-size: 46rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+}
+
+.hero-slogan {
+  margin-top: 16rpx;
+  font-size: 28rpx;
+  color: #ffffff;
+  opacity: 0.96;
+}
+
+.hero-desc {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  line-height: 1.7;
+  color: #dbe6ff;
+}
+
+.hero-version {
+  margin-top: 20rpx;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ---------- 主体 ---------- */
+.index-body {
+  padding: 0 24rpx;
+  margin-top: -32rpx;
+}
+
+.trust-item-title {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-top: 4rpx;
+}
+
+.trust-item-sub {
+  font-size: 20rpx;
+  color: var(--text-weak);
+  margin-top: 2rpx;
+}
+
+.core-ability {
+  margin-top: 16rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--brand-primary);
+  background-color: var(--brand-primary-soft);
+  border-radius: 999rpx;
+  padding: 12rpx 20rpx;
+}
+
+/* ---------- 角色卡片 ---------- */
+.role-grid {
+  display: flex;
+  gap: 20rpx;
+}
+
+.role-card {
+  position: relative;
+  flex: 1;
+  background-color: #ffffff;
+  border-radius: 24rpx;
+  border: 3rpx solid transparent;
+  box-shadow: var(--shadow-card);
+  padding: 32rpx 24rpx;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.role-card-active {
+  border-color: var(--brand-primary);
+  background-color: var(--brand-primary-soft);
+}
+
+.role-check {
+  position: absolute;
+  top: 14rpx;
+  right: 18rpx;
+  width: 36rpx;
+  height: 36rpx;
+  line-height: 36rpx;
+  border-radius: 50%;
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  font-size: 24rpx;
+  text-align: center;
+}
+
+.role-icon {
+  font-size: 56rpx;
+  line-height: 1.2;
+}
+
+.role-title {
+  margin-top: 12rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.role-sub {
+  margin-top: 4rpx;
+  font-size: 26rpx;
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.role-desc {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  color: var(--text-weak);
+  line-height: 1.6;
+}
+
+.role-current {
+  margin: 20rpx 4rpx 24rpx;
+  font-size: 24rpx;
+}
+
+/* ---------- 统计 ---------- */
+.stat-grid {
+  display: flex;
+  background-color: var(--bg-gray);
+  border-radius: 16rpx;
+  padding: 20rpx 0;
+}
+
+.stat-cell {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--brand-primary);
+  line-height: 1.2;
+}
+
+.stat-label {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: var(--text-weak);
+}
+
+/* ---------- 其它 ---------- */
+.report-hint {
+  background-color: var(--bg-gray);
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+}
+
+.report-hint-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 6rpx;
+}
+
+.reset-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.disclaimer-tags {
+  margin-top: 12rpx;
+  display: flex;
+  flex-wrap: wrap;
+}

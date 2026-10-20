@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "我的需求",
+  "navigationBarBackgroundColor": "#1F4FBF",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "demand-card": "/components/DemandCard/index"
+  }
+}

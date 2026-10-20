@@ -1,0 +1,109 @@
+<!-- 履约打卡页：师范生打卡 + 写小结，家长确认履约 -->
+<view class="page">
+  <view class="loading" wx:if="{{loading}}">加载中…</view>
+
+  <!-- 订单不存在 -->
+  <view class="card" wx:if="{{!loading && notFound}}">
+    <view class="empty">
+      <view class="empty-icon">🚫</view>
+      <view class="empty-text">{{errorMsg}}</view>
+    </view>
+    <view class="btn btn-ghost mt-16" catchtap="onBack">返回上一页</view>
+  </view>
+
+  <block wx:if="{{!loading && !notFound}}">
+    <!-- 订单摘要 -->
+    <view class="card">
+      <view class="row-between">
+        <view class="order-title">{{orderTitle}}</view>
+        <text class="tag tag-blue">{{statusLabel}}</text>
+      </view>
+      <view class="order-row" wx:for="{{orderRows}}" wx:key="label">
+        <text class="order-label">{{item.label}}</text>
+        <text class="order-value">{{item.value}}</text>
+      </view>
+    </view>
+
+    <!-- 打卡说明（合规与规则） -->
+    <view class="card notice-card">
+      <view class="section-title">履约打卡说明</view>
+      <view class="text-sub">{{checkinDesc}}</view>
+      <view class="evidence">{{evidenceNote}}</view>
+    </view>
+
+    <!-- 统计 -->
+    <view class="card">
+      <view class="section-title">履约统计</view>
+      <view class="stat-row">
+        <view class="stat-item" wx:for="{{statsCards}}" wx:key="label">
+          <view class="stat-value">{{item.value}}</view>
+          <view class="stat-label">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 师范生：打卡入口 / 进行中 / 不可打卡 -->
+    <block wx:if="{{isTutor}}">
+      <view class="card action-card" wx:if="{{canStart}}">
+        <view class="action-title">{{checkinTitle}}</view>
+        <view class="text-sub action-desc">开始打卡会记录上课开始时间与 mock 定位；下课时请提交授课小结，家长确认后完成履约闭环。</view>
+        <view class="{{startBtnClass}}" catchtap="onStartCheckin">{{startBtnText}}</view>
+      </view>
+
+      <view class="card active-card" wx:if="{{activeCheckin}}">
+        <view class="row-between">
+          <view class="action-title">本次打卡进行中</view>
+          <text class="tag tag-blue">{{activeElapsedText}}</text>
+        </view>
+        <view class="active-meta">开始时间：{{activeStartText}}</view>
+        <view class="active-meta">定位：{{activeLocationText}}</view>
+
+        <view class="form-label mt-24">授课小结（家长可见）</view>
+        <textarea
+          class="form-textarea summary-input"
+          value="{{summary}}"
+          focus="{{summaryFocus}}"
+          maxlength="{{summaryMax}}"
+          placeholder="{{summaryPlaceholder}}"
+          bindinput="onSummaryInput"
+        />
+        <view class="row-between summary-foot">
+          <text class="text-weak">至少 {{summaryMin}} 字，家长据此确认履约</text>
+          <text class="text-weak">{{summaryLen}}/{{summaryMax}}</text>
+        </view>
+        <view class="{{submitBtnClass}}" catchtap="onFinishCheckin">{{submitBtnText}}</view>
+      </view>
+
+      <view class="card blocked-card" wx:if="{{!canStart && !activeCheckin}}">
+        <view class="blocked-icon">🔒</view>
+        <view class="blocked-title">成单后才能打卡</view>
+        <view class="text-sub">{{blockedReason}}</view>
+        <view class="btn btn-ghost mt-24" catchtap="onBack">返回上一页</view>
+      </view>
+    </block>
+
+    <!-- 打卡记录 -->
+    <view class="section-title">打卡记录（{{list.length}} 次）</view>
+    <view class="record-list">
+      <checkin-card
+        wx:for="{{list}}"
+        wx:key="id"
+        checkin="{{item}}"
+        role="{{role}}"
+        show-confirm="{{isParent}}"
+        bind:tap="onCheckinTap"
+        bind:confirm="onConfirmCheckin"
+        bind:finish="onFinishShortcut"
+      />
+    </view>
+
+    <view class="empty" wx:if="{{!list.length}}">
+      <view class="empty-icon">🗓️</view>
+      <view class="empty-text">{{emptyText}}</view>
+    </view>
+
+    <view class="hint-line">累计时长来自每次打卡的「开始 — 结束」时间差，可用于核对课时。</view>
+  </block>
+
+  <platform-notice />
+</view>

@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "发布家教需求",
+  "navigationBarBackgroundColor": "#1F4FBF",
+  "navigationBarTextStyle": "white",
+  "usingComponents": {
+    "risk-alert": "/components/RiskAlert/index"
+  }
+}

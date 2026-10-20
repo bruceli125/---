@@ -1,0 +1,9 @@
+{
+  "name": "submitReview",
+  "version": "1.0.0",
+  "description": "京师家教 - 双向盲评云函数：评价状态查询、提交评价（双方都评后揭晓并结算信用分）、已揭晓列表",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

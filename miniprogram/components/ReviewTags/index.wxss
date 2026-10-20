@@ -1,0 +1,61 @@
+/**
+ * ReviewTags 样式（组件样式隔离；主题色用 CSS 变量 + 兜底值）
+ */
+.rt {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.rt-item {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 26rpx;
+  margin: 0 16rpx 16rpx 0;
+  border-radius: 999rpx;
+  font-size: 25rpx;
+  background-color: var(--bg-gray, #F2F4F7);
+  color: var(--text-sub, #475467);
+  border: 2rpx solid transparent;
+  transition: all 0.15s ease;
+}
+
+.rt-label {
+  line-height: 1.4;
+}
+
+.rt-check {
+  margin-left: 8rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+/* 选中态：绿色（老师侧） */
+.rt-active.rt-green {
+  background-color: var(--trust-green-soft, #E7F8F0);
+  color: var(--trust-green, #17B26A);
+  border-color: var(--trust-green, #17B26A);
+  font-weight: 600;
+}
+
+/* 选中态：蓝色（家长侧） */
+.rt-active.rt-blue {
+  background-color: var(--brand-primary-soft, #EAF1FF);
+  color: var(--brand-primary, #1F4FBF);
+  border-color: var(--brand-primary, #1F4FBF);
+  font-weight: 600;
+}
+
+/* 只读：不可点击的观感，但保持选中态可见 */
+.rt-readonly {
+  opacity: 0.95;
+}
+
+.rt-readonly.rt-active {
+  box-shadow: none;
+}
+
+.rt-empty {
+  font-size: 23rpx;
+  color: var(--text-weak, #98A2B3);
+  padding: 8rpx 0;
+}

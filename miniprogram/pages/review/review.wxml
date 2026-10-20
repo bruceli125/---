@@ -1,0 +1,197 @@
+<!-- 双向盲评页：四态显示（可评价 / 等待对方 / 已揭晓 / 不可评价） -->
+<view class="page">
+  <view class="loading" wx:if="{{loading}}">加载中…</view>
+
+  <!-- 订单不存在 -->
+  <view class="card" wx:if="{{!loading && notFound}}">
+    <view class="empty">
+      <view class="empty-icon">🚫</view>
+      <view class="empty-text">{{errorMsg}}</view>
+    </view>
+    <view class="btn btn-ghost mt-16" catchtap="onBack">返回上一页</view>
+  </view>
+
+  <block wx:if="{{!loading && !notFound}}">
+    <!-- 订单摘要 -->
+    <view class="card">
+      <view class="row-between">
+        <view class="order-title">{{orderTitle}}</view>
+        <text class="tag tag-blue">{{directionLabel}}</text>
+      </view>
+      <view class="order-sub">{{counterpartText}}</view>
+      <view class="order-status">订单状态：{{orderStatusLabel}}</view>
+    </view>
+
+    <!-- 盲评说明 -->
+    <view class="card blind-card">
+      <view class="blind-head">
+        <text class="blind-icon">🎭</text>
+        <text class="blind-title">双向盲评</text>
+      </view>
+      <view class="blind-text">{{blindTip}}</view>
+    </view>
+
+    <!-- ============ 状态 1/2：可以评价（含「对方已评价」提示） ============ -->
+    <block wx:if="{{viewMode === 'form'}}">
+      <view class="card locked-tip-card" wx:if="{{hasOtherReviewed}}">
+        <view class="locked-row">
+          <text class="locked-row-icon">📩</text>
+          <view class="locked-row-body">
+            <view class="locked-row-title">对方已提交评价</view>
+            <view class="locked-row-text">{{otherSubmittedText}}</view>
+            <view class="locked-row-hint">🔒 对方已评价，待你评价后可见</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">我的评价</view>
+
+        <view class="form-label">总体评分（必选）</view>
+        <view class="stars">
+          <view
+            class="{{item.cls}}"
+            wx:for="{{starList}}"
+            wx:key="value"
+            data-value="{{item.value}}"
+            catchtap="onStarTap"
+          >{{item.char}}</view>
+        </view>
+        <view class="rating-text">{{ratingText}}</view>
+
+        <view class="form-label mt-24">{{tagTitle}}</view>
+        <review-tags tags="{{tags}}" selected="{{selectedTags}}" theme="green" bind:change="onTagsChange" />
+
+        <view class="form-label mt-24">文字评价（选填）</view>
+        <textarea
+          class="form-textarea comment-input"
+          value="{{comment}}"
+          maxlength="{{commentMax}}"
+          placeholder="{{commentPlaceholder}}"
+          bindinput="onCommentInput"
+        />
+        <view class="row-between comment-foot">
+          <text class="text-weak">评价提交后不可修改</text>
+          <text class="text-weak">{{commentLen}}/{{commentMax}}</text>
+        </view>
+
+        <view class="{{submitBtnClass}}" catchtap="onSubmit">{{submitBtnText}}</view>
+        <view class="credit-rule">{{creditRuleText}}</view>
+      </view>
+    </block>
+
+    <!-- ============ 状态 3：我已评价，等待对方 ============ -->
+    <block wx:if="{{viewMode === 'waiting'}}">
+      <view class="card">
+        <view class="waiting-banner">
+          <text class="waiting-icon">⏳</text>
+          <view class="waiting-text">{{waitingText}}</view>
+        </view>
+
+        <view class="divider"></view>
+        <view class="section-title">我的评价（已提交）</view>
+        <view class="rv" wx:if="{{myReviewView}}">
+          <view class="rv-head">
+            <text class="rv-stars">{{myReviewView.starText}}</text>
+            <text class="rv-rating">{{myReviewView.ratingText}}</text>
+            <text class="rv-time">{{myReviewView.timeText}}</text>
+          </view>
+          <view class="rv-tags" wx:if="{{myReviewView.hasTags}}">
+            <text class="rv-tag" wx:for="{{myReviewView.tags}}" wx:for-item="t" wx:key="*this">{{t}}</text>
+          </view>
+          <view class="rv-comment" wx:if="{{myReviewView.hasComment}}">{{myReviewView.comment}}</view>
+          <view class="rv-comment-empty" wx:else>未填写文字评价</view>
+        </view>
+
+        <view class="divider"></view>
+        <view class="section-title">对方的评价</view>
+        <view class="locked-box">
+          <text class="locked-box-icon">🔒</text>
+          <view class="locked-box-text">{{otherLockText}}</view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ============ 状态 4：双方已揭晓 ============ -->
+    <block wx:if="{{viewMode === 'revealed'}}">
+      <view class="card credit-card" wx:if="{{creditVisible}}">
+        <view class="credit-head">
+          <text class="credit-icon">📈</text>
+          <text class="credit-title">信用分已更新</text>
+        </view>
+        <view class="credit-line" wx:for="{{creditLines}}" wx:key="*this">{{item}}</view>
+        <view class="credit-note">信用分由平台规则自动计算（非人工评审），用于后续匹配排序与风险提示。</view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">我的评价</view>
+        <view class="rv" wx:if="{{myReviewView}}">
+          <view class="rv-head">
+            <text class="rv-stars">{{myReviewView.starText}}</text>
+            <text class="rv-rating">{{myReviewView.ratingText}}</text>
+            <text class="rv-time">{{myReviewView.timeText}}</text>
+          </view>
+          <view class="rv-tags" wx:if="{{myReviewView.hasTags}}">
+            <text class="rv-tag" wx:for="{{myReviewView.tags}}" wx:for-item="t" wx:key="*this">{{t}}</text>
+          </view>
+          <view class="rv-comment" wx:if="{{myReviewView.hasComment}}">{{myReviewView.comment}}</view>
+          <view class="rv-comment-empty" wx:else>未填写文字评价</view>
+        </view>
+        <view class="text-weak" wx:else>暂无我的评价</view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">对方的评价</view>
+        <view class="rv" wx:if="{{otherReviewView}}">
+          <view class="rv-head">
+            <text class="rv-stars">{{otherReviewView.starText}}</text>
+            <text class="rv-rating">{{otherReviewView.ratingText}}</text>
+            <text class="rv-time">{{otherReviewView.timeText}}</text>
+          </view>
+          <view class="rv-from">{{otherReviewView.directionLabel}}</view>
+          <view class="rv-tags" wx:if="{{otherReviewView.hasTags}}">
+            <text class="rv-tag" wx:for="{{otherReviewView.tags}}" wx:for-item="t" wx:key="*this">{{t}}</text>
+          </view>
+          <view class="rv-comment" wx:if="{{otherReviewView.hasComment}}">{{otherReviewView.comment}}</view>
+          <view class="rv-comment-empty" wx:else>对方未填写文字评价</view>
+          <view class="rv-revealed" wx:if="{{otherReviewView.revealedText}}">{{otherReviewView.revealedText}}</view>
+        </view>
+        <view class="text-weak" wx:else>暂无对方评价</view>
+      </view>
+    </block>
+
+    <!-- ============ 状态 5：暂不可评价 ============ -->
+    <view class="card blocked-card" wx:if="{{viewMode === 'blocked'}}">
+      <view class="blocked-icon">🔒</view>
+      <view class="blocked-title">暂不能评价</view>
+      <view class="text-sub">{{blockedReason}}</view>
+      <view class="btn btn-ghost mt-24" catchtap="onBack">返回上一页</view>
+    </view>
+
+    <!-- ============ 全部已揭晓评价 ============ -->
+    <view class="card">
+      <view class="row-between">
+        <view class="section-title-plain">全部已揭晓评价</view>
+        <text class="link" catchtap="onToggleAllReviews">{{allToggleText}}</text>
+      </view>
+      <view class="text-weak">仅展示双方都已完成评价、正式揭晓的记录（单方评价不可见）。</view>
+
+      <block wx:if="{{showAll}}">
+        <view class="all-item" wx:for="{{allReviews}}" wx:key="id">
+          <view class="rv-head">
+            <text class="rv-stars">{{item.starText}}</text>
+            <text class="rv-rating">{{item.directionLabel}}</text>
+            <text class="rv-time">{{item.timeText}}</text>
+          </view>
+          <view class="rv-tags" wx:if="{{item.hasTags}}">
+            <text class="rv-tag" wx:for="{{item.tags}}" wx:for-item="t" wx:key="*this">{{t}}</text>
+          </view>
+          <view class="rv-comment" wx:if="{{item.hasComment}}">{{item.comment}}</view>
+        </view>
+        <view class="text-weak" wx:if="{{!allReviews.length}}">暂无已揭晓的评价记录。</view>
+      </block>
+    </view>
+  </block>
+
+  <platform-notice />
+</view>

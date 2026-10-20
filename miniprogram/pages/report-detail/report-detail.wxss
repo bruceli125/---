@@ -1,0 +1,235 @@
+/* 对接报告页样式 */
+.page-with-footer {
+  padding-bottom: 240rpx;
+}
+
+/* ---------- 报告头 ---------- */
+.report-head {
+  background: linear-gradient(135deg, #ffffff, #f4f8ff);
+  border: 2rpx solid var(--brand-primary-soft);
+}
+
+.head-row {
+  display: flex;
+  align-items: center;
+  margin-top: 12rpx;
+}
+
+.head-label {
+  width: 150rpx;
+  flex-shrink: 0;
+  color: var(--text-weak);
+  font-size: 24rpx;
+}
+
+.head-value {
+  flex: 1;
+  font-size: 24rpx;
+  color: var(--text-sub);
+  word-break: break-all;
+}
+
+/* ---------- 键值行 ---------- */
+.kv-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 10rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.kv-row:last-child {
+  border-bottom: none;
+}
+
+.kv-label {
+  width: 150rpx;
+  flex-shrink: 0;
+  color: var(--text-weak);
+  font-size: 25rpx;
+}
+
+.kv-value {
+  flex: 1;
+  font-size: 26rpx;
+  color: var(--text-main);
+  word-break: break-all;
+}
+
+.summary-box {
+  margin-top: 18rpx;
+  padding: 20rpx;
+  border-radius: var(--radius-md);
+  background-color: var(--brand-primary-soft);
+}
+
+.summary-line {
+  font-size: 25rpx;
+  color: var(--text-sub);
+  line-height: 1.7;
+}
+
+/* ---------- 风险条 ---------- */
+.risk-strip {
+  margin-top: 18rpx;
+  padding: 18rpx 20rpx;
+  border-radius: var(--radius-md);
+  background-color: var(--danger-red-soft);
+  color: var(--danger-red);
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+.risk-strip-orange {
+  background-color: var(--warn-orange-soft);
+  color: var(--warn-orange);
+}
+
+/* ---------- Top3 卡片 ---------- */
+.match-item {
+  padding: 22rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.match-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.match-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.rank-badge {
+  flex-shrink: 0;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(135deg, var(--brand-primary-light), var(--brand-primary));
+  color: #ffffff;
+  font-size: 22rpx;
+  font-weight: 600;
+  margin-right: 16rpx;
+}
+
+.avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 30rpx;
+  font-weight: 600;
+  background: linear-gradient(135deg, #4F86F7, #1F4FBF);
+}
+
+.match-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.match-score {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--trust-green);
+}
+
+.match-meta {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 14rpx;
+}
+
+.reason-title {
+  margin-top: 14rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--text-sub);
+}
+
+.reason-item {
+  font-size: 24rpx;
+  color: var(--text-sub);
+  line-height: 1.7;
+  margin-top: 6rpx;
+}
+
+.cert-no {
+  margin-top: 10rpx;
+}
+
+/* ---------- 避坑提示 ---------- */
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 12rpx;
+}
+
+.tip-dot {
+  color: var(--warn-orange);
+  font-size: 26rpx;
+  margin-right: 10rpx;
+  line-height: 1.6;
+}
+
+.tip-text {
+  flex: 1;
+  font-size: 25rpx;
+  color: var(--text-sub);
+  line-height: 1.65;
+}
+
+/* ---------- 下一步建议 ---------- */
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 14rpx;
+}
+
+.step-index {
+  width: 40rpx;
+  height: 40rpx;
+  flex-shrink: 0;
+  margin-right: 14rpx;
+  border-radius: 50%;
+  background-color: var(--brand-primary-soft);
+  color: var(--brand-primary);
+  font-size: 22rpx;
+  text-align: center;
+  line-height: 40rpx;
+}
+
+.step-text {
+  flex: 1;
+  font-size: 25rpx;
+  color: var(--text-sub);
+  line-height: 1.65;
+}
+
+/* ---------- 免责声明 ---------- */
+.disclaimer-item {
+  font-size: 23rpx;
+  color: var(--text-weak);
+  line-height: 1.75;
+  margin-top: 8rpx;
+}
+
+/* ---------- 底部条 ---------- */
+.footer-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12rpx;
+  font-size: 25rpx;
+  color: var(--brand-primary);
+}
+
+.empty-btn {
+  width: 400rpx;
+  margin: 24rpx auto 0;
+}
