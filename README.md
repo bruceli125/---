@@ -579,7 +579,7 @@ node tools/verify-flows.js       # 业务链路验收（49 项：双减/接单�
 
 ![tabBar 图标](docs/ui/tabbar-icons.png)
 
-生成脚本：`node miniprogram/tools/build-tab-icons.js`（Python + Pillow，4 倍绘制后 LANCZOS 缩小）。
+生成脚本：`python miniprogram/tools/build-tab-icons.py`（Python + Pillow，4 倍绘制后 LANCZOS 缩小）。
 
 ### 4. 长按环形确认按钮（接单）
 
