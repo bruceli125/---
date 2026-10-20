@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>BG 亮度对照</title>
+<link rel="stylesheet" href="../web-console/css/tokens.css" />
+<link rel="stylesheet" href="../web-console/css/base.css" />
+<style>html, body { overflow: hidden; }</style>
+</head>
+<body>
+<div class="atmos">
+  <div class="atmos__mesh"></div>
+  <div class="atmos__grid"></div>
+  <div class="atmos__grain"></div>
+  <canvas class="atmos__canvas" id="bg-canvas"></canvas>
+  <div class="atmos__vignette"></div>
+</div>
+<script src="three.r128.min.js"></script>
+<script src="../web-console/js/three-bg.js"></script>
+<script>
+  var b = parseFloat((location.search.match(/b=([\d.]+)/) || [])[1] || '1');
+  var cv = document.getElementById('bg-canvas');
+  window.BG.init(cv, { dprLimit: 2 });
+  window.BG.setParallax(0.5, -0.3);
+  // 用 CSS 亮度模拟更强的粒子层：只放大本层（粒子 + 线框），不改模块常量
+  if (b !== 1) cv.style.filter = 'brightness(' + b + ')';
+</script>
+</body>
+</html>

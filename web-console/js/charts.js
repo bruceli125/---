@@ -699,7 +699,8 @@
     var raw = cfg.series;
     if (!raw || !raw.length) {
       if (cfg.data && cfg.data.length) {
-        raw = [{ name: cfg.name || '数值', data: cfg.data }];
+        // 容错：sparkline 常直接传 { data: [...], color: 'var(--accent)' }
+        raw = [{ name: cfg.name || '数值', data: cfg.data, color: cfg.color, type: cfg.type }];
       } else {
         return [];
       }
@@ -1045,6 +1046,26 @@
     }
   };
 
+  /** 柱状图的类目标签：保证每根柱子都有名字，过长用省略号压缩（不走抽稀） */
+  function drawBarLabels(st, ctx, m) {
+    var labels = st.cfg.labels;
+    if (!labels || !labels.length) return;
+    ctx.font = '11px ' + MONO;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = st.pal['--text-4'] || FALLBACKS['--text-4'];
+    var maxW = Math.max(8, m.band - 6);
+    var step = m.band < 26 ? Math.max(1, Math.ceil(26 / m.band)) : 1; // 极窄才抽稀
+    var y = m.plotY + m.plotH + 8;
+    for (var i = 0; i < labels.length && i < m.xs.length; i += step) {
+      var text = labels[i];
+      if (text === undefined || text === null || text === '') continue;
+      var s = ellipsis(ctx, String(text), maxW);
+      if (!s) continue;
+      ctx.fillText(s, Math.round(m.xs[i]), Math.round(y));
+    }
+  }
+
   /** X 轴标签：按可用宽度自动抽稀，居中于数据点 */
   function drawXLabels(st, ctx, m) {
     var labels = st.cfg.labels;
@@ -1207,7 +1228,7 @@
           ctx.fillText(fmtTick(tv), m.plotX - 8, Math.round(y) + 0.5);
         }
       }
-      if (m.hasX) drawXLabels(st, ctx, m);
+      if (m.hasX) drawBarLabels(st, ctx, m);
       if (m.legend) drawLegend(st, ctx, m);
 
       var baseY = clamp(m.yOf(0), m.plotY, m.plotY + m.plotH);
@@ -1833,10 +1854,33 @@
       if (!(maxV > 0)) maxV = 1;
 
       var gapY = 6;
-      var showName = w >= 300;
-      var gutterL = showName ? clamp(w * 0.22, 56, 116) : 0;
-      var gutterR = clamp(w * 0.30, 74, 132);
-      if (gutterL + gutterR > w * 0.7) gutterR = Math.max(52, w * 0.7 - gutterL);
+      // 左槽（阶段名）与右槽（数值 + 转化率）按真实文本宽度计算，避免浪费绘图区
+      var showName = w >= 262;
+      ctx.font = '11px ' + SANS;
+      var maxNameW = 0;
+      for (i = 0; i < n; i++) {
+        var nw = 0;
+        try { nw = ctx.measureText(items[i].name).width; } catch (e) { nw = items[i].name.length * 11; }
+        if (nw > maxNameW) maxNameW = nw;
+      }
+      var gutterL = showName ? Math.min(Math.max(maxNameW + 22, 48), w * 0.32) : 0;
+
+      ctx.font = '11px ' + MONO;
+      var maxValW = 0;
+      for (i = 0; i < n; i++) {
+        var vw = 0;
+        try { vw = ctx.measureText(fmtValue(st, items[i].value)).width; } catch (e) { vw = 30; }
+        if (vw > maxValW) maxValW = vw;
+      }
+      var pctW = 0;
+      try { pctW = ctx.measureText('100.0%').width; } catch (e) { pctW = 32; }
+      var gutterR = Math.min(Math.max(maxValW + pctW + 20, 56), w * 0.42);
+
+      if (!(gutterL + gutterR <= w - 44)) {   // 空间不足：阶段名改为压在条内
+        showName = false;
+        gutterL = 0;
+        gutterR = Math.min(gutterR, w * 0.46);
+      }
 
       var barArea = Math.max(12, w - gutterL - gutterR - 4);
       var barH = (h - gapY * (n - 1)) / n;
@@ -1845,7 +1889,6 @@
       var used = barH * n + gapY * (n - 1);
       var top = Math.max(0, (h - used) / 2);
 
-      ctx.font = '11px ' + SANS;
       // 左侧阶段名可能很长：Gutter 内做省略
       var nameW = Math.max(0, gutterL - 12);
 

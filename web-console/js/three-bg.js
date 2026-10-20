@@ -53,10 +53,16 @@
   var PARTICLE_MAX = 1400;
   var AREA_PER_POINT = 1200;
 
-  // 粒子/线框统一的总不透明度：落在要求的 0.25~0.45 区间中段。
-  // 再叠加 base.css 里 .atmos__canvas 的 opacity 0.85 与 .atmos__vignette 渐晕，
-  // 最终落在内容下面只剩一层"呼吸感"，不会和正文抢对比度。
-  var BASE_OPACITY = 0.38;
+  // 粒子/线框统一的总不透明度：取要求区间 0.25~0.45 的上沿 0.44。
+  // 为什么是上沿：再叠加 base.css 里 .atmos__canvas 的 opacity 0.85、.atmos__vignette 渐晕
+  // 以及"内容区中心淡化"，真正落到屏幕上的有效亮度只剩 ~0.15 左右 —— 这已经是
+  // "看得见星尘但绝不抢文字"的临界点，再低就变成一片死黑了。
+  var BASE_OPACITY = 0.44;
+
+  // 点的视觉尺寸增益：随机尺寸仍是 0.6~2.2px（要求值），但 1px 以下的点会被抗锯齿
+  // 和渐晕吃掉，所以整体再乘 1.3，并给一个 0.85px 的下限。
+  var SIZE_GAIN = 1.3;
+  var SIZE_MIN_PX = 0.85;
 
   // 线框透明度 0.08~0.18（同样的道理：只做轮廓暗示，不做实体）
   var WIRE_OPACITY_MIN = 0.08;
@@ -169,20 +175,22 @@
     '  float dist = max(-mv.z, 0.001);',
     '',
     '  // 近大远小：以相机距离做正确的透视反比衰减',
-    '  gl_PointSize = clamp(aSize * uPixelRatio * (uRefDist / dist),',
-    '                       0.55 * uPixelRatio, 4.0 * uPixelRatio);',
+    '  // （乘 SIZE_GAIN 后随机尺寸 0.6~2.2 的观感仍在 1~3px 量级，不会变成大点）',
+    '  float px = aSize * 1.3 * (uRefDist / dist);',
+    '  gl_PointSize = clamp(px * uPixelRatio, 0.85 * uPixelRatio, 5.0 * uPixelRatio);',
     '',
-    '  // 近亮远暗：远处压到 30% 亮度，叠出空气透视',
+    '  // 近亮远暗：远处压到 60% 亮度（压太狠远景会整片溶进颗粒噪声里）',
     '  float depth01 = clamp((dist - uRefDist * 0.55) / (uRefDist * 1.15), 0.0, 1.0);',
-    '  float depthAlpha = mix(1.0, 0.30, depth01);',
+    '  float depthAlpha = mix(1.0, 0.60, depth01);',
     '',
     '  // 内容区中心淡化：横轴乘 0.66 把衰减做成"竖椭圆"，',
     '  // 于是画面中栏（阅读区）最暗、四周最亮 —— 背景永远不和文字抢对比度。',
+    '  // 下限 0.70：中心仍保留七成亮度，否则中间会出现一块明显的"空洞"。',
     '  vec4 clip = projectionMatrix * mv;',
     '  gl_Position = clip;',
     '  vec2 ndc = clip.xy / max(clip.w, 0.0001);',
     '  float rN = length(ndc * vec2(0.66, 1.0));',
-    '  float centerFade = mix(0.40, 1.0, smoothstep(0.16, 0.92, rN));',
+    '  float centerFade = mix(0.70, 1.0, smoothstep(0.16, 0.92, rN));',
     '',
     '  vAlpha = aAlpha * depthAlpha * centerFade;',
     '  vColor = aColor;',
@@ -504,8 +512,9 @@
       // 基础尺寸 0.6~2.2（参考深度处的 CSS px），实际像素还要乘上 focal/dist 衰减
       size[i] = 0.6 + Math.random() * 1.6;
 
-      // 亮度本身也做分层（0.45~1.0），否则整片点看起来像均匀噪点，缺少"星等"层次
-      alpha[i] = 0.45 + Math.random() * 0.55;
+      // 亮度本身也做分层（0.75~1.0），否则整片点看起来像均匀噪点，缺少"星等"层次。
+      // 下限不能太低：base.css 的颗粒纹理本身噪声约 ±8，星等太暗会被噪声直接吃掉。
+      alpha[i] = 0.75 + Math.random() * 0.25;
 
       // 颜色比例做平方偏置：多数点偏 accent 蓝，少数偏 violet 紫，
       // 6:4 的蓝紫比 5:5 更"科技蓝"，也更不容易看出生硬的渐变带。
@@ -887,11 +896,14 @@
         var c2 = cv.getContext('2d');
         if (!c2) cv = null;
         else {
-          // 预渲染软圆点：逐帧 drawImage 一张小图，比 1200 次 arc+fill 便宜得多
+          // 预渲染软圆点：逐帧 drawImage 一张小图，比 1200 次 arc+fill 便宜得多。
+          // 光斑必须"实心偏多、只在边缘虚化"：太虚的渐变在缩到 1px 时平均下来几乎透明，
+          // 整条 2D 路径就会看起来像没画东西。
           var half = SPRITE_PX * 0.5;
           var g = c2.createRadialGradient(half, half, 0, half, half, half);
           g.addColorStop(0, 'rgba(' + css + ',1)');
-          g.addColorStop(0.35, 'rgba(' + css + ',0.72)');
+          g.addColorStop(0.52, 'rgba(' + css + ',0.9)');
+          g.addColorStop(0.8, 'rgba(' + css + ',0.32)');
           g.addColorStop(1, 'rgba(' + css + ',0)');
           c2.fillStyle = g;
           c2.fillRect(0, 0, SPRITE_PX, SPRITE_PX);
@@ -966,18 +978,18 @@
       var depth01 = (d - NEAR_D) / (FAR_D - NEAR_D);
       if (depth01 < 0) depth01 = 0;
       else if (depth01 > 1) depth01 = 1;
-      var a = alpha[i] * (1 - 0.7 * depth01);
+      var a = alpha[i] * (1 - 0.4 * depth01);
 
-      // 内容区中心淡化（竖椭圆，与 shader 的 centerFade 一致）
+      // 内容区中心淡化（竖椭圆，与 shader 的 centerFade 一致：0.70 ~ 1.0）
       var nx = (sx - cx) / cx;
       var ny = (sy - cy) / cy;
       var rn = Math.sqrt(nx * 0.66 * (nx * 0.66) + ny * ny);
-      a *= (0.4 + 0.6 * smoothstep(0.16, 0.92, rn)) * BASE_OPACITY;
+      a *= (0.7 + 0.3 * smoothstep(0.16, 0.92, rn)) * BASE_OPACITY;
 
       if (a < 0.012) continue; // 肉眼不可见，省掉一次绘制
 
-      var ss = size[i] * (CAM_Z / d);
-      if (ss < 0.72) ss = 0.72; // 亚像素精灵在部分浏览器会被完全吃掉，给个下限
+      var ss = size[i] * SIZE_GAIN * (CAM_Z / d);
+      if (ss < SIZE_MIN_PX) ss = SIZE_MIN_PX; // 亚像素精灵会被吃掉，给个下限
 
       var si = Math.round(tint[i] * steps);
       if (si < 0) si = 0;

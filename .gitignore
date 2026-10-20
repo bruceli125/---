@@ -24,3 +24,5 @@ web-console/.preview/
 
 # ---------- 子代理自检临时目录 ----------
 _bgtest/
+.dsh-vision-toolkit/
+.dsh-*/
