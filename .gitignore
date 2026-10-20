@@ -26,3 +26,4 @@ web-console/.preview/
 _bgtest/
 .dsh-vision-toolkit/
 .dsh-*/
+_tmp_*
