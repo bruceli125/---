@@ -104,50 +104,6 @@
   color: var(--ink-5);
 }
 
-/* ---------- 设计系统入口 ---------- */
-.design-entry {
-  display: flex;
-  align-items: center;
-  gap: 18rpx;
-  margin-top: 18rpx;
-  padding: 20rpx 24rpx;
-  background: var(--paper);
-  border: 1rpx solid var(--line);
-  border-radius: var(--r-md);
-  box-shadow: var(--sh-1);
-}
-
-.design-entry:active {
-  background: var(--slate);
-}
-
-.design-entry__ring {
-  width: 44rpx;
-  height: 44rpx;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background: conic-gradient(from 210deg, #ffb27a, #ffd166, #6fe3e1, #a78bfa, #ff9ec4, #ffb27a);
-  box-shadow: 0 6rpx 16rpx -8rpx rgba(167, 139, 250, 0.8);
-}
-
-.design-entry__title {
-  font-size: 25rpx;
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: 0.01em;
-}
-
-.design-entry__sub {
-  margin-top: 2rpx;
-  font-size: 21rpx;
-  color: var(--ink-4);
-}
-
-.design-entry__arrow {
-  font-size: 32rpx;
-  color: var(--ink-5);
-  line-height: 1;
-}
 
 /* ---------- 主体 ---------- */
 .index-body {

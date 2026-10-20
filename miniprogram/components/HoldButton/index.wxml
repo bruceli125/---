@@ -1,0 +1,17 @@
+<!-- HoldButton：长按环形确认。按住增长，松手完成；中途松手/滑动即取消复位 -->
+<view
+  class="hb {{holding ? 'hb--holding' : ''}} {{isDone ? 'hb--done' : ''}} {{disabled ? 'hb--off' : ''}}"
+  bindtouchstart="onStart"
+  bindtouchmove="onMove"
+  bindtouchend="onEnd"
+  bindtouchcancel="onEnd"
+  catchtap="noop"
+>
+  <view class="hb__ringwrap">
+    <view class="hb__ring" style="{{ringStyle}}"></view>
+    <view class="hb__hole">
+      <text class="hb__check" wx:if="{{isDone}}">✓</text>
+    </view>
+  </view>
+  <text class="hb__text">{{text}}</text>
+</view>

@@ -1,6 +1,7 @@
 {
   "component": true,
   "usingComponents": {
-    "cert-badge": "/components/CertBadge/index"
+    "cert-badge": "/components/CertBadge/index",
+    "hold-button": "/components/HoldButton/index"
   }
 }

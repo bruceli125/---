@@ -122,11 +122,6 @@ Page({
     wx.navigateTo({ url: '/pages/demand-list/demand-list' });
   },
 
-  /** LIGHTCORE PRISM 设计系统说明页 */
-  goUiKit() {
-    wx.navigateTo({ url: '/pages/ui-kit/ui-kit' });
-  },
-
   /* ---------- 师范生入口 ---------- */
 
   goTutorVerify() {

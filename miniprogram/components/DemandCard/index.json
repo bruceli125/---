@@ -1,4 +1,6 @@
 {
   "component": true,
-  "usingComponents": {}
+  "usingComponents": {
+    "hold-button": "/components/HoldButton/index"
+  }
 }

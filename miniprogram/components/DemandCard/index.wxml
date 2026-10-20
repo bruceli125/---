@@ -67,11 +67,15 @@
       <text class="dc-time">{{createdAtText}}</text>
       <text wx:if="{{showMeta}}" class="dc-meta">{{metaText}}</text>
     </view>
-    <view
+    <!-- 长按确认接单：按住环形进度增长，松手完成；中途松手取消复位 -->
+    <hold-button
       wx:if="{{showApplyBtn}}"
-      class="dc-apply {{applyDisabled ? 'dc-apply-disabled' : ''}}"
-      catchtap="onApply"
-    >{{applyBtnText}}</view>
+      label="{{applyBtnText}}"
+      done="{{applied}}"
+      disabled="{{applyDisabled}}"
+      duration="{{1200}}"
+      bind:confirm="onApply"
+    />
   </view>
 
 </view>

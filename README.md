@@ -548,7 +548,7 @@ node tools/verify-flows.js       # 业务链路验收（49 项：双减/接单�
 
 ## 十六、UI 主题：LIGHTCORE PRISM（浅色 · 虹彩）
 
-小程序整体视觉已升级为「黑白灰打底 + 虹彩点缀」的浅色设计系统，规则与令牌集中在 `miniprogram/app.wxss`。
+小程序视觉为「黑白灰打底 + 虹彩点缀」的浅色设计系统，令牌与规则集中在 `miniprogram/app.wxss`。
 
 ### 1. 三条硬规则（新增页面必须遵守）
 
@@ -567,32 +567,55 @@ node tools/verify-flows.js       # 业务链路验收（49 项：双减/接单�
 | 文字 | `--ink` | `#0A0A0C` |
 | 虹彩（唯一彩色） | `--spec-o/y/c/v/p` | `#FFB27A` `#FFD166` `#6FE3E1` `#A78BFA` `#FF9EC4` |
 
-### 3. 签名元素
+### 3. tabBar 封面图标
+
+三枚 81×81 PNG，位于 `miniprogram/assets/tab/`：
+
+| 页面 | 未选中 | 选中（虹彩渐变 + 柔光） |
+| --- | --- | --- |
+| 首页 | `home.png` | `home-on.png` |
+| 接单池 | `pool.png` | `pool-on.png` |
+| 我的 | `me.png` | `me-on.png` |
+
+![tabBar 图标](docs/ui/tabbar-icons.png)
+
+生成脚本：`node miniprogram/tools/build-tab-icons.js`（Python + Pillow，4 倍绘制后 LANCZOS 缩小）。
+
+### 4. 长按环形确认按钮（接单）
+
+接单是不可撤销动作，单击误触代价高，因此 `components/HoldButton` 采用**长按确认**：
+
+- 按住 → 左侧环形进度条 0→100%（默认 1.2s）；
+- 环形成满 → 松手视为确认，按钮转为墨色「✓ 已接单」；
+- 中途松手 / 手指滑动超过 10px / 触发 `touchcancel` → 立即取消并复位，并提示"请长按 1.2 秒"。
+
+![长按按钮四态](docs/ui/hold-button.png)
+
+已接入：接单池的 `DemandCard`、匹配结果页的 `TutorCard`。
+
+| 参数 | 说明 |
+| --- | --- |
+| `label` / `doneLabel` | 常态 / 完成态文案 |
+| `duration` | 按住时长（毫秒），默认 1200 |
+| `disabled` / `done` | 禁用、已完成（由父组件回填） |
+| `bind:confirm` | 环形成满时触发 |### 5. 签名元素
 
 - `.prism-bar` 棱镜渐变条（5 段光谱）
 - `.prism-ring` 折射光环（conic-gradient + 白色内圆，首页主视觉）
 - `.btn-prism` 虹彩描边按钮（双背景 border-box 实现，兼容低版本 WebView）
 - `.meter` 虹彩进度条 / `.bars` 渐变数据柱 / `.donut` 环形图 / `.switch` 开关
 
-### 4. 设计系统说明页
-
-首页 → 「LIGHTCORE PRISM 设计系统」入口，或直接访问 `pages/ui-kit/ui-kit`：
-色彩 / 棱镜渐变 / 排版 / 12 图标 / 按钮六态 / 导航 / 组件 / 网页与手机模型。
-
-### 5. 预览与验收
+### 6. 预览与验收
 
 小程序 UI 无法在 CI 里直接截图，因此提供等价预览工具：
 
 ```bash
 cd miniprogram
-node tools/build-icons.js     # 生成 12 个 base64 SVG 图标
-node tools/make-preview.js    # 把 WXSS 转成浏览器可渲染的等价 CSS + 预览页
+node tools/make-preview.js     # 把 WXSS 转成浏览器可渲染的等价 CSS + 预览页
 # 打开 miniprogram/.preview/mp-preview.html
 ```
 
-| 首页主视觉 | 设计系统页 |
-| --- | --- |
-| ![首页](docs/ui/home-hero.png) | ![设计系统](docs/ui/design-system.png) |
+> 预览工具把 `rpx` 按 750→375 折算成 `px`、把 `page` 选择器映射为包裹层，
+> 布局与颜色与真机高度一致，可在提交前发现塌陷/重叠/挤压。
 
-> 预览工具会把 `rpx` 按 750→375 折算成 `px`、把 `page` 选择器映射为包裹层，
-> 因此布局与颜色与真机高度一致，可在提交前发现塌陷/重叠/挤压。
+![首页主视觉](docs/ui/home-hero.png)

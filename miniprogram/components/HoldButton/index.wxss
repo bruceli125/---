@@ -1,0 +1,78 @@
+/* HoldButton —— 长按环形确认按钮
+   状态：常态 → 按住中 → 已完成 / 已取消复位；禁用态半透明不可触发 */
+.hb {
+  display: inline-flex;
+  align-items: center;
+  gap: 12rpx;
+  height: 72rpx;
+  padding: 0 28rpx 0 12rpx;
+  border-radius: 999rpx;
+  border: 1rpx solid var(--line-2, #d8dbe4);
+  background: #ffffff;
+  transition: border-color 200ms ease, background-color 200ms ease, transform 160ms ease;
+}
+
+.hb--holding {
+  border-color: var(--ink, #0a0a0c);
+  transform: scale(0.985);
+}
+
+.hb--done {
+  background: var(--ink, #0a0a0c);
+  border-color: var(--ink, #0a0a0c);
+}
+
+.hb--off {
+  opacity: 0.45;
+}
+
+/* 环形进度：外圈 conic-gradient 由 JS 写入，内圈白色留出"环" */
+.hb__ringwrap {
+  position: relative;
+  width: 48rpx;
+  height: 48rpx;
+  flex-shrink: 0;
+}
+
+.hb__ring {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  transition: background 60ms linear;
+}
+
+.hb__hole {
+  position: absolute;
+  top: 7rpx;
+  right: 7rpx;
+  bottom: 7rpx;
+  left: 7rpx;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hb--done .hb__hole {
+  background: var(--ink, #0a0a0c);
+}
+
+.hb__check {
+  font-size: 22rpx;
+  line-height: 1;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.hb__text {
+  font-size: 26rpx;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ink, #0a0a0c);
+  white-space: nowrap;
+}
+
+.hb--done .hb__text {
+  color: #ffffff;
+}

@@ -36,16 +36,6 @@
     </view>
     <view class="core-ability">{{coreAbility}}</view>
 
-    <!-- 设计系统入口（浅色虹彩主题说明页） -->
-    <view class="design-entry" bindtap="goUiKit">
-      <view class="design-entry__ring"></view>
-      <view class="flex-1">
-        <view class="design-entry__title">LIGHTCORE PRISM 设计系统</view>
-        <view class="design-entry__sub">色彩 · 棱镜渐变 · 排版 · 组件 · 图表</view>
-      </view>
-      <view class="design-entry__arrow">›</view>
-    </view>
-
     <!-- 角色选择 -->
     <view class="section-title mt-24">选择您的身份</view>
     <view class="role-grid">
