@@ -1,0 +1,374 @@
+<!-- LIGHTCORE PRISM · UI 设计系统（浅色模式） -->
+<view class="ui-page">
+
+  <!-- ============ 页头 ============ -->
+  <view class="ui-hero">
+    <view class="ui-hero__wash"></view>
+    <view class="ui-hero__ring">
+      <view class="prism-halo"></view>
+      <view class="prism-ring prism-ring--sm"></view>
+    </view>
+    <view class="ui-hero__inner">
+      <view class="ui-eyebrow">DESIGN SYSTEM</view>
+      <view class="ui-title">{{brand.name}}</view>
+      <view class="prism-bar ui-hero__bar"></view>
+      <view class="ui-sub">{{brand.sub}}</view>
+      <view class="ui-tags">
+        <text class="tag tag-prism" wx:for="{{tags}}" wx:key="*this">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="ui-body">
+
+    <!-- ============ 色彩 ============ -->
+    <view class="ui-section">
+      <view class="ui-section__head">
+        <text class="ui-section__title">色彩</text>
+        <text class="ui-section__meta">5 · 中性骨架</text>
+      </view>
+      <view class="ui-swatches">
+        <view class="ui-swatch" wx:for="{{colors}}" wx:key="hex">
+          <view class="ui-swatch__chip" style="background: {{item.hex}};"></view>
+          <view class="ui-swatch__name">{{item.name}}</view>
+          <view class="ui-swatch__hex">{{item.hex}}</view>
+          <view class="ui-swatch__note">{{item.note}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 棱镜渐变 ============ -->
+    <view class="ui-section">
+      <view class="ui-section__head">
+        <text class="ui-section__title">棱镜渐变</text>
+        <text class="ui-section__meta">唯一的彩色来源</text>
+      </view>
+      <view class="prism-bar ui-prism"></view>
+      <view class="ui-prism__codes">
+        <text class="ui-prism__code" wx:for="{{prismStops}}" wx:key="*this">{{item}}</text>
+      </view>
+    </view>
+
+    <!-- ============ 排版 ============ -->
+    <view class="ui-section">
+      <view class="ui-section__head">
+        <text class="ui-section__title">排版</text>
+        <text class="ui-section__meta">系统字体 · 4 字重</text>
+      </view>
+      <view class="ui-type">
+        <view class="ui-type__aa">Aa</view>
+        <view class="ui-type__list">
+          <view class="ui-type__row" wx:for="{{typeScale}}" wx:key="label">
+            <text class="ui-type__sample" style="font-weight: {{item.weight}};">光</text>
+            <text class="ui-type__label">{{item.label}}</text>
+            <text class="ui-type__weight">{{item.weight}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="ui-type__alphabet">{{alphabet}}</view>
+    </view>
+
+    <!-- ============ 图标 ============ -->
+    <view class="ui-section">
+      <view class="ui-section__head">
+        <text class="ui-section__title">图标</text>
+        <text class="ui-section__meta">12 · 线条 1.6px</text>
+      </view>
+      <view class="ui-icons">
+        <view class="ui-icon" wx:for="{{icons}}" wx:key="key">
+          <image class="ui-icon__img" src="{{item.src}}" mode="aspectFit" />
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 按钮 ============ -->
+    <view class="ui-section">
+      <view class="ui-section__head">
+        <text class="ui-section__title">按钮</text>
+        <text class="ui-section__meta">4 类 × 正常/禁用</text>
+      </view>
+
+      <view class="ui-btn-row">
+        <view class="ui-btn-col">
+          <text class="ui-btn-col__label">主要</text>
+          <view class="btn btn-prism" data-label="开始使用" bindtap="onDemo">{{primaryText}}</view>
+          <view class="btn btn-prism btn-disabled">开始使用</view>
+        </view>
+        <view class="ui-btn-col">
+          <text class="ui-btn-col__label">次要</text>
+          <view class="btn btn-ghost" data-label="了解更多" bindtap="onDemo">了解更多</view>
+          <view class="btn btn-ghost btn-disabled">了解更多</view>
+        </view>
+      </view>
+
+      <view class="ui-btn-row">
+        <view class="ui-btn-col">
+          <text class="ui-btn-col__label">文本</text>
+          <view class="ui-text-btn" data-label="查看文档" bindtap="onDemo">查看文档 ›</view>
+          <view class="ui-text-btn ui-text-btn--disabled">查看文档 ›</view>
+        </view>
+        <view class="ui-btn-col">
+          <text class="ui-btn-col__label">图标</text>
+          <view class="ui-btn-inline">
+            <view class="ui-icon-btn" data-label="复制" bindtap="onDemo">
+              <text class="ui-icon-btn__glyph">⧉</text>
+            </view>
+            <view class="ui-icon-btn" data-label="筛选" bindtap="onDemo">
+              <text class="ui-icon-btn__glyph">≡</text>
+            </view>
+            <view class="ui-icon-btn ui-icon-btn--disabled">
+              <text class="ui-icon-btn__glyph">＋</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 导航 ============ -->
+    <view class="ui-section">
+      <view class="ui-section__head">
+        <text class="ui-section__title">导航</text>
+        <text class="ui-section__meta">桌面端 / 移动端</text>
+      </view>
+
+      <view class="ui-nav ui-nav--desktop">
+        <view class="ui-nav__logo">
+          <view class="ui-nav__mark"></view>
+          <text class="ui-nav__brand">PRISM</text>
+        </view>
+        <view class="ui-nav__links">
+          <text class="ui-nav__link" wx:for="{{navLinks}}" wx:key="*this">{{item}}</text>
+        </view>
+        <view class="ui-nav__right">
+          <view class="ui-nav__search">搜索</view>
+          <text class="ui-nav__login">登录</text>
+          <view class="ui-nav__cta">开始</view>
+        </view>
+      </view>
+
+      <view class="ui-nav ui-nav--mobile">
+        <view class="ui-nav__logo">
+          <view class="ui-nav__mark"></view>
+          <text class="ui-nav__brand">PRISM</text>
+        </view>
+        <view class="ui-nav__right">
+          <view class="ui-nav__search ui-nav__search--icon">⌕</view>
+          <view class="ui-nav__burger">
+            <view class="ui-nav__burger-line"></view>
+            <view class="ui-nav__burger-line"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 组件 ============ -->
+    <view class="ui-section">
+      <view class="ui-section__head">
+        <text class="ui-section__title">组件</text>
+        <text class="ui-section__meta">6 类</text>
+      </view>
+
+      <!-- 1. 卡片 -->
+      <view class="card-prism ui-component-gap">
+        <view class="card-prism__inner">
+          <view class="ui-caption">卡片 · 虹彩描边</view>
+          <view class="ui-card2">
+            <view class="ui-card2__visual">
+              <view class="ui-card2__wave ui-card2__wave--a"></view>
+              <view class="ui-card2__wave ui-card2__wave--b"></view>
+              <view class="ui-card2__wave ui-card2__wave--c"></view>
+            </view>
+            <view class="ui-card2__body">
+              <view class="ui-card2__title">Photon Engine</view>
+              <view class="ui-card2__desc">把光线折射成可复用的色彩语言。</view>
+              <view class="btn btn-primary btn-sm ui-card2__btn" data-label="查看详情" bindtap="onDemo">查看</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 2. 输入框 -->
+      <view class="ui-component-gap">
+        <view class="ui-caption">输入框</view>
+        <view class="ui-field">
+          <view class="ui-field__label">搜索</view>
+          <view class="ui-input">
+            <text class="ui-input__icon">⌕</text>
+            <text class="ui-input__ph">搜索需求 / 师范生 / 报告</text>
+          </view>
+        </view>
+        <view class="ui-field">
+          <view class="ui-field__label">邮箱</view>
+          <view class="ui-input">
+            <text class="ui-input__ph">you@cnu.edu.cn</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 3. 进度条 -->
+      <view class="ui-component-gap">
+        <view class="ui-caption">进度条 · {{progress}}%</view>
+        <view class="meter">
+          <view class="meter__fill" style="width: {{progress}}%;"></view>
+        </view>
+      </view>
+
+      <!-- 4. 标签页 -->
+      <view class="ui-component-gap">
+        <view class="ui-caption">标签页</view>
+        <view class="ui-tabs">
+          <view
+            class="ui-tab {{activeTab === index ? 'ui-tab--on' : ''}}"
+            wx:for="{{tabs}}"
+            wx:key="*this"
+            data-index="{{index}}"
+            bindtap="onTab"
+          >
+            {{item}}
+          </view>
+        </view>
+        <view class="ui-tab-panel">当前：{{tabs[activeTab]}}</view>
+      </view>
+
+      <!-- 5. 开关 -->
+      <view class="ui-component-gap">
+        <view class="ui-caption">开关</view>
+        <view class="ui-switch-row" wx:for="{{switches}}" wx:key="key">
+          <view class="flex-1">
+            <view class="ui-switch-row__title">{{item.label}}</view>
+            <view class="ui-switch-row__desc">{{item.desc}}</view>
+          </view>
+          <view class="switch {{item.on ? 'switch--on' : ''}}" data-key="{{item.key}}" bindtap="onToggle"></view>
+        </view>
+      </view>
+
+      <!-- 6. 数据可视化 -->
+      <view class="ui-component-gap">
+        <view class="ui-caption">数据可视化</view>
+        <view class="ui-viz">
+          <view class="ui-donut-wrap">
+            <view class="donut"></view>
+            <view class="donut__center">
+              <view class="ui-donut__num">54%</view>
+              <view class="ui-donut__cap">三重认证</view>
+            </view>
+          </view>
+          <view class="ui-legend">
+            <view class="ui-legend__item" wx:for="{{donutLegend}}" wx:key="label">
+              <view class="ui-legend__dot" style="background: {{item.color}};"></view>
+              <text class="ui-legend__label">{{item.label}}</text>
+              <text class="ui-legend__val">{{item.value}}%</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="ui-chart">
+          <view class="ui-chart__head">
+            <text class="ui-chart__title">近 7 天匹配量</text>
+            <text class="ui-chart__meta">峰值 78</text>
+          </view>
+          <view class="bars">
+            <view class="bars__col" wx:for="{{week}}" wx:key="label">
+              <view class="bars__bar" style="height: {{item.h}}rpx;"></view>
+              <view class="bars__label">{{item.label}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 网页模型 ============ -->
+    <view class="ui-section">
+      <view class="ui-section__head">
+        <text class="ui-section__title">网页</text>
+        <text class="ui-section__meta">桌面浏览器</text>
+      </view>
+      <view class="ui-browser">
+        <view class="ui-browser__bar">
+          <view class="ui-browser__dots">
+            <view class="ui-browser__dot"></view>
+            <view class="ui-browser__dot"></view>
+            <view class="ui-browser__dot"></view>
+          </view>
+          <view class="ui-browser__url">lightcore.prism / home</view>
+        </view>
+        <view class="ui-browser__stage">
+          <view class="ui-browser__wave"></view>
+          <view class="ui-browser__content">
+            <view class="ui-browser__eyebrow">LIGHTCORE PRISM</view>
+            <view class="ui-browser__title">用光与色彩构建未来</view>
+            <view class="ui-browser__actions">
+              <view class="btn btn-prism btn-sm" data-label="开始使用" bindtap="onDemo">开始使用</view>
+              <view class="btn btn-ghost btn-sm" data-label="观看演示" bindtap="onDemo">观看演示</view>
+            </view>
+          </view>
+        </view>
+        <view class="ui-browser__partners">
+          <text class="ui-partner">CNU</text>
+          <text class="ui-partner">PRISM</text>
+          <text class="ui-partner">OPTICS</text>
+          <text class="ui-partner">LUMEN</text>
+          <text class="ui-partner">SPECTRA</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 移动应用模型 ============ -->
+    <view class="ui-section">
+      <view class="ui-section__head">
+        <text class="ui-section__title">移动应用</text>
+        <text class="ui-section__meta">手机模型</text>
+      </view>
+      <view class="ui-phone">
+        <view class="ui-phone__notch"></view>
+        <view class="ui-phone__screen">
+          <view class="ui-phone__top">
+            <text class="ui-phone__hi">下午好，王老师</text>
+            <view class="ui-phone__avatar">王</view>
+          </view>
+          <view class="ui-phone__balance">
+            <text class="ui-phone__label">本月课时结算</text>
+            <view class="ui-phone__amount">¥24,880</view>
+            <view class="ui-phone__delta">+12.4% 较上月</view>
+          </view>
+
+          <view class="ui-phone__chart">
+            <view class="ui-phone__bar" wx:for="{{week}}" wx:key="label" style="height: {{item.h / 2}}rpx;"></view>
+          </view>
+
+          <view class="ui-phone__actions">
+            <view class="ui-phone__action" wx:for="{{quickActions}}" wx:key="label">
+              <view class="ui-phone__actionIcon">
+                <text class="ui-phone__actionGlyph">{{item.label[0]}}</text>
+              </view>
+              <text class="ui-phone__actionLabel">{{item.label}}</text>
+            </view>
+          </view>
+
+          <view class="ui-phone__list">
+            <view class="ui-phone__item" wx:for="{{activities}}" wx:key="title">
+              <view class="ui-phone__itemDot"></view>
+              <view class="flex-1">
+                <view class="ui-phone__itemTitle">{{item.title}}</view>
+                <view class="ui-phone__itemMeta">{{item.meta}}</view>
+              </view>
+              <text class="ui-phone__itemTag">{{item.tag}}</text>
+            </view>
+          </view>
+
+          <view class="ui-phone__tabbar">
+            <view class="ui-phone__tab ui-phone__tab--on">{{quickActions[0].label[0]}}</view>
+            <view class="ui-phone__tab">{{quickActions[1].label[0]}}</view>
+            <view class="ui-phone__tab">{{quickActions[2].label[0]}}</view>
+            <view class="ui-phone__tab">{{quickActions[3].label[0]}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 返回 -->
+    <view class="btn btn-ghost btn-block mt-24" bindtap="onBack">返回首页</view>
+    <view class="ui-foot">LIGHTCORE PRISM · v{{brand.version}} · 浅色模式</view>
+    <platform-notice />
+  </view>
+</view>

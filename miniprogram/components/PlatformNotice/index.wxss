@@ -5,8 +5,8 @@
   box-sizing: border-box;
   padding: 20rpx 24rpx;
   border-radius: var(--radius-md, 16rpx);
-  background-color: var(--bg-gray, #F2F4F7);
-  border: 2rpx dashed var(--border-color, #EAECF0);
+  background-color: var(--bg-gray, #f2f4f8);
+  border: 2rpx dashed var(--border-color, #e6e8ef);
 }
 
 /* 底部紧凑版：本身就是页面最后一块，不再额外加外边距 */
@@ -41,20 +41,20 @@
 .pn-text {
   font-size: 22rpx;
   line-height: 1.65;
-  color: var(--text-sub, #475467);
+  color: var(--text-sub, #5c5f6b);
 }
 
 .pn-long {
   margin-top: 12rpx;
   padding-top: 12rpx;
-  border-top: 2rpx solid var(--border-color, #EAECF0);
+  border-top: 2rpx solid var(--border-color, #e6e8ef);
   font-size: 22rpx;
   line-height: 1.75;
-  color: var(--text-weak, #98A2B3);
+  color: var(--text-weak, #8e929e);
 }
 
 .pn-more {
   margin-top: 8rpx;
   font-size: 21rpx;
-  color: var(--brand-primary, #1F4FBF);
+  color: var(--brand-primary, #0a0a0c);
 }

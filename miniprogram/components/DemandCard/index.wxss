@@ -8,11 +8,11 @@
   padding: 28rpx;
   margin-bottom: 24rpx;
   box-shadow: var(--shadow-card, 0 4rpx 20rpx rgba(16, 24, 40, 0.06));
-  border: 2rpx solid var(--border-color, #eaecf0);
+  border: 2rpx solid var(--border-color, #e6e8ef);
 }
 
 .demand-card:active {
-  background-color: #fbfcfe;
+  background-color: #ffffff;
 }
 
 /* ---------- 右上角状态角标 ---------- */
@@ -33,23 +33,23 @@
 
 /* 招募中=绿 / 匹配中=蓝 / 已匹配=紫 / 已结束=灰 / 风险拦截=红 */
 .cn-green {
-  background: linear-gradient(135deg, #22c77a, #17b26a);
+  background: linear-gradient(135deg, #12b981, #0e9f6e);
 }
 
 .cn-blue {
-  background: linear-gradient(135deg, #4f86f7, #1f4fbf);
+  background: linear-gradient(135deg, #6d4aff, #0a0a0c);
 }
 
 .cn-purple {
-  background: linear-gradient(135deg, #8b6bf0, #5b34e0);
+  background: linear-gradient(135deg, #6d4aff, #6d4aff);
 }
 
 .cn-gray {
-  background: linear-gradient(135deg, #b4bdc9, #98a2b3);
+  background: linear-gradient(135deg, #b9bcc6, #8e929e);
 }
 
 .cn-red {
-  background: linear-gradient(135deg, #f97066, #f04438);
+  background: linear-gradient(135deg, #f07a70, #d92d20);
 }
 
 /* ---------- 标题行（右侧留白给角标，避免遮挡） ---------- */
@@ -71,13 +71,13 @@
 .dc-title {
   font-size: 34rpx;
   font-weight: 700;
-  color: var(--text-main, #1d2939);
+  color: var(--text-main, #0a0a0c);
   margin-right: 14rpx;
 }
 
 .dc-distance {
   font-size: 22rpx;
-  color: var(--text-weak, #98a2b3);
+  color: var(--text-weak, #8e929e);
 }
 
 /* ---------- 学科类标记 / 打卡徽章 ---------- */
@@ -98,23 +98,23 @@
 
 /* 学科类：灰色（提示受双减约束） */
 .dc-group-discipline {
-  background-color: var(--bg-gray, #f2f4f7);
-  color: var(--text-sub, #475467);
-  border: 2rpx solid #e4e7ec;
+  background-color: var(--bg-gray, #f2f4f8);
+  color: var(--text-sub, #5c5f6b);
+  border: 2rpx solid #e6e8ef;
 }
 
 /* 素质拓展：绿色（不受休息日限制） */
 .dc-group-quality {
-  background-color: var(--trust-green-soft, #e7f8f0);
-  color: var(--trust-green, #17b26a);
-  border: 2rpx solid #bfeeda;
+  background-color: var(--trust-green-soft, #e6f7f1);
+  color: var(--trust-green, #0e9f6e);
+  border: 2rpx solid #c9eedd;
 }
 
 .dc-checkin {
   font-size: 20rpx;
   font-weight: 600;
-  color: var(--trust-green, #17b26a);
-  background-color: var(--trust-green-soft, #e7f8f0);
+  color: var(--trust-green, #0e9f6e);
+  background-color: var(--trust-green-soft, #e6f7f1);
   border-radius: 999rpx;
   padding: 3rpx 14rpx;
   margin-right: 12rpx;
@@ -123,22 +123,22 @@
 /* ---------- 已成单 / 订单进度提示 ---------- */
 .dc-matched {
   margin-top: 14rpx;
-  background-color: var(--trust-green-soft, #e7f8f0);
-  border: 2rpx solid #bfeeda;
+  background-color: var(--trust-green-soft, #e6f7f1);
+  border: 2rpx solid #c9eedd;
   border-radius: 12rpx;
   padding: 12rpx 18rpx;
   font-size: 24rpx;
   font-weight: 600;
-  color: #067647;
+  color: #0a7a52;
 }
 
 .dc-hint {
   margin-top: 14rpx;
-  background-color: var(--brand-primary-soft, #eaf1ff);
+  background-color: var(--brand-primary-soft, #f1edff);
   border-radius: 12rpx;
   padding: 12rpx 18rpx;
   font-size: 23rpx;
-  color: var(--brand-primary, #1f4fbf);
+  color: var(--brand-primary, #0a0a0c);
 }
 
 /* ---------- 风险标签 ---------- */
@@ -149,13 +149,13 @@
 }
 
 .risk-high {
-  background-color: var(--danger-red-soft, #feeceb);
-  border: 2rpx solid #fbc9c4;
+  background-color: var(--danger-red-soft, #fdecea);
+  border: 2rpx solid #f9d4d0;
 }
 
 .risk-medium {
-  background-color: var(--warn-orange-soft, #fff4e5);
-  border: 2rpx solid #fcd9a8;
+  background-color: var(--warn-orange-soft, #fff6e5);
+  border: 2rpx solid #ffe3bd;
 }
 
 .dc-risk-text {
@@ -164,11 +164,11 @@
 }
 
 .risk-high .dc-risk-text {
-  color: var(--danger-red, #f04438);
+  color: var(--danger-red, #d92d20);
 }
 
 .risk-medium .dc-risk-text {
-  color: #b54708;
+  color: #8a4b00;
 }
 
 .dc-risk-words {
@@ -179,17 +179,17 @@
 
 .dc-risk-word {
   font-size: 20rpx;
-  color: var(--danger-red, #f04438);
+  color: var(--danger-red, #d92d20);
   background-color: #ffffff;
-  border: 2rpx solid #fbc9c4;
+  border: 2rpx solid #f9d4d0;
   border-radius: 999rpx;
   padding: 2rpx 14rpx;
   margin: 0 10rpx 6rpx 0;
 }
 
 .risk-medium .dc-risk-word {
-  color: #b54708;
-  border-color: #fcd9a8;
+  color: #8a4b00;
+  border-color: #ffe3bd;
 }
 
 /* ---------- 标签行（频次 / 时间段 / 方式 / 区域 / 薪资） ---------- */
@@ -202,7 +202,7 @@
 .dc-tag {
   display: flex;
   align-items: center;
-  background-color: var(--bg-gray, #f2f4f7);
+  background-color: var(--bg-gray, #f2f4f8);
   border-radius: 999rpx;
   padding: 6rpx 16rpx;
   margin: 0 12rpx 10rpx 0;
@@ -216,17 +216,17 @@
 
 .dc-tag-text {
   font-size: 22rpx;
-  color: var(--text-sub, #475467);
+  color: var(--text-sub, #5c5f6b);
 }
 
 /* 薪资：橙色加粗，视觉上明显区别于其它四项 */
 .dc-tag-salary {
-  background-color: var(--warn-orange-soft, #fff4e5);
-  border-color: #fcd9a8;
+  background-color: var(--warn-orange-soft, #fff6e5);
+  border-color: #ffe3bd;
 }
 
 .dc-tag-salary .dc-tag-text {
-  color: #d9480f;
+  color: #8a4b00;
   font-weight: 700;
   font-size: 23rpx;
 }
@@ -248,7 +248,7 @@
   flex: 1;
   min-width: 0;
   font-size: 24rpx;
-  color: var(--text-sub, #475467);
+  color: var(--text-sub, #5c5f6b);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -258,7 +258,7 @@
 .dc-special {
   margin-top: 14rpx;
   font-size: 24rpx;
-  color: var(--text-weak, #98a2b3);
+  color: var(--text-weak, #8e929e);
   line-height: 1.6;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -269,7 +269,7 @@
 /* ---------- 匹配度 ---------- */
 .dc-score-row {
   margin-top: 18rpx;
-  background-color: #f4f8ff;
+  background-color: #fafafc;
   border-radius: 14rpx;
   padding: 16rpx 20rpx;
 }
@@ -277,7 +277,7 @@
 .dc-score-text {
   font-size: 26rpx;
   font-weight: 700;
-  color: var(--brand-primary, #1f4fbf);
+  color: var(--brand-primary, #0a0a0c);
 }
 
 .dc-reasons {
@@ -288,7 +288,7 @@
 
 .dc-reason {
   font-size: 22rpx;
-  color: var(--text-sub, #475467);
+  color: var(--text-sub, #5c5f6b);
   background-color: #ffffff;
   border-radius: 999rpx;
   padding: 4rpx 14rpx;
@@ -302,7 +302,7 @@
   justify-content: space-between;
   margin-top: 20rpx;
   padding-top: 18rpx;
-  border-top: 2rpx solid var(--border-color, #eaecf0);
+  border-top: 2rpx solid var(--border-color, #e6e8ef);
 }
 
 .dc-foot-left {
@@ -314,12 +314,12 @@
 
 .dc-time {
   font-size: 22rpx;
-  color: var(--text-weak, #98a2b3);
+  color: var(--text-weak, #8e929e);
 }
 
 .dc-meta {
   font-size: 21rpx;
-  color: var(--text-weak, #98a2b3);
+  color: var(--text-weak, #8e929e);
   margin-top: 4rpx;
 }
 
@@ -334,7 +334,7 @@
   font-size: 26rpx;
   font-weight: 600;
   color: #ffffff;
-  background: linear-gradient(135deg, #22c77a, #17b26a);
+  background: linear-gradient(135deg, #12b981, #0e9f6e);
   box-shadow: 0 6rpx 16rpx rgba(23, 178, 106, 0.24);
 }
 
@@ -343,6 +343,6 @@
 }
 
 .dc-apply-disabled {
-  background: #d0d5dd;
+  background: #d8dbe4;
   box-shadow: none;
 }

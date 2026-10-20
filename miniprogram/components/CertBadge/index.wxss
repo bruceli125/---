@@ -34,27 +34,27 @@
 
 /* 等级配色 */
 .badge-gray {
-  background-color: var(--bg-gray, #f2f4f7);
-  color: var(--text-weak, #98a2b3);
-  border-color: #e4e7ec;
+  background-color: var(--bg-gray, #f2f4f8);
+  color: var(--text-weak, #8e929e);
+  border-color: #e6e8ef;
 }
 
 .badge-blue {
-  background-color: var(--brand-primary-soft, #eaf1ff);
-  color: var(--brand-primary, #1f4fbf);
-  border-color: #c7d9ff;
+  background-color: var(--brand-primary-soft, #f1edff);
+  color: var(--brand-primary, #0a0a0c);
+  border-color: #ddd6ff;
 }
 
 .badge-deep {
-  background-color: #e3ebff;
-  color: #1a3f99;
-  border-color: #a9c2ff;
+  background-color: #ece9ff;
+  color: #4b3fbf;
+  border-color: #c9c0ff;
 }
 
 .badge-green {
-  background: linear-gradient(135deg, #22c77a, var(--trust-green, #17b26a));
+  background: linear-gradient(135deg, #12b981, var(--trust-green, #0e9f6e));
   color: #ffffff;
-  border-color: #0f9c5c;
+  border-color: #0e9f6e;
   box-shadow: 0 6rpx 16rpx rgba(23, 178, 106, 0.28);
 }
 
@@ -98,8 +98,8 @@
   display: flex;
   padding: 28rpx;
   border-radius: var(--radius-lg, 24rpx);
-  background: linear-gradient(135deg, #ffffff 0%, #f4f8ff 100%);
-  border: 2rpx solid #d9e6ff;
+  background: linear-gradient(135deg, #ffffff 0%, #fafafc 100%);
+  border: 2rpx solid #ece9ff;
   box-shadow: 0 8rpx 28rpx rgba(31, 79, 191, 0.1);
   overflow: hidden;
 }
@@ -115,28 +115,28 @@
 }
 
 .cert-green {
-  border-color: #b7efd3;
-  background: linear-gradient(135deg, #ffffff 0%, #f1fdf7 100%);
+  border-color: #cdeee0;
+  background: linear-gradient(135deg, #ffffff 0%, #eefaf4 100%);
   box-shadow: 0 8rpx 28rpx rgba(23, 178, 106, 0.14);
 }
 
 .cert-gray {
-  border-color: #e4e7ec;
+  border-color: #e6e8ef;
   background: linear-gradient(135deg, #ffffff 0%, #f7f8fa 100%);
   box-shadow: 0 8rpx 24rpx rgba(16, 24, 40, 0.06);
 }
 
 .cert-blue::before,
 .cert-deep::before {
-  background: linear-gradient(180deg, var(--brand-primary-light, #2b6de5), var(--brand-primary, #1f4fbf));
+  background: linear-gradient(180deg, var(--brand-primary-light, #2a2a31), var(--brand-primary, #0a0a0c));
 }
 
 .cert-green::before {
-  background: linear-gradient(180deg, #22c77a, var(--trust-green, #17b26a));
+  background: linear-gradient(180deg, #12b981, var(--trust-green, #0e9f6e));
 }
 
 .cert-gray::before {
-  background: #d0d5dd;
+  background: #d8dbe4;
 }
 
 .cc-left {
@@ -156,18 +156,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #eaf1ff, #d6e4ff);
+  background: linear-gradient(135deg, #f1edff, #ece9ff);
   border: 4rpx solid #ffffff;
   box-shadow: 0 6rpx 18rpx rgba(31, 79, 191, 0.18);
 }
 
 .cert-green .cc-shield {
-  background: linear-gradient(135deg, #e7f8f0, #c6f0dd);
+  background: linear-gradient(135deg, #e6f7f1, #cdeee0);
   box-shadow: 0 6rpx 18rpx rgba(23, 178, 106, 0.22);
 }
 
 .cert-gray .cc-shield {
-  background: linear-gradient(135deg, #f2f4f7, #e4e7ec);
+  background: linear-gradient(135deg, #f2f4f8, #e6e8ef);
   box-shadow: none;
 }
 
@@ -181,17 +181,17 @@
   font-size: 20rpx;
   padding: 4rpx 14rpx;
   border-radius: 999rpx;
-  background-color: var(--brand-primary, #1f4fbf);
+  background-color: var(--brand-primary, #0a0a0c);
   color: #ffffff;
   white-space: nowrap;
 }
 
 .cert-green .cc-level-tag {
-  background-color: var(--trust-green, #17b26a);
+  background-color: var(--trust-green, #0e9f6e);
 }
 
 .cert-gray .cc-level-tag {
-  background-color: #98a2b3;
+  background-color: #8e929e;
 }
 
 .cc-right {
@@ -210,14 +210,14 @@
 .cc-name {
   font-size: 36rpx;
   font-weight: 700;
-  color: var(--text-main, #1d2939);
+  color: var(--text-main, #0a0a0c);
   margin-right: 14rpx;
 }
 
 .cc-verified-flag {
   font-size: 20rpx;
-  color: var(--trust-green, #17b26a);
-  background-color: var(--trust-green-soft, #e7f8f0);
+  color: var(--trust-green, #0e9f6e);
+  background-color: var(--trust-green-soft, #e6f7f1);
   padding: 2rpx 12rpx;
   border-radius: 999rpx;
 }
@@ -225,13 +225,13 @@
 .cc-school {
   margin-top: 8rpx;
   font-size: 26rpx;
-  color: var(--text-sub, #475467);
+  color: var(--text-sub, #5c5f6b);
 }
 
 .cc-desc {
   margin-top: 6rpx;
   font-size: 22rpx;
-  color: var(--text-weak, #98a2b3);
+  color: var(--text-weak, #8e929e);
 }
 
 .cc-no-row {
@@ -239,7 +239,7 @@
   display: flex;
   align-items: center;
   background-color: #ffffff;
-  border: 2rpx dashed #c7d9ff;
+  border: 2rpx dashed #ddd6ff;
   border-radius: var(--radius-sm, 8rpx);
   padding: 10rpx 16rpx;
   align-self: flex-start;
@@ -248,7 +248,7 @@
 
 .cc-no-label {
   font-size: 20rpx;
-  color: var(--text-weak, #98a2b3);
+  color: var(--text-weak, #8e929e);
   margin-right: 10rpx;
   flex-shrink: 0;
 }
@@ -256,7 +256,7 @@
 .cc-no-value {
   font-size: 24rpx;
   font-weight: 600;
-  color: var(--brand-primary, #1f4fbf);
+  color: var(--brand-primary, #0a0a0c);
   letter-spacing: 1rpx;
   font-family: Menlo, Consolas, monospace;
 }
@@ -264,7 +264,7 @@
 .cc-no-copy {
   font-size: 20rpx;
   color: #ffffff;
-  background-color: var(--brand-primary-light, #2b6de5);
+  background-color: var(--brand-primary-light, #2a2a31);
   border-radius: 999rpx;
   padding: 2rpx 14rpx;
   margin-left: 14rpx;
@@ -279,8 +279,8 @@
 
 .cc-tag {
   font-size: 20rpx;
-  color: var(--trust-green, #17b26a);
-  background-color: var(--trust-green-soft, #e7f8f0);
+  color: var(--trust-green, #0e9f6e);
+  background-color: var(--trust-green-soft, #e6f7f1);
   border-radius: 999rpx;
   padding: 4rpx 14rpx;
   margin: 0 12rpx 8rpx 0;
@@ -289,7 +289,7 @@
 .cc-foot {
   margin-top: 12rpx;
   font-size: 20rpx;
-  color: var(--text-weak, #98a2b3);
+  color: var(--text-weak, #8e929e);
 }
 
 /* lg 尺寸：放大盾牌与姓名，用于详情页 / 报告页 */

@@ -1,13 +1,27 @@
 <!-- 首页 / 角色选择 -->
 <view class="index-page">
 
-  <!-- 品牌区 -->
+  <!-- 品牌区：折射光环 + 虹彩光谱（LIGHTCORE PRISM 主视觉） -->
   <view class="hero">
-    <view class="hero-badge">高校主导 · 学生团队运营</view>
-    <view class="hero-title">{{brand.name}}</view>
-    <view class="hero-slogan">{{brand.slogan}}</view>
-    <view class="hero-desc">{{brand.desc}}</view>
-    <view class="hero-version">v{{brand.version}} · MVP 演示版</view>
+    <view class="hero-wash"></view>
+    <view class="hero-ring">
+      <view class="prism-halo"></view>
+      <view class="prism-ring"></view>
+    </view>
+
+    <view class="hero-inner">
+      <view class="hero-eyebrow">LIGHTCORE PRISM</view>
+      <view class="hero-title">{{brand.name}}</view>
+      <view class="prism-bar hero-bar"></view>
+      <view class="hero-slogan">{{brand.slogan}}</view>
+      <view class="hero-desc">{{brand.desc}}</view>
+      <view class="hero-tags">
+        <text class="tag tag-prism">认证可查</text>
+        <text class="tag tag-line">试课可换</text>
+        <text class="tag tag-line">学生零押金</text>
+      </view>
+      <view class="hero-version">v{{brand.version}} · 可信对接 · 智能匹配</view>
+    </view>
   </view>
 
   <view class="index-body">
@@ -21,6 +35,16 @@
       </view>
     </view>
     <view class="core-ability">{{coreAbility}}</view>
+
+    <!-- 设计系统入口（浅色虹彩主题说明页） -->
+    <view class="design-entry" bindtap="goUiKit">
+      <view class="design-entry__ring"></view>
+      <view class="flex-1">
+        <view class="design-entry__title">LIGHTCORE PRISM 设计系统</view>
+        <view class="design-entry__sub">色彩 · 棱镜渐变 · 排版 · 组件 · 图表</view>
+      </view>
+      <view class="design-entry__arrow">›</view>
+    </view>
 
     <!-- 角色选择 -->
     <view class="section-title mt-24">选择您的身份</view>

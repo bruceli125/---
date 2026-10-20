@@ -27,3 +27,4 @@ _bgtest/
 .dsh-vision-toolkit/
 .dsh-*/
 _tmp_*
+miniprogram/.preview/

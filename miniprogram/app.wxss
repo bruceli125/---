@@ -1,57 +1,141 @@
 /**
- * 京师家教可信对接平台 —— 全局样式
- * 设计语言：教育蓝（可信、专业）+ 可信绿（认证、通过）+ 警示橙/红（风险）
- * 所有颜色统一走 CSS 变量，便于二期整体换肤。
+ * 京师家教 —— 全局设计系统（LIGHTCORE PRISM · 浅色模式）
+ * ---------------------------------------------------------------------------
+ * 设计语言：黑白灰打底，虹彩（橙/琥珀/青/紫/粉）是**唯一的彩色来源**。
+ * 规则（新增页面必须遵守）：
+ *   1. 颜色只用这里的变量，禁止写死 hex；语义色仅用于状态（成功/警示/危险）。
+ *   2. 彩色只出现在「光」上：渐变条、光环、进度、图表、徽章描边——不做大面积色块。
+ *   3. 层级靠"边框 + 阴影 + 留白"表达，不靠加深背景色。
+ *   4. 旧变量名（--brand-primary 等）保留为别名，历史页面自动跟随新皮肤。
+ * ---------------------------------------------------------------------------
+ * 色板：白 #FFFFFF / 雪 #FAFAFC / 板岩 #F2F4F8 / 边框 #E6E8EF / 墨 #0A0A0C
+ * 虹彩：橙 #FFB27A · 琥珀 #FFD166 · 青 #6FE3E1 · 紫 #A78BFA · 粉 #FF9EC4
  */
 page {
-  /* 主色：教育蓝 */
-  --brand-primary: #1F4FBF;
-  --brand-primary-light: #2B6DE5;
-  --brand-primary-soft: #EAF1FF;
+  /* ---------- 中性色（骨架） ---------- */
+  --ink: #0a0a0c;
+  --ink-2: #2a2a31;
+  --ink-3: #5c5f6b;
+  --ink-4: #8e929e;
+  --ink-5: #b9bcc6;
+  --paper: #ffffff;
+  --snow: #fafafc;
+  --slate: #f2f4f8;
+  --line: #e6e8ef;
+  --line-2: #d8dbe4;
 
-  /* 辅助色：可信绿 */
-  --trust-green: #17B26A;
-  --trust-green-soft: #E7F8F0;
+  /* ---------- 虹彩（唯一彩色来源） ---------- */
+  --spec-o: #ffb27a;
+  --spec-y: #ffd166;
+  --spec-c: #6fe3e1;
+  --spec-v: #a78bfa;
+  --spec-p: #ff9ec4;
+  --grad-prism: linear-gradient(
+    90deg,
+    #ffb27a 0%,
+    #ffd166 24%,
+    #6fe3e1 50%,
+    #a78bfa 74%,
+    #ff9ec4 100%
+  );
+  --grad-prism-soft: linear-gradient(
+    120deg,
+    rgba(255, 178, 122, 0.16) 0%,
+    rgba(255, 209, 102, 0.14) 24%,
+    rgba(111, 227, 225, 0.14) 50%,
+    rgba(167, 139, 250, 0.16) 74%,
+    rgba(255, 158, 196, 0.16) 100%
+  );
 
-  /* 警示色 */
-  --warn-orange: #F79009;
-  --warn-orange-soft: #FFF4E5;
-  --danger-red: #F04438;
-  --danger-red-soft: #FEECEB;
+  /* ---------- 语义色（状态专用，克制使用） ---------- */
+  --ok: #0e9f6e;
+  --ok-soft: #e6f7f1;
+  --warn: #b26a00;
+  --warn-soft: #fff6e5;
+  --danger: #d92d20;
+  --danger-soft: #fdecea;
+  --violet: #6d4aff;
+  --violet-soft: #f1edff;
 
-  /* 中性色 */
-  --text-main: #1D2939;
-  --text-sub: #475467;
-  --text-weak: #98A2B3;
-  --border-color: #EAECF0;
-  --bg-page: #F5F7FB;
-  --bg-card: #FFFFFF;
-  --bg-gray: #F2F4F7;
+  /* ---------- 兼容别名（历史页面无需改） ---------- */
+  --brand-primary: var(--ink);
+  --brand-primary-light: var(--ink-2);
+  --brand-primary-soft: var(--slate);
+  --trust-green: var(--ok);
+  --trust-green-soft: var(--ok-soft);
+  --warn-orange: var(--warn);
+  --warn-orange-soft: var(--warn-soft);
+  --danger-red: var(--danger);
+  --danger-red-soft: var(--danger-soft);
+  --text-main: var(--ink);
+  --text-sub: var(--ink-3);
+  --text-weak: var(--ink-4);
+  --border-color: var(--line);
+  --bg-page: var(--snow);
+  --bg-card: var(--paper);
+  --bg-gray: var(--slate);
 
-  /* 尺寸与阴影 */
-  --radius-sm: 8rpx;
-  --radius-md: 16rpx;
-  --radius-lg: 24rpx;
-  --shadow-card: 0 4rpx 20rpx rgba(16, 24, 40, 0.06);
+  /* ---------- 圆角 / 阴影 / 动效 ---------- */
+  --r-xs: 8rpx;
+  --r-sm: 12rpx;
+  --r-md: 18rpx;
+  --r-lg: 26rpx;
+  --r-xl: 34rpx;
+  --radius-sm: 12rpx;
+  --radius-md: 18rpx;
+  --radius-lg: 26rpx;
+  --sh-1: 0 1rpx 2rpx rgba(10, 10, 12, 0.04), 0 10rpx 26rpx -18rpx rgba(10, 10, 12, 0.12);
+  --sh-2: 0 2rpx 6rpx rgba(10, 10, 12, 0.05), 0 22rpx 48rpx -26rpx rgba(10, 10, 12, 0.18);
+  --sh-3: 0 40rpx 80rpx -40rpx rgba(10, 10, 12, 0.28);
+  --shadow-card: var(--sh-1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.22, 1.2, 0.36, 1);
 
-  background-color: var(--bg-page);
-  color: var(--text-main);
-  font-size: 28rpx;
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Helvetica, sans-serif;
-  line-height: 1.55;
+  /* ---------- 基础样式 ---------- */
+  background-color: var(--snow);
+  color: var(--ink);
+  font-size: 27rpx;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
+    "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ---------- 布局 ---------- */
+/* ==========================================================================
+ * 一、氛围底层：极淡的虹彩晕染 + 细网格（不抢内容，只加"空气感"）
+ * ====================================================================== */
 .page {
+  position: relative;
   min-height: 100vh;
   box-sizing: border-box;
-  padding: 24rpx 24rpx 48rpx;
+  padding: 28rpx 28rpx 56rpx;
+  background-image: radial-gradient(120% 60% at 8% -10%, rgba(255, 178, 122, 0.1), transparent 60%),
+    radial-gradient(100% 50% at 100% 0%, rgba(167, 139, 250, 0.1), transparent 62%),
+    radial-gradient(120% 60% at 50% 110%, rgba(111, 227, 225, 0.08), transparent 64%);
+  background-repeat: no-repeat;
 }
 
 .page-with-footer {
-  padding-bottom: 220rpx;
+  padding-bottom: 240rpx;
 }
 
+/* 细网格：只在大留白处可见，制造"光学仪器"的精密感 */
+.page-grid::before {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background-image: linear-gradient(to right, rgba(10, 10, 12, 0.028) 1rpx, transparent 1rpx),
+    linear-gradient(to bottom, rgba(10, 10, 12, 0.028) 1rpx, transparent 1rpx);
+  background-size: 56rpx 56rpx;
+  -webkit-mask-image: radial-gradient(120% 70% at 50% 0%, #000 0%, transparent 72%);
+  mask-image: radial-gradient(120% 70% at 50% 0%, #000 0%, transparent 72%);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+ * 二、布局
+ * ====================================================================== */
 .row {
   display: flex;
   align-items: center;
@@ -73,17 +157,10 @@ page {
   min-width: 0;
 }
 
-.gap-8 {
-  gap: 8rpx;
-}
-
-.gap-16 {
-  gap: 16rpx;
-}
-
-.gap-24 {
-  gap: 24rpx;
-}
+.gap-8 { gap: 8rpx; }
+.gap-12 { gap: 12rpx; }
+.gap-16 { gap: 16rpx; }
+.gap-24 { gap: 24rpx; }
 
 .mt-8 { margin-top: 8rpx; }
 .mt-16 { margin-top: 16rpx; }
@@ -92,95 +169,164 @@ page {
 .mb-16 { margin-bottom: 16rpx; }
 .mb-24 { margin-bottom: 24rpx; }
 
-/* ---------- 卡片 ---------- */
+/* ==========================================================================
+ * 三、卡片：白面 + 一像素描边 + 双层柔阴影（高级感来自"薄",不是"重"）
+ * ====================================================================== */
 .card {
-  background-color: var(--bg-card);
-  border-radius: var(--radius-lg);
-  padding: 28rpx;
-  box-shadow: var(--shadow-card);
+  position: relative;
+  background: var(--paper);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 30rpx;
+  box-shadow: var(--sh-1);
   margin-bottom: 24rpx;
+  overflow: hidden;
+}
+
+/* 顶部一像素高光：让白卡"鼓"起来 */
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: auto; left: 0;
+  height: 1rpx;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  pointer-events: none;
 }
 
 .card-flat {
-  background-color: var(--bg-card);
-  border-radius: var(--radius-lg);
+  background: var(--paper);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-lg);
   padding: 28rpx;
-  border: 2rpx solid var(--border-color);
   margin-bottom: 24rpx;
 }
 
+/* 玻璃态：半透明白 + 模糊（iOS 效果好，Android 降级为纯白） */
+.card-glass {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1rpx solid rgba(230, 232, 239, 0.9);
+  border-radius: var(--r-lg);
+  padding: 30rpx;
+  margin-bottom: 24rpx;
+  box-shadow: var(--sh-1);
+  -webkit-backdrop-filter: blur(18rpx) saturate(160%);
+  backdrop-filter: blur(18rpx) saturate(160%);
+}
+
+/* 虹彩描边卡片（重点信息，如匹配 Top1 / 认证徽章） */
+.card-prism {
+  position: relative;
+  border-radius: var(--r-lg);
+  padding: 2rpx;
+  background: var(--grad-prism);
+  box-shadow: 0 12rpx 36rpx -22rpx rgba(167, 139, 250, 0.5);
+  margin-bottom: 24rpx;
+}
+
+.card-prism__inner {
+  background: var(--paper);
+  border-radius: calc(var(--r-lg) - 2rpx);
+  padding: 28rpx;
+}
+
 .card-title {
-  font-size: 32rpx;
+  font-size: 31rpx;
   font-weight: 600;
-  color: var(--text-main);
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
 
 .section-title {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: var(--text-main);
-  margin-bottom: 16rpx;
   display: flex;
   align-items: center;
+  font-size: 29rpx;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 18rpx;
 }
 
+/* 标题前的虹彩细条（替代原来的纯色竖条） */
 .section-title::before {
   content: "";
-  width: 8rpx;
-  height: 30rpx;
-  border-radius: 4rpx;
-  background: linear-gradient(180deg, var(--brand-primary-light), var(--brand-primary));
+  width: 6rpx;
+  height: 26rpx;
+  border-radius: 3rpx;
   margin-right: 14rpx;
+  background: var(--grad-prism);
 }
 
 .section-title-plain {
-  font-size: 30rpx;
+  font-size: 29rpx;
   font-weight: 600;
-  color: var(--text-main);
+  color: var(--ink);
   margin-bottom: 16rpx;
 }
 
-/* ---------- 文本 ---------- */
-.title-lg {
-  font-size: 40rpx;
+/* ==========================================================================
+ * 四、排版
+ * ====================================================================== */
+.title-xl {
+  font-size: 56rpx;
   font-weight: 700;
-  color: var(--text-main);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+}
+
+.title-lg {
+  font-size: 44rpx;
+  font-weight: 700;
+  line-height: 1.16;
+  letter-spacing: -0.03em;
+  color: var(--ink);
 }
 
 .title-md {
   font-size: 34rpx;
   font-weight: 600;
-  color: var(--text-main);
+  letter-spacing: -0.02em;
+  color: var(--ink);
 }
 
 .text-sub {
-  color: var(--text-sub);
+  color: var(--ink-3);
   font-size: 26rpx;
 }
 
 .text-weak {
-  color: var(--text-weak);
+  color: var(--ink-4);
   font-size: 24rpx;
 }
 
-.text-green {
-  color: var(--trust-green);
+.text-ink { color: var(--ink); }
+.text-violet { color: var(--violet); }
+.text-green { color: var(--ok); }
+.text-orange { color: var(--warn); }
+.text-red { color: var(--danger); }
+.text-bold { font-weight: 600; }
+
+/* 虹彩文字：用于品牌名/关键数字 */
+.prism-text {
+  background: var(--grad-prism);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
-.text-blue {
-  color: var(--brand-primary);
+/* 等宽数字：数据看板可读性 */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
-.text-orange {
-  color: var(--warn-orange);
-}
-
-.text-red {
-  color: var(--danger-red);
-}
-
-.text-bold {
+.eyebrow {
+  font-size: 21rpx;
   font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-4);
 }
 
 .ellipsis {
@@ -197,249 +343,557 @@ page {
 }
 
 .divider {
-  height: 2rpx;
-  background-color: var(--border-color);
-  margin: 20rpx 0;
+  height: 1rpx;
+  background: var(--line);
+  margin: 22rpx 0;
 }
 
-/* ---------- 标签 ---------- */
+/* ==========================================================================
+ * 五、标签 / 徽章
+ * ====================================================================== */
 .tag {
   display: inline-flex;
   align-items: center;
-  padding: 4rpx 14rpx;
+  padding: 6rpx 16rpx;
   border-radius: 999rpx;
   font-size: 22rpx;
-  line-height: 1.6;
-  background-color: var(--bg-gray);
-  color: var(--text-sub);
+  line-height: 1.5;
+  background: var(--slate);
+  color: var(--ink-3);
+  border: 1rpx solid transparent;
   margin-right: 12rpx;
   margin-bottom: 8rpx;
 }
 
-.tag-blue {
-  background-color: var(--brand-primary-soft);
-  color: var(--brand-primary);
-}
-
-.tag-green {
-  background-color: var(--trust-green-soft);
-  color: var(--trust-green);
-}
-
-.tag-orange {
-  background-color: var(--warn-orange-soft);
-  color: var(--warn-orange);
-}
-
-.tag-red {
-  background-color: var(--danger-red-soft);
-  color: var(--danger-red);
+.tag-ink {
+  background: var(--ink);
+  color: #fff;
 }
 
 .tag-line {
-  background-color: transparent;
-  border: 2rpx solid var(--border-color);
+  background: transparent;
+  border-color: var(--line-2);
+  color: var(--ink-3);
 }
 
-/* ---------- 按钮 ---------- */
+.tag-blue {
+  background: var(--slate);
+  color: var(--ink-2);
+}
+
+.tag-green {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.tag-orange {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.tag-red {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.tag-prism {
+  background: var(--grad-prism-soft);
+  color: var(--ink-2);
+  border-color: rgba(167, 139, 250, 0.28);
+}
+
+/* ==========================================================================
+ * 六、按钮（六态齐全：默认 / 按下 / 禁用 / 加载 / 虹彩 / 危险）
+ * ====================================================================== */
 .btn {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10rpx;
   height: 88rpx;
+  padding: 0 36rpx;
   border-radius: 999rpx;
-  font-size: 30rpx;
+  font-size: 29rpx;
   font-weight: 600;
+  letter-spacing: 0.01em;
   box-sizing: border-box;
+  transition: transform 160ms var(--ease-spring), box-shadow 200ms var(--ease-out),
+    background-color 200ms var(--ease-out), opacity 200ms var(--ease-out);
 }
 
 .btn::after {
   border: none;
 }
 
+/* 主按钮：墨色实心（最高对比 = 明确的行动召唤） */
 .btn-primary {
-  background: linear-gradient(135deg, var(--brand-primary-light), var(--brand-primary));
-  color: #ffffff;
-  box-shadow: 0 8rpx 20rpx rgba(31, 79, 191, 0.24);
+  background: var(--ink);
+  color: #fff;
+  box-shadow: 0 12rpx 28rpx -16rpx rgba(10, 10, 12, 0.6);
 }
 
-.btn-green {
-  background: linear-gradient(135deg, #22C77A, var(--trust-green));
-  color: #ffffff;
-  box-shadow: 0 8rpx 20rpx rgba(23, 178, 106, 0.22);
+.btn-primary:active {
+  transform: scale(0.976);
+  box-shadow: 0 6rpx 16rpx -12rpx rgba(10, 10, 12, 0.55);
+}
+
+/* 虹彩按钮：白底 + 虹彩描边（双背景 border-box，兼容性最好） */
+.btn-prism {
+  color: var(--ink);
+  border: 2rpx solid transparent;
+  background-image: linear-gradient(#ffffff, #ffffff), var(--grad-prism);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: 0 14rpx 34rpx -22rpx rgba(167, 139, 250, 0.55);
+}
+
+.btn-prism:active {
+  transform: scale(0.976);
 }
 
 .btn-ghost {
-  background-color: #ffffff;
-  color: var(--brand-primary);
-  border: 2rpx solid var(--brand-primary);
+  background: var(--paper);
+  color: var(--ink);
+  border: 1rpx solid var(--line-2);
+}
+
+.btn-ghost:active {
+  background: var(--slate);
 }
 
 .btn-gray {
-  background-color: var(--bg-gray);
-  color: var(--text-sub);
+  background: var(--slate);
+  color: var(--ink-3);
 }
 
-.btn-disabled {
-  background-color: #D0D5DD !important;
-  color: #ffffff !important;
+.btn-green {
+  background: var(--ok);
+  color: #fff;
+  box-shadow: 0 12rpx 28rpx -18rpx rgba(14, 159, 110, 0.6);
+}
+
+.btn-danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.btn-disabled,
+.btn[disabled] {
+  background: var(--slate) !important;
+  color: var(--ink-5) !important;
   box-shadow: none !important;
-  border: none !important;
+  border-color: transparent !important;
+  pointer-events: none;
 }
 
 .btn-sm {
   height: 64rpx;
-  font-size: 26rpx;
-  padding: 0 32rpx;
-  border-radius: 999rpx;
+  font-size: 25rpx;
+  padding: 0 28rpx;
 }
 
-/* ---------- 表单 ---------- */
+.btn-block {
+  width: 100%;
+}
+
+/* ==========================================================================
+ * 七、表单
+ * ====================================================================== */
 .form-item {
-  background-color: var(--bg-card);
-  border-radius: var(--radius-md);
-  padding: 24rpx 28rpx;
-  margin-bottom: 20rpx;
+  background: var(--paper);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  padding: 24rpx 26rpx;
+  margin-bottom: 18rpx;
+  transition: border-color 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+}
+
+.form-item:focus-within {
+  border-color: var(--ink-4);
+  box-shadow: 0 0 0 4rpx rgba(10, 10, 12, 0.05);
 }
 
 .form-label {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: var(--text-main);
-  margin-bottom: 12rpx;
   display: flex;
   align-items: center;
+  font-size: 25rpx;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+  margin-bottom: 10rpx;
 }
 
 .form-label-required::after {
   content: "*";
-  color: var(--danger-red);
+  color: var(--danger);
   margin-left: 6rpx;
 }
 
 .form-input {
   width: 100%;
-  font-size: 28rpx;
-  color: var(--text-main);
-  min-height: 60rpx;
+  min-height: 56rpx;
+  font-size: 29rpx;
+  color: var(--ink);
 }
 
 .form-textarea {
   width: 100%;
   min-height: 160rpx;
   font-size: 28rpx;
-  color: var(--text-main);
+  line-height: 1.65;
+  color: var(--ink);
 }
 
 .form-tip {
   font-size: 22rpx;
-  color: var(--text-weak);
+  color: var(--ink-4);
   margin-top: 8rpx;
 }
 
 .placeholder {
-  color: var(--text-weak);
+  color: var(--ink-5);
 }
 
-/* ---------- 选择器组 ---------- */
+/* 选择芯片 */
 .chip-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
+  gap: 14rpx;
 }
 
 .chip {
-  padding: 12rpx 28rpx;
+  padding: 13rpx 28rpx;
   border-radius: 999rpx;
-  background-color: var(--bg-gray);
-  color: var(--text-sub);
-  font-size: 26rpx;
+  background: var(--paper);
+  border: 1rpx solid var(--line-2);
+  color: var(--ink-3);
+  font-size: 25rpx;
+  transition: all 180ms var(--ease-out);
+}
+
+.chip:active {
+  transform: scale(0.97);
 }
 
 .chip-active {
-  background-color: var(--brand-primary-soft);
-  color: var(--brand-primary);
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
   font-weight: 600;
-  border: 2rpx solid var(--brand-primary);
 }
 
-/* ---------- 底部操作条 ---------- */
+/* ==========================================================================
+ * 八、底部操作条 / 免责声明 / 空态 / 信任条
+ * ====================================================================== */
 .footer-bar {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 20rpx 24rpx calc(20rpx + env(safe-area-inset-bottom));
-  background-color: #ffffff;
-  border-top: 2rpx solid var(--border-color);
+  padding: 20rpx 28rpx calc(20rpx + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(20rpx) saturate(160%);
+  backdrop-filter: blur(20rpx) saturate(160%);
+  border-top: 1rpx solid var(--line);
   display: flex;
-  gap: 20rpx;
+  gap: 18rpx;
   z-index: 20;
 }
 
-/* ---------- 免责声明 ---------- */
 .disclaimer {
   font-size: 22rpx;
-  color: var(--text-weak);
-  line-height: 1.7;
-  background-color: var(--bg-gray);
-  border-radius: var(--radius-md);
-  padding: 20rpx 24rpx;
+  line-height: 1.75;
+  color: var(--ink-3);
+  background: var(--slate);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  padding: 22rpx 24rpx;
 }
 
 .disclaimer-title {
-  font-size: 24rpx;
+  font-size: 23rpx;
   font-weight: 600;
-  color: var(--text-sub);
+  color: var(--ink-2);
   margin-bottom: 8rpx;
 }
 
-/* ---------- 空状态 / 加载 ---------- */
 .empty {
   padding: 120rpx 40rpx;
   text-align: center;
 }
 
 .empty-icon {
-  font-size: 96rpx;
+  font-size: 88rpx;
   line-height: 1;
+  opacity: 0.9;
 }
 
 .empty-text {
-  margin-top: 20rpx;
-  color: var(--text-weak);
+  margin-top: 22rpx;
+  color: var(--ink-4);
   font-size: 26rpx;
 }
 
 .loading {
   padding: 80rpx 0;
   text-align: center;
-  color: var(--text-weak);
+  color: var(--ink-4);
   font-size: 26rpx;
 }
 
-/* ---------- 通用小横条 ---------- */
 .trust-bar {
   display: flex;
-  align-items: center;
-  justify-content: space-around;
-  background-color: #ffffff;
-  border-radius: var(--radius-lg);
-  padding: 20rpx 12rpx;
-  box-shadow: var(--shadow-card);
+  align-items: stretch;
+  background: var(--paper);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 22rpx 10rpx;
+  box-shadow: var(--sh-1);
 }
 
 .trust-item {
   flex: 1;
   text-align: center;
+  position: relative;
+}
+
+.trust-item + .trust-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14%;
+  bottom: 14%;
+  width: 1rpx;
+  background: var(--line);
 }
 
 .trust-item-icon {
-  font-size: 36rpx;
+  font-size: 34rpx;
 }
 
 .trust-item-text {
   font-size: 22rpx;
-  color: var(--text-sub);
+  color: var(--ink-3);
   margin-top: 6rpx;
 }
+
+/* ==========================================================================
+ * 九、签名元素：虹彩条 / 光环 / 进度 / 数据条
+ * ====================================================================== */
+
+/* 棱镜渐变条（设计系统的"光谱"） */
+.prism-bar {
+  height: 18rpx;
+  border-radius: 999rpx;
+  background: var(--grad-prism);
+  box-shadow: 0 6rpx 18rpx -8rpx rgba(167, 139, 250, 0.55);
+}
+
+.prism-bar-thin {
+  height: 6rpx;
+  border-radius: 999rpx;
+  background: var(--grad-prism);
+  opacity: 0.9;
+}
+
+/* 折射光环（首页主视觉：3D 玻璃环的 CSS 表达） */
+.prism-ring {
+  position: relative;
+  width: 240rpx;
+  height: 240rpx;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 210deg,
+    #ffb27a,
+    #ffd166,
+    #6fe3e1,
+    #a78bfa,
+    #ff9ec4,
+    #ffb27a
+  );
+  box-shadow: 0 30rpx 70rpx -30rpx rgba(167, 139, 250, 0.7);
+}
+
+.prism-ring::after {
+  content: "";
+  position: absolute;
+  top: 46rpx; right: 46rpx; bottom: 46rpx; left: 46rpx;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: inset 0 -10rpx 30rpx rgba(10, 10, 12, 0.06);
+}
+
+.prism-ring--sm {
+  width: 120rpx;
+  height: 120rpx;
+  box-shadow: 0 12rpx 32rpx -16rpx rgba(167, 139, 250, 0.6);
+}
+
+.prism-ring--sm::after {
+  top: 24rpx; right: 24rpx; bottom: 24rpx; left: 24rpx;
+}
+
+/* 光环外的柔光晕 */
+.prism-halo {
+  position: absolute;
+  width: 420rpx;
+  height: 420rpx;
+  border-radius: 50%;
+  background: var(--grad-prism-soft);
+  filter: blur(30rpx);
+  pointer-events: none;
+}
+
+/* 进度条（虹彩填充） */
+.meter {
+  height: 12rpx;
+  border-radius: 999rpx;
+  background: var(--slate);
+  overflow: hidden;
+}
+
+.meter__fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: var(--grad-prism);
+  transition: width 520ms var(--ease-out);
+}
+
+/* 数据小柱（替代 canvas 的轻量图表，安全且清晰） */
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 10rpx;
+  height: 160rpx;
+}
+
+.bars__col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.bars__bar {
+  width: 100%;
+  border-radius: 8rpx 8rpx 4rpx 4rpx;
+  background: var(--grad-prism);
+  opacity: 0.85;
+  min-height: 6rpx;
+}
+
+.bars__bar--muted {
+  background: var(--line-2);
+  opacity: 1;
+}
+
+.bars__label {
+  font-size: 19rpx;
+  color: var(--ink-4);
+}
+
+/* 环形图（conic-gradient 实现，无 canvas 依赖） */
+.donut {
+  position: relative;
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 50%;
+  background: conic-gradient(
+    #a78bfa 0deg 130deg,
+    #6fe3e1 130deg 240deg,
+    #ffd166 240deg 330deg,
+    var(--line) 330deg 360deg
+  );
+}
+
+.donut::after {
+  content: "";
+  position: absolute;
+  top: 34rpx; right: 34rpx; bottom: 34rpx; left: 34rpx;
+  border-radius: 50%;
+  background: var(--paper);
+}
+
+.donut__center {
+  position: absolute;
+  top: 34rpx; right: 34rpx; bottom: 34rpx; left: 34rpx;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* 开关 */
+.switch {
+  position: relative;
+  width: 92rpx;
+  height: 52rpx;
+  border-radius: 999rpx;
+  background: var(--line-2);
+  transition: background-color 220ms var(--ease-out);
+}
+
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 4rpx;
+  left: 4rpx;
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: 0 2rpx 8rpx rgba(10, 10, 12, 0.18);
+  transition: transform 260ms var(--ease-spring);
+}
+
+.switch--on {
+  background: var(--ink);
+}
+
+.switch--on::after {
+  transform: translateX(40rpx);
+}
+
+/* ==========================================================================
+ * 十、动效（入场 / 按压反馈）
+ * ====================================================================== */
+.fade-up {
+  animation: fade-up 420ms var(--ease-out) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16rpx);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.pop {
+  animation: pop 320ms var(--ease-spring) both;
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 交错的入场延迟（列表用） */
+.d1 { animation-delay: 40ms; }
+.d2 { animation-delay: 80ms; }
+.d3 { animation-delay: 120ms; }
+.d4 { animation-delay: 160ms; }
+.d5 { animation-delay: 200ms; }
+.d6 { animation-delay: 240ms; }

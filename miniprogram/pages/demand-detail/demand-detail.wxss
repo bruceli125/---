@@ -83,7 +83,7 @@
 .risk-high {
   margin-top: 14rpx;
   background-color: rgba(240, 68, 56, 0.12);
-  color: #b42318;
+  color: #a21b12;
   font-size: 24rpx;
   font-weight: 600;
   border-radius: 12rpx;
@@ -138,7 +138,7 @@
 .matched-name {
   font-size: 28rpx;
   font-weight: 600;
-  color: #05603a;
+  color: #0a7a52;
   margin-bottom: 6rpx;
 }
 

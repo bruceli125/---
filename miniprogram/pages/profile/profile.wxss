@@ -5,7 +5,7 @@
 
 /* ---------- 用户卡 ---------- */
 .user-card {
-  background: linear-gradient(150deg, #F4F8FF, #ffffff);
+  background: linear-gradient(150deg, #fafafc, #ffffff);
   border: 2rpx solid var(--brand-primary-soft);
 }
 
@@ -21,7 +21,7 @@
   color: #ffffff;
   font-size: 42rpx;
   font-weight: 600;
-  background: linear-gradient(135deg, #4F86F7, #1F4FBF);
+  background: linear-gradient(135deg, #6d4aff, #0a0a0c);
 }
 
 .user-name {

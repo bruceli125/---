@@ -45,19 +45,19 @@
 }
 
 .step-done {
-  background: linear-gradient(135deg, #22C77A, var(--trust-green));
+  background: linear-gradient(135deg, #12b981, var(--trust-green));
 }
 
 .step-pending {
-  background: linear-gradient(135deg, #FFB020, var(--warn-orange));
+  background: linear-gradient(135deg, #b26a00, var(--warn-orange));
 }
 
 .step-rejected {
-  background: linear-gradient(135deg, #F97066, var(--danger-red));
+  background: linear-gradient(135deg, #f07a70, var(--danger-red));
 }
 
 .step-todo {
-  background-color: #D0D5DD;
+  background-color: #d8dbe4;
 }
 
 .progress-label {
@@ -74,7 +74,7 @@
 
 /* ---------- 认证完成 ---------- */
 .celebrate {
-  background: linear-gradient(160deg, #F2FBF6, #ffffff);
+  background: linear-gradient(160deg, #eefaf4, #ffffff);
   border: 2rpx solid var(--trust-green-soft);
 }
 

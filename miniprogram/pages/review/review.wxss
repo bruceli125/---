@@ -23,7 +23,7 @@
 
 /* 盲评说明 */
 .blind-card {
-  background: linear-gradient(180deg, #F7FAFF, #FFFFFF);
+  background: linear-gradient(180deg, #f7f8fb, #FFFFFF);
   border: 2rpx solid var(--brand-primary-soft);
 }
 
@@ -53,7 +53,7 @@
 /* 对方已评价提示 */
 .locked-tip-card {
   background-color: var(--warn-orange-soft);
-  border: 2rpx solid #FDE4C0;
+  border: 2rpx solid #ffe3bd;
 }
 
 .locked-row {
@@ -75,12 +75,12 @@
 .locked-row-title {
   font-size: 28rpx;
   font-weight: 700;
-  color: #B54708;
+  color: #8a4b00;
 }
 
 .locked-row-text {
   font-size: 23rpx;
-  color: #B54708;
+  color: #8a4b00;
   margin-top: 6rpx;
   opacity: 0.85;
 }
@@ -104,13 +104,13 @@
 .star {
   font-size: 64rpx;
   line-height: 1.1;
-  color: #D0D5DD;
+  color: #d8dbe4;
   margin-right: 12rpx;
   padding: 4rpx 6rpx;
 }
 
 .star-on {
-  color: #F5A524;
+  color: #b26a00;
 }
 
 .rating-text {
@@ -171,7 +171,7 @@
 
 .rv-stars {
   font-size: 30rpx;
-  color: #F5A524;
+  color: #b26a00;
   letter-spacing: 2rpx;
 }
 
@@ -254,8 +254,8 @@
 
 /* 信用分 */
 .credit-card {
-  background: linear-gradient(180deg, #F2FBF6, #FFFFFF);
-  border: 2rpx solid #C7EDD9;
+  background: linear-gradient(180deg, #eefaf4, #FFFFFF);
+  border: 2rpx solid #cdeee0;
 }
 
 .credit-head {

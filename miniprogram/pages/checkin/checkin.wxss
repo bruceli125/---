@@ -31,7 +31,7 @@
 
 /* 说明卡 */
 .notice-card {
-  background: linear-gradient(180deg, #F7FAFF, #FFFFFF);
+  background: linear-gradient(180deg, #f7f8fb, #FFFFFF);
 }
 
 .evidence {
@@ -76,7 +76,7 @@
 
 /* 打卡入口 */
 .action-card {
-  background: linear-gradient(180deg, #F4F8FF, #FFFFFF);
+  background: linear-gradient(180deg, #fafafc, #FFFFFF);
   border: 2rpx solid var(--brand-primary-soft);
 }
 

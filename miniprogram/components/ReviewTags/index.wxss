@@ -13,8 +13,8 @@
   margin: 0 16rpx 16rpx 0;
   border-radius: 999rpx;
   font-size: 25rpx;
-  background-color: var(--bg-gray, #F2F4F7);
-  color: var(--text-sub, #475467);
+  background-color: var(--bg-gray, #f2f4f8);
+  color: var(--text-sub, #5c5f6b);
   border: 2rpx solid transparent;
   transition: all 0.15s ease;
 }
@@ -31,17 +31,17 @@
 
 /* 选中态：绿色（老师侧） */
 .rt-active.rt-green {
-  background-color: var(--trust-green-soft, #E7F8F0);
-  color: var(--trust-green, #17B26A);
-  border-color: var(--trust-green, #17B26A);
+  background-color: var(--trust-green-soft, #e6f7f1);
+  color: var(--trust-green, #0e9f6e);
+  border-color: var(--trust-green, #0e9f6e);
   font-weight: 600;
 }
 
 /* 选中态：蓝色（家长侧） */
 .rt-active.rt-blue {
-  background-color: var(--brand-primary-soft, #EAF1FF);
-  color: var(--brand-primary, #1F4FBF);
-  border-color: var(--brand-primary, #1F4FBF);
+  background-color: var(--brand-primary-soft, #f1edff);
+  color: var(--brand-primary, #0a0a0c);
+  border-color: var(--brand-primary, #0a0a0c);
   font-weight: 600;
 }
 
@@ -56,6 +56,6 @@
 
 .rt-empty {
   font-size: 23rpx;
-  color: var(--text-weak, #98A2B3);
+  color: var(--text-weak, #8e929e);
   padding: 8rpx 0;
 }

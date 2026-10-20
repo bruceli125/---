@@ -6,7 +6,7 @@
 
 /* ---------- 家长身份提示 ---------- */
 .role-hint {
-  background: linear-gradient(160deg, #fff8ec, #ffffff);
+  background: linear-gradient(160deg, #fffaf1, #ffffff);
   border: 2rpx solid var(--warn-orange-soft);
 }
 
@@ -18,7 +18,7 @@
 
 /* ---------- 我的状态卡 ---------- */
 .my-card {
-  background: linear-gradient(150deg, #f4f8ff, #ffffff);
+  background: linear-gradient(150deg, #fafafc, #ffffff);
   border: 2rpx solid var(--brand-primary-soft);
 }
 
@@ -34,7 +34,7 @@
   color: #ffffff;
   font-size: 40rpx;
   font-weight: 600;
-  background: linear-gradient(135deg, #4f86f7, #1f4fbf);
+  background: linear-gradient(135deg, #6d4aff, #0a0a0c);
 }
 
 .my-name {

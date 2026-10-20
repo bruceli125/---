@@ -5,7 +5,7 @@
 
 /* ---------- 头部 ---------- */
 .head-card {
-  background: linear-gradient(150deg, #F4F8FF, #ffffff);
+  background: linear-gradient(150deg, #fafafc, #ffffff);
   border: 2rpx solid var(--brand-primary-soft);
 }
 
@@ -21,7 +21,7 @@
   color: #ffffff;
   font-size: 54rpx;
   font-weight: 600;
-  background: linear-gradient(135deg, #4F86F7, #1F4FBF);
+  background: linear-gradient(135deg, #6d4aff, #0a0a0c);
 }
 
 .price-row {
@@ -60,7 +60,7 @@
 .credit-bar-inner {
   height: 100%;
   border-radius: 999rpx;
-  background: linear-gradient(90deg, #22C77A, var(--trust-green));
+  background: linear-gradient(90deg, #12b981, var(--trust-green));
 }
 
 /* ---------- 认证等级提示 ---------- */

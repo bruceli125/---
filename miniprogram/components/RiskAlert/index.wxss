@@ -61,14 +61,14 @@
   margin-top: 16rpx;
   font-size: 34rpx;
   font-weight: 700;
-  color: var(--text-main, #1d2939);
+  color: var(--text-main, #0a0a0c);
   line-height: 1.4;
 }
 
 .ra-desc {
   margin-top: 10rpx;
   font-size: 24rpx;
-  color: var(--text-sub, #475467);
+  color: var(--text-sub, #5c5f6b);
   line-height: 1.6;
 }
 
@@ -94,7 +94,7 @@
   justify-content: space-between;
   font-size: 26rpx;
   font-weight: 600;
-  color: var(--text-main, #1d2939);
+  color: var(--text-main, #0a0a0c);
   margin-bottom: 14rpx;
 }
 
@@ -105,21 +105,21 @@
 .ra-sec-count {
   font-size: 22rpx;
   font-weight: 400;
-  color: var(--text-weak, #98a2b3);
+  color: var(--text-weak, #8e929e);
 }
 
 .ra-empty {
   font-size: 24rpx;
-  color: var(--text-weak, #98a2b3);
-  background-color: var(--bg-gray, #f2f4f7);
+  color: var(--text-weak, #8e929e);
+  background-color: var(--bg-gray, #f2f4f8);
   border-radius: 12rpx;
   padding: 18rpx 20rpx;
   line-height: 1.6;
 }
 
 .ra-hit {
-  background-color: #fffbf5;
-  border: 2rpx solid #ffe4bd;
+  background-color: #fffaf1;
+  border: 2rpx solid #ffe3bd;
   border-radius: 14rpx;
   padding: 18rpx 20rpx;
   margin-bottom: 14rpx;
@@ -141,12 +141,12 @@
 
 .ra-hit-cat {
   font-size: 22rpx;
-  color: var(--text-weak, #98a2b3);
+  color: var(--text-weak, #8e929e);
 }
 
 .ra-hit-tip {
   font-size: 24rpx;
-  color: var(--text-sub, #475467);
+  color: var(--text-sub, #5c5f6b);
   line-height: 1.6;
 }
 
@@ -160,7 +160,7 @@
   width: 12rpx;
   height: 12rpx;
   border-radius: 50%;
-  background-color: var(--warn-orange, #f79009);
+  background-color: var(--warn-orange, #b26a00);
   margin: 12rpx 14rpx 0 0;
   flex-shrink: 0;
 }
@@ -168,21 +168,21 @@
 .ra-tip-text {
   flex: 1;
   font-size: 24rpx;
-  color: var(--text-sub, #475467);
+  color: var(--text-sub, #5c5f6b);
   line-height: 1.65;
 }
 
 .ra-more {
   font-size: 22rpx;
-  color: var(--text-weak, #98a2b3);
+  color: var(--text-weak, #8e929e);
   padding: 6rpx 0 0 26rpx;
 }
 
 .ra-safe-tip {
   margin: 24rpx 0 28rpx;
   font-size: 22rpx;
-  color: #b54708;
-  background-color: var(--danger-red-soft, #feeceb);
+  color: #8a4b00;
+  background-color: var(--danger-red-soft, #fdecea);
   border-radius: 12rpx;
   padding: 16rpx 20rpx;
   line-height: 1.6;
@@ -191,7 +191,7 @@
 .ra-footer {
   display: flex;
   padding: 20rpx 32rpx calc(24rpx + env(safe-area-inset-bottom));
-  border-top: 2rpx solid var(--border-color, #eaecf0);
+  border-top: 2rpx solid var(--border-color, #e6e8ef);
   gap: 20rpx;
   background-color: #ffffff;
 }
@@ -208,8 +208,8 @@
 }
 
 .ra-btn-cancel {
-  background-color: var(--bg-gray, #f2f4f7);
-  color: var(--text-sub, #475467);
+  background-color: var(--bg-gray, #f2f4f8);
+  color: var(--text-sub, #5c5f6b);
 }
 
 .ra-btn-confirm {

@@ -543,3 +543,56 @@ node tools/verify-flows.js       # 业务链路验收（49 项：双减/接单�
 - 版本：`0.2.0`（二期：双减合规 + 履约打卡 + 双向盲评）
 - 数据源：默认本地 mock + Storage（`APP_INFO.useCloud = false`）
 - 建议基础库：`3.5.5`（`project.config.json` 已配置），云开发需基础库 `2.2.3+`，全局自定义组件需 `2.11.1+`
+
+---
+
+## 十六、UI 主题：LIGHTCORE PRISM（浅色 · 虹彩）
+
+小程序整体视觉已升级为「黑白灰打底 + 虹彩点缀」的浅色设计系统，规则与令牌集中在 `miniprogram/app.wxss`。
+
+### 1. 三条硬规则（新增页面必须遵守）
+
+1. **颜色只用令牌**，禁止写死 hex；语义色（成功/警示/危险）仅用于状态。
+2. **彩色只出现在"光"上**：渐变条、光环、进度、图表、徽章描边——不做大面积色块。
+3. **层级靠边框 + 阴影 + 留白**表达，不靠加深背景色。
+
+### 2. 色板
+
+| 用途 | 令牌 | 值 |
+| --- | --- | --- |
+| 卡片 | `--paper` | `#FFFFFF` |
+| 页面底 | `--snow` | `#FAFAFC` |
+| 分区 | `--slate` | `#F2F4F8` |
+| 描边 | `--line` | `#E6E8EF` |
+| 文字 | `--ink` | `#0A0A0C` |
+| 虹彩（唯一彩色） | `--spec-o/y/c/v/p` | `#FFB27A` `#FFD166` `#6FE3E1` `#A78BFA` `#FF9EC4` |
+
+### 3. 签名元素
+
+- `.prism-bar` 棱镜渐变条（5 段光谱）
+- `.prism-ring` 折射光环（conic-gradient + 白色内圆，首页主视觉）
+- `.btn-prism` 虹彩描边按钮（双背景 border-box 实现，兼容低版本 WebView）
+- `.meter` 虹彩进度条 / `.bars` 渐变数据柱 / `.donut` 环形图 / `.switch` 开关
+
+### 4. 设计系统说明页
+
+首页 → 「LIGHTCORE PRISM 设计系统」入口，或直接访问 `pages/ui-kit/ui-kit`：
+色彩 / 棱镜渐变 / 排版 / 12 图标 / 按钮六态 / 导航 / 组件 / 网页与手机模型。
+
+### 5. 预览与验收
+
+小程序 UI 无法在 CI 里直接截图，因此提供等价预览工具：
+
+```bash
+cd miniprogram
+node tools/build-icons.js     # 生成 12 个 base64 SVG 图标
+node tools/make-preview.js    # 把 WXSS 转成浏览器可渲染的等价 CSS + 预览页
+# 打开 miniprogram/.preview/mp-preview.html
+```
+
+| 首页主视觉 | 设计系统页 |
+| --- | --- |
+| ![首页](docs/ui/home-hero.png) | ![设计系统](docs/ui/design-system.png) |
+
+> 预览工具会把 `rpx` 按 750→375 折算成 `px`、把 `page` 选择器映射为包裹层，
+> 因此布局与颜色与真机高度一致，可在提交前发现塌陷/重叠/挤压。
