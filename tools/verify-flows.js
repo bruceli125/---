@@ -236,6 +236,48 @@ function section(title) {
     text.length + ' 字'
   );
 
+  /* ================= G. 接单 / 取消接单 ================= */
+  section('G. 接单与取消接单');
+  const applyTarget = 'demo_demand_003'; // 招募/匹配中，未成单
+  const beforeApply = await api.getDemandDetail(applyTarget);
+  const beforeCount = beforeApply.code === 0 ? Number(beforeApply.data.applyCount || 0) : 0;
+
+  const applied = await api.applyDemand({ demandId: applyTarget, tutorId: 'tutor_001', tutorName: '林嘉怡' });
+  check('投递接单成功', applied.code === 0, applied.message);
+  const afterApply = await api.getDemandDetail(applyTarget);
+  check(
+    '投递后申请数 +1',
+    afterApply.code === 0 && Number(afterApply.data.applyCount || 0) === beforeCount + 1,
+    beforeCount + ' → ' + (afterApply.code === 0 ? afterApply.data.applyCount : '?')
+  );
+  const myApps = await api.getMyApplications('tutor_001');
+  check(
+    '我的投递里能查到',
+    myApps.code === 0 && myApps.data.some(function (a) { return a.demandId === applyTarget; }),
+    '共 ' + (myApps.code === 0 ? myApps.data.length : 0) + ' 条'
+  );
+
+  const cancelled = await api.cancelApplication({ demandId: applyTarget, tutorId: 'tutor_001' });
+  check('取消接单成功', cancelled.code === 0, cancelled.message);
+  const afterCancel = await api.getDemandDetail(applyTarget);
+  check(
+    '取消后申请数回退',
+    afterCancel.code === 0 && Number(afterCancel.data.applyCount || 0) === beforeCount,
+    (afterApply.code === 0 ? afterApply.data.applyCount : '?') + ' → ' + (afterCancel.code === 0 ? afterCancel.data.applyCount : '?')
+  );
+  const myApps2 = await api.getMyApplications('tutor_001');
+  check(
+    '我的投递里已移除',
+    myApps2.code === 0 && !myApps2.data.some(function (a) { return a.demandId === applyTarget; }),
+    '剩 ' + (myApps2.code === 0 ? myApps2.data.length : 0) + ' 条'
+  );
+  const cancelAgain = await api.cancelApplication({ demandId: applyTarget, tutorId: 'tutor_001' });
+  check('重复取消被拒（无记录可撤）', cancelAgain.code !== 0, cancelAgain.message);
+
+  // 已成单的订单不允许撤回
+  const matchedCancel = await api.cancelApplication({ demandId: 'demo_demand_005', tutorId: 'tutor_001' });
+  check('已成单订单禁止撤回（code 3）', matchedCancel.code === 3, matchedCancel.message);
+
   /* ================= 汇总 ================= */
   console.log('');
   const total = pass + failures.length;

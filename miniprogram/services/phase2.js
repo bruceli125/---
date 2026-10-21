@@ -640,14 +640,62 @@ function getTutorPool(query) {
   );
 }
 
+/**
+ * 取消接单（撤回投递）
+ * 说明：仅在订单尚未成单、且投递记录仍是 applied 时允许撤回；
+ *      撤回后需求侧 applyCount 同步减一，家长端看不到该投递。
+ * @param {{demandId:string, tutorId:string}} payload
+ */
+function cancelApplication(payload) {
+  const p = payload || {};
+  if (!p.demandId) return Promise.resolve(fail('缺少 demandId'));
+  if (!p.tutorId) return Promise.resolve(fail('缺少 tutorId'));
+
+  const demands = loadDemands();
+  const demand = findById(demands, p.demandId);
+  if (!demand) return Promise.resolve(fail('需求不存在'));
+
+  // 已成单（且是自己）不允许撤回：避免履约中丢掉订单关系
+  if (demand.status === DEMAND_STATUS.MATCHED && demand.matchedTutorId === p.tutorId) {
+    return Promise.resolve({
+      code: 3,
+      data: { demand: demand },
+      message: '该订单已成单，如需取消请联系家长或平台运营'
+    });
+  }
+
+  const apps = readStore(STORAGE_KEYS.APPLICATIONS, []);
+  const target = apps.filter(function (a) {
+    return a.demandId === p.demandId && a.tutorId === p.tutorId && a.status !== APPLY_STATUS.REJECTED;
+  })[0];
+  if (!target) return Promise.resolve(fail('没有找到可撤回的接单记录'));
+
+  const rest = apps.filter(function (a) {
+    return a.id !== target.id;
+  });
+  writeStore(STORAGE_KEYS.APPLICATIONS, rest);
+
+  // 需求侧申请数减一（不低于 0）
+  for (let i = 0; i < demands.length; i++) {
+    if (demands[i].id === p.demandId) {
+      demands[i].applyCount = Math.max(0, Number(demands[i].applyCount || 0) - 1);
+      break;
+    }
+  }
+  writeStore(STORAGE_KEYS.DEMANDS, demands);
+
+  return Promise.resolve(ok({ removed: target, demandId: p.demandId }, '已取消接单'));
+}
+
 module.exports = {
   /* 信用分 */
   getCredit: getCredit,
   calcCreditDelta: calcCreditDelta,
   clampCredit: clampCredit,
 
-  /* 成单 */
+  /* 成单 / 接单 */
   acceptApplication: acceptApplication,
+  cancelApplication: cancelApplication,
 
   /* 履约打卡 */
   canCheckin: canCheckin,
@@ -680,6 +728,7 @@ if (USE_CLOUD) {
   const GUARDED = [
     'getCredit',
     'acceptApplication',
+    'cancelApplication',
     'startCheckin',
     'finishCheckin',
     'confirmCheckin',

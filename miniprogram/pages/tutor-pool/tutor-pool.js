@@ -456,8 +456,55 @@ Page({
       });
   },
 
-  /* ================= 角色与认证 ================= */
+  /**
+   * 取消接单（撤回投递）
+   * 二次确认后调用 api.cancelApplication：撤回投递、需求申请数减一、家长端不可见。
+   * 已成单的订单不允许撤回（避免履约中丢掉订单关系），此时接口返回 code 3。
+   */
+  onCancelApply(e) {
+    const self = this;
+    const detail = e.detail || {};
+    const demand = detail.demand || {};
+    const demandId = detail.demandId || demand.id;
+    if (!demandId) return;
+    if (!this.data.isTutor) {
+      toast('请先切换到师范生身份');
+      return;
+    }
 
+    wx.showModal({
+      title: '取消接单',
+      content: '取消后家长将看不到你的投递，之后仍可重新投递。确认取消吗？',
+      confirmText: '取消接单',
+      confirmColor: '#D92D20',
+      success(res) {
+        if (!res.confirm) return;
+        api
+          .cancelApplication({
+            demandId: demandId,
+            tutorId: self.data.tutorId || self.resolveTutorId()
+          })
+          .then(function (r) {
+            if (!r || r.code !== 0) {
+              toast((r && r.message) || '取消失败，请重试');
+              return;
+            }
+            const list = self.data.list.slice();
+            for (let i = 0; i < list.length; i++) {
+              if (list[i].demandId === demandId) {
+                list[i].applied = false;
+                list[i].orderHint = buildOrderHint(list[i].demand, false, false);
+              }
+            }
+            self.setData({ list: list });
+            toast('已取消接单');
+            self.loadAll(true);
+          });
+      }
+    });
+  },
+
+  /* ================= 角色与认证 ================= */
   onSwitchRole() {
     const app = getApp();
     app.setRole(C.ROLES.TUTOR);

@@ -1,20 +1,24 @@
 /* HoldButton —— 长按环形确认按钮
-   状态：常态 → 按住中 → 已完成 / 已取消复位；禁用态半透明不可触发 */
+   防抖动三要素：① 宽度固定 ② 无 scale 变换 ③ 环无 transition（渐变色不可插值） */
 .hb {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 12rpx;
+  /* 固定宽度：文案切换不再撑动整行，这是"屏幕不抖"的第一要素 */
+  width: 208rpx;
   height: 72rpx;
-  padding: 0 28rpx 0 12rpx;
+  padding: 0 18rpx 0 8rpx;
+  box-sizing: border-box;
+  flex: 0 0 auto;
   border-radius: 999rpx;
   border: 1rpx solid var(--line-2, #d8dbe4);
   background: #ffffff;
-  transition: border-color 200ms ease, background-color 200ms ease, transform 160ms ease;
+  transition: border-color 180ms ease, background-color 180ms ease;
 }
 
 .hb--holding {
   border-color: var(--ink, #0a0a0c);
-  transform: scale(0.985);
 }
 
 .hb--done {
@@ -29,16 +33,15 @@
 /* 环形进度：外圈 conic-gradient 由 JS 写入，内圈白色留出"环" */
 .hb__ringwrap {
   position: relative;
-  width: 48rpx;
-  height: 48rpx;
-  flex-shrink: 0;
+  width: 46rpx;
+  height: 46rpx;
+  flex: 0 0 auto;
 }
 
 .hb__ring {
-  width: 48rpx;
-  height: 48rpx;
+  width: 46rpx;
+  height: 46rpx;
   border-radius: 50%;
-  transition: background 60ms linear;
 }
 
 .hb__hole {
@@ -66,7 +69,7 @@
 }
 
 .hb__text {
-  font-size: 26rpx;
+  font-size: 25rpx;
   font-weight: 600;
   letter-spacing: 0.01em;
   color: var(--ink, #0a0a0c);

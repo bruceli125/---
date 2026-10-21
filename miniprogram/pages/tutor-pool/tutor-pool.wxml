@@ -166,6 +166,7 @@
       apply-text="申请接单"
       bind:tap="onDemandTap"
       bind:apply="onApply"
+      bind:cancel="onCancelApply"
     />
   </block>
 

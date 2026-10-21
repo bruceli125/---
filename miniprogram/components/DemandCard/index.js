@@ -216,6 +216,15 @@ Component({
         demandId: this.data.demand && this.data.demand.id,
         demand: this.data.demand
       });
+    },
+
+    /** 取消接单：仅已投递状态下可见，具体确认与撤回由页面处理 */
+    onCancel() {
+      if (!this.data.applied) return;
+      this.triggerEvent('cancel', {
+        demandId: this.data.demand && this.data.demand.id,
+        demand: this.data.demand
+      });
     }
   }
 });

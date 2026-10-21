@@ -1,6 +1,6 @@
 <!-- HoldButton：长按环形确认。按住增长，松手完成；中途松手/滑动即取消复位 -->
 <view
-  class="hb {{holding ? 'hb--holding' : ''}} {{isDone ? 'hb--done' : ''}} {{disabled ? 'hb--off' : ''}}"
+  class="hb {{holding ? 'hb--holding' : ''}} {{isDone ? 'hb--done' : ''}} {{off ? 'hb--off' : ''}}"
   bindtouchstart="onStart"
   bindtouchmove="onMove"
   bindtouchend="onEnd"

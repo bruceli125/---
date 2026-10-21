@@ -276,6 +276,45 @@ Page({
       });
   },
 
+  /** 取消接单（撤回投递） */
+  onTutorCancel(e) {
+    if (!this.data.showApply) return;
+    const detail = e.detail || {};
+    const tutor = detail.tutor || {};
+    const tutorId = detail.tutorId || tutor.id;
+    if (!tutorId) return;
+    const list = this.data.list.slice();
+    let index = -1;
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].tutorId === tutorId) {
+        index = i;
+        break;
+      }
+    }
+    if (index < 0) return;
+
+    wx.showModal({
+      title: '取消接单',
+      content: '取消后家长将看不到你的投递，之后仍可重新投递。确认取消吗？',
+      confirmText: '取消接单',
+      confirmColor: '#D92D20',
+      success: (res) => {
+        if (!res.confirm) return;
+        api
+          .cancelApplication({ demandId: this.data.demandId, tutorId: tutorId })
+          .then((r) => {
+            if (!r || r.code !== 0) {
+              toast((r && r.message) || '取消失败，请重试');
+              return;
+            }
+            list[index].applied = false;
+            this.setData({ list: list });
+            toast('已取消接单');
+          });
+      }
+    });
+  },
+
   onGoDemandList() {
     wx.navigateTo({ url: '/pages/demand-list/demand-list' });
   },

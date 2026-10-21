@@ -84,6 +84,7 @@
         applied="{{item.applied}}"
         bindtap="onTutorTap"
         bindapply="onTutorApply"
+        bindcancel="onTutorCancel"
       />
 
       <view wx:if="{{list.length}}" class="tip-line">点击卡片可查看师范生详情、认证材料与信用分</view>

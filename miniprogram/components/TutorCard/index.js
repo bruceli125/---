@@ -140,6 +140,12 @@ Component({
       this.triggerEvent('apply', { tutorId: this.data.tutor && this.data.tutor.id, tutor: this.data.tutor });
     },
 
+    /** 取消接单：仅已投递状态下可见，具体确认与撤回由页面处理 */
+    onCancel() {
+      if (!this.data.applied) return;
+      this.triggerEvent('cancel', { tutorId: this.data.tutor && this.data.tutor.id, tutor: this.data.tutor });
+    },
+
     /** 图片头像加载失败时降级为文字头像 */
     onAvatarError() {
       this.setData({ avatarError: true, useImage: false });

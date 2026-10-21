@@ -346,3 +346,20 @@
   background: #d8dbe4;
   box-shadow: none;
 }
+
+/* ---------- 接单操作区（长按按钮 + 取消接单） ---------- */
+.dc-actions {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  flex: 0 0 auto;
+}
+
+.dc-cancel {
+  display: flex;
+  align-items: center;
+  height: 72rpx;
+  padding: 0 8rpx;
+  font-size: 22rpx;
+  color: var(--danger-red, #d92d20);
+}
