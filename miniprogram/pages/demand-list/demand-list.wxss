@@ -172,16 +172,34 @@
   box-shadow: 0 2rpx 8rpx rgba(10, 10, 12, 0.04), 0 12rpx 28rpx -18rpx rgba(10, 10, 12, 0.12);
 }
 
-/* ---------------- 右上角角标 ---------------- */
-.dc__badge {
+/* ---------------- 右上角角标组 ---------------- */
+.dc__badges {
   position: absolute;
   top: 0;
   right: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8rpx;
+}
+
+/* 订单状态角标（紫渐变 / 纯黑），贴住右上圆角 */
+.dc__badge {
   padding: 8rpx 22rpx;
   font-size: 21rpx;
   font-weight: 600;
   color: #fff;
   border-radius: 0 22rpx 0 18rpx;
+}
+
+/* 已报名：绿色小标签，与状态角标并排 */
+.dc__applied {
+  margin-top: 10rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 999rpx;
+  background: #e6f7f1;
+  color: #0e9f6e;
+  font-size: 19rpx;
+  font-weight: 600;
 }
 
 .badge--violet {
@@ -332,14 +350,22 @@
 }
 
 /* ---------------- 底部操作 ---------------- */
+/* 底部：纯展示区。去掉按钮后加大下内边距，避免卡片显得空旷 */
 .dc__foot {
   margin-top: 22rpx;
-  padding: 18rpx 0 20rpx;
+  padding: 20rpx 0 26rpx;
   border-top: 1rpx solid #f0f1f5;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16rpx;
+}
+
+/* 右下角微弱的「查看详情」提示 */
+.dc__more {
+  flex: 0 0 auto;
+  font-size: 21rpx;
+  color: #b0b4be;
 }
 
 .dc__foot-left {

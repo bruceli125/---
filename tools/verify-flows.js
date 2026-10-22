@@ -572,7 +572,15 @@ function section(title) {
   check('需求详情有「取消报名」按钮', detailWxml2.indexOf('onCancelSignup') > -1 && detailWxml2.indexOf('取消报名') > -1);
 
   const listWxml2 = fsJ.readFileSync(pathJ.join(MPJ, 'pages/demand-list/demand-list.wxml'), 'utf8');
-  check('接单池使用长按报名组件', listWxml2.indexOf('hold-button') > -1);
+  // 本轮起报名入口统一收拢到需求详情页：列表页只展示 + 跳转，不再有报名按钮
+  check(
+    '接单池已移除报名按钮（入口收拢到详情页）',
+    listWxml2.indexOf('hold-button') === -1 && listWxml2.indexOf('取消报名') === -1
+  );
+  check('接单池整卡可跳转详情', listWxml2.indexOf('bindtap="onOpenDemand"') > -1);
+  check('接单池未报名卡片显示已报名标签位', listWxml2.indexOf('dc__applied') > -1);
+  const detailWxml3 = fsJ.readFileSync(pathJ.join(MPJ, 'pages/demand-detail/demand-detail.wxml'), 'utf8');
+  check('需求详情页保留唯一报名入口', detailWxml3.indexOf('onHoldStart') > -1);
 
   const badgeJs = fsJ.readFileSync(pathJ.join(MPJ, 'app.js'), 'utf8');
   check('TabBar 角标接口已实现（index: 2）', badgeJs.indexOf('setTabBarBadge') > -1 && badgeJs.indexOf('index: 2') > -1);

@@ -83,7 +83,13 @@ Page({
       return;
     }
 
-    // 学生：先用缓存校正，再拉列表（避免回到列表还是旧状态）
+    /*
+     * 【已报名标签的来源】
+     * 从详情页报名/取消后返回本页会触发 onShow：
+     *   1) syncFromServer() 以服务端 applications 校正 appliedDemands 缓存
+     *   2) loadPool() 重新拉列表，buildCard 里 applied: applied.has(id) 决定是否显示「已报名」
+     * 所以标签状态永远与详情页一致，不依赖页面间传参。
+     */
     const self = this;
     applied.syncFromServer(this.resolveTutorId()).then(function () {
       self.loadPool();
@@ -189,71 +195,11 @@ Page({
     };
   },
 
-  /** 长按报名（2 秒，HoldButton 内部计时） */
-  onSignup(e) {
-    const self = this;
-    const demandId = (e.detail && e.detail.demandId) || e.currentTarget.dataset.demandid;
-    if (!demandId) return;
+  /*
+   * 报名 / 取消报名 / 去沟通 三个方法已删除：
+   * 按本次要求，所有报名操作统一收拢到「需求详情页」，列表页只做展示与跳转。
+   */
 
-    api
-      .signupByHold({ demandId: demandId, tutorId: this.resolveTutorId(), tutorName: '' })
-      .then(function (res) {
-        if (!res || (res.code !== 0 && res.code !== 3)) {
-          wx.showToast({ title: (res && res.message) || '报名失败', icon: 'none' });
-          return;
-        }
-        if (res.code === 3) {
-          wx.showToast({ title: res.message, icon: 'none' });
-          return;
-        }
-
-        // 关键：先写全局缓存，再更新本页（保证进详情页一定是「已报名」）
-        applied.add(demandId);
-        self.patchItem(demandId, { applied: true });
-
-        wx.showToast({ title: '报名成功，进入沟通', icon: 'none' });
-        const app = getApp();
-        if (app && app.refreshChatBadge) app.refreshChatBadge();
-
-        wx.navigateTo({
-          url:
-            '/pages/chat-room/chat-room?demandId=' +
-            demandId +
-            '&tutorId=' +
-            self.resolveTutorId()
-        });
-      });
-  },
-
-  /** 取消接单：二次确认 → 删投递 → 写缓存 → 立即复位卡片 */
-  onCancelSignup(e) {
-    const self = this;
-    const demandId = e.currentTarget.dataset.demandid;
-    if (!demandId) return;
-
-    wx.showModal({
-      title: '取消报名',
-      content: '确定要取消报名吗？取消后可重新报名。',
-      confirmText: '取消报名',
-      confirmColor: '#D92D20',
-      success(res) {
-        if (!res.confirm) return;
-        api.cancelApplication({ demandId: demandId, tutorId: self.resolveTutorId() }).then(
-          function (r) {
-            if (!r || r.code !== 0) {
-              wx.showToast({ title: (r && r.message) || '取消失败', icon: 'none' });
-              return;
-            }
-            applied.remove(demandId);
-            self.patchItem(demandId, { applied: false });
-            wx.showToast({ title: '已取消接单', icon: 'none' });
-            const app = getApp();
-            if (app && app.refreshChatBadge) app.refreshChatBadge();
-          }
-        );
-      }
-    });
-  },
 
   /** 局部更新一条卡片，避免整表重排 */
   patchItem(demandId, patch) {
@@ -376,15 +322,6 @@ Page({
     });
 
     this.setData({ displayDemands: list });
-  },
-
-  /** 去沟通：已报名的单子直接进对应聊天室 */
-  goChat(e) {
-    const demandId = e.currentTarget.dataset.demandid;
-    if (!demandId) return;
-    wx.navigateTo({
-      url: '/pages/chat-room/chat-room?demandId=' + demandId + '&tutorId=' + this.resolveTutorId()
-    });
   },
 
   onOpenDemand(e) {

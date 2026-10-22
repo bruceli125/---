@@ -17,7 +17,7 @@
     <block wx:if="{{isTutor}}">
       <view class="head">
         <view class="head__title">接单池</view>
-        <view class="head__sub">共 {{displayDemands.length}} 条 · 长按 2 秒报名</view>
+        <view class="head__sub">共 {{displayDemands.length}} 条 · 点击卡片查看需求详情与报名</view>
       </view>
 
       <!-- ============ 吸顶多维筛选栏 ============ -->
@@ -65,12 +65,21 @@
         </view>
       </view>
 
-      <view class="dc" wx:for="{{displayDemands}}" wx:key="demandId">
+      <view
+        class="dc"
+        wx:for="{{displayDemands}}"
+        wx:key="demandId"
+        data-demandid="{{item.demandId}}"
+        bindtap="onOpenDemand"
+      >
 
         <!-- 右上角状态角标 -->
+        <view class="dc__badges">
+        <view class="dc__applied" wx:if="{{item.applied}}">已报名</view>
         <view class="dc__badge {{item.statusClass}}">{{item.statusLabel}}</view>
+      </view>
 
-        <view data-demandid="{{item.demandId}}" bindtap="onOpenDemand">
+        <view>
           <!-- 标题 + 分类 -->
           <view class="dc__title">{{item.title}}</view>
           <view class="dc__cat {{item.categoryClass}}">{{item.category}}</view>
@@ -112,34 +121,13 @@
           </view>
         </view>
 
-        <!-- 底部操作 -->
+        <!-- 底部：纯展示（时间 / 申请数 / 浏览量）+ 查看详情提示 -->
         <view class="dc__foot">
           <view class="dc__foot-left">
             <text class="dc__time">{{item.timeText}}</text>
             <text class="dc__count">{{item.applyCount}}人已申请 · {{item.viewCount}}次浏览</text>
           </view>
-
-          <view class="dc__foot-right">
-            <!--
-              已报名：卡片不消失，右侧换成「取消报名 + 去沟通」
-              （是否已报名 = applied.has(demandId)，在 JS 的 buildCard 里算好）
-            -->
-            <block wx:if="{{item.applied}}">
-              <text class="dc__cancel" data-demandid="{{item.demandId}}" catchtap="onCancelSignup">取消报名</text>
-              <view class="dc__done" data-demandid="{{item.demandId}}" catchtap="goChat">
-                <text class="dc__done-check">💬</text>去沟通
-              </view>
-            </block>
-
-            <view wx:else class="dc__hold">
-              <hold-button
-                label="长按报名"
-                duration="{{2000}}"
-                demand-id="{{item.demandId}}"
-                bind:confirm="onSignup"
-              />
-            </view>
-          </view>
+          <view class="dc__more">查看详情 ›</view>
         </view>
       </view>
     </block>
