@@ -24,9 +24,33 @@ Page({
     blocked: false,
     loading: true,
 
-    /** 学生视图：可接订单 */
-    pool: [],
+    /** 学生视图：原始订单（未筛选） */
+    allDemands: [],
+    /** 学生视图：筛选后用于渲染的订单 */
+    displayDemands: [],
     poolTotal: 0,
+
+    /* ---------- 多维筛选栏 ---------- */
+    /** 当前展开的面板 key：'' | 'subject' | 'grade' | 'price' | 'time' */
+    activeTab: '',
+    /** 筛选参数：全部非空才参与过滤 */
+    filterParams: { subject: '', grade: '', price: '', time: '' },
+    /** 四个 Tab 的显示文案与当前选中值 */
+    filterTabs: [
+      { key: 'subject', label: '学科', value: '' },
+      { key: 'grade', label: '年级', value: '' },
+      { key: 'price', label: '价格', value: '' },
+      { key: 'time', label: '时间', value: '' }
+    ],
+    /** 各面板的选项（第一项「全部」用空值表示不限） */
+    filterOptions: {
+      subject: ['全部', '语文', '数学', '英语', '物理', '化学', '生物', '历史', '地理', '素质拓展'],
+      grade: ['全部', '小学', '初中', '高中', '学前'],
+      price: ['全部', '100元以下', '100-150元', '150-200元', '200元以上'],
+      time: ['全部', '工作日晚上', '周末', '时间面议']
+    },
+    /** 面板里当前高亮的选项（点「确定」才写入 filterParams） */
+    draftOption: '',
 
     /** 家长视图：我的需求 */
     mine: [],
@@ -99,7 +123,8 @@ Page({
         const list = (res.data.list || []).map(function (it) {
           return self.buildCard(it);
         });
-        self.setData({ loading: false, pool: list, poolTotal: list.length });
+        self.setData({ loading: false, allDemands: list, poolTotal: list.length });
+        self.applyFilters();
       });
   },
 
@@ -153,7 +178,14 @@ Page({
 
       timeText: prettyTime(d.createdAt),
       applyCount: d.applyCount || 0,
-      viewCount: d.viewCount || 0
+      viewCount: d.viewCount || 0,
+
+      /* ---- 供前端筛选使用（不直接展示） ---- */
+      subjectText: d.subject || '',
+      stage: d.stage || stageFromGrade(d.grade),
+      budget: Number(d.budget || 0),
+      timeRaw: d.timeRangeText || '',
+      isQuality: !isDiscipline
     };
   },
 
@@ -225,14 +257,125 @@ Page({
 
   /** 局部更新一条卡片，避免整表重排 */
   patchItem(demandId, patch) {
-    const pool = this.data.pool.slice();
-    for (let i = 0; i < pool.length; i++) {
-      if (pool[i].demandId === demandId) {
-        pool[i] = Object.assign({}, pool[i], patch);
+    const all = this.data.allDemands.slice();
+    for (let i = 0; i < all.length; i++) {
+      if (all[i].demandId === demandId) {
+        all[i] = Object.assign({}, all[i], patch);
         break;
       }
     }
-    this.setData({ pool: pool });
+    this.setData({ allDemands: all });
+    this.applyFilters();
+  },
+
+  /* ==================================================================
+   * 多维筛选
+   * ================================================================== */
+
+  /** 阻止穿透滚动（配合 catchtouchmove），空实现即可 */
+  noop() {},
+
+  /** 点击 Tab：同一个再次点击收起，点其他则切换 */
+  onTabClick(e) {
+    const key = e.currentTarget.dataset.key;
+    if (this.data.activeTab === key) {
+      this.closePanel();
+      return;
+    }
+    // 打开时把该维度已生效的值作为草稿，方便用户看到当前选中
+    this.setData({ activeTab: key, draftOption: this.data.filterParams[key] || '' });
+  },
+
+  /** 点遮罩 / 关闭：收起面板 */
+  closePanel() {
+    this.setData({ activeTab: '', draftOption: '' });
+  },
+  onMaskTap() {
+    this.closePanel();
+  },
+
+  /** 面板内点选项：只改草稿，不立即生效 */
+  onPickOption(e) {
+    const value = e.currentTarget.dataset.value || '';
+    this.setData({ draftOption: value === '全部' ? '' : value });
+  },
+
+  /** 重置当前面板 */
+  onResetPanel() {
+    const key = this.data.activeTab;
+    if (!key) return;
+    const params = Object.assign({}, this.data.filterParams, { [key]: '' });
+    this.setData({ filterParams: params, draftOption: '' });
+    this.syncFilterTabs(params);
+    this.applyFilters();
+  },
+
+  /** 确定：写入 filterParams → 关面板 → 过滤 */
+  onConfirmPanel() {
+    const key = this.data.activeTab;
+    if (!key) return;
+    const params = Object.assign({}, this.data.filterParams, { [key]: this.data.draftOption });
+    this.setData({ filterParams: params, activeTab: '', draftOption: '' });
+    this.syncFilterTabs(params);
+    this.applyFilters();
+  },
+
+  /** 把 filterParams 反映到 Tab 文案上（选中后 Tab 显示所选值） */
+  syncFilterTabs(params) {
+    const tabs = this.data.filterTabs.map(function (t) {
+      return Object.assign({}, t, {
+        value: params[t.key] || '',
+        active: !!params[t.key]
+      });
+    });
+    this.setData({ filterTabs: tabs });
+  },
+
+  /**
+   * 统一过滤：按 filterParams 非空维度叠加过滤 allDemands → displayDemands
+   * 学科：标题/科目包含关键词；「素质拓展」按 isQuality 判定
+   * 年级：按 stage 映射（小学/初中/高中/学前）
+   * 价格：解析为数值区间比较
+   * 时间：按 timeRaw 文本包含判定
+   */
+  applyFilters() {
+    const p = this.data.filterParams;
+    const all = this.data.allDemands || [];
+
+    const list = all.filter(function (it) {
+      // 学科
+      if (p.subject) {
+        if (p.subject === '素质拓展') {
+          if (!it.isQuality) return false;
+        } else if ((it.subjectText || '').indexOf(p.subject) === -1) {
+          return false;
+        }
+      }
+      // 年级
+      if (p.grade && it.stage !== p.grade) return false;
+      // 价格
+      if (p.price) {
+        const b = Number(it.budget || 0);
+        if (p.price === '100元以下' && !(b > 0 && b < 100)) return false;
+        if (p.price === '100-150元' && !(b >= 100 && b <= 150)) return false;
+        if (p.price === '150-200元' && !(b > 150 && b <= 200)) return false;
+        if (p.price === '200元以上' && !(b > 200)) return false;
+      }
+      // 时间
+      if (p.time) {
+        const t = it.timeRaw || '';
+        if (p.time === '工作日晚上') {
+          if (t.indexOf('工作日晚上') === -1 && t.indexOf('工作日下午') === -1) return false;
+        } else if (p.time === '周末') {
+          if (t.indexOf('周末') === -1) return false;
+        } else if (p.time === '时间面议') {
+          if (t && t.indexOf('面议') === -1) return false;
+        }
+      }
+      return true;
+    });
+
+    this.setData({ displayDemands: list });
   },
 
   /** 去沟通：已报名的单子直接进对应聊天室 */
@@ -305,4 +448,19 @@ function prettyTime(text) {
   if (t >= dayStart) return '今天 ' + m[4];
   if (t >= dayStart - 86400000) return '昨天 ' + m[4];
   return m[2] + '-' + m[3] + ' ' + m[4];
+}
+
+/**
+ * 年级文本 → 学段枚举（与筛选栏「年级」选项一一对应）
+ * 优先用数据里的 stage 字段；缺失时按年级名兜底推断。
+ */
+function stageFromGrade(grade) {
+  const g = String(grade || '');
+  if (!g) return '';
+  if (/小班|中班|大班|幼小衔接|学前/.test(g)) return 'preschool';
+  if (/幼儿园/.test(g)) return 'preschool';
+  if (/一年级|二年级|三年级|四年级|五年级|六年级|小学/.test(g)) return 'primary';
+  if (/初一|初二|初三|七年级|八年级|九年级|初中/.test(g)) return 'junior';
+  if (/高一|高二|高三|高中/.test(g)) return 'senior';
+  return '';
 }

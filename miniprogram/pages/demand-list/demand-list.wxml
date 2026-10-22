@@ -17,17 +17,55 @@
     <block wx:if="{{isTutor}}">
       <view class="head">
         <view class="head__title">接单池</view>
-        <view class="head__sub">共 {{poolTotal}} 条 · 长按 2 秒报名</view>
+        <view class="head__sub">共 {{displayDemands.length}} 条 · 长按 2 秒报名</view>
       </view>
 
-      <view wx:if="{{!loading && !pool.length}}" class="card">
+      <!-- ============ 吸顶多维筛选栏 ============ -->
+      <view class="filter">
+        <view class="filter__tabs">
+          <view
+            class="filter__tab {{item.active ? 'filter__tab--on' : ''}} {{activeTab === item.key ? 'filter__tab--open' : ''}}"
+            wx:for="{{filterTabs}}"
+            wx:key="key"
+            data-key="{{item.key}}"
+            bindtap="onTabClick"
+          >
+            <text class="filter__label">{{item.value || item.label}}</text>
+            <text class="filter__arrow">{{activeTab === item.key ? '▲' : '▼'}}</text>
+          </view>
+        </view>
+
+        <!-- 展开面板：遮罩 + 白色下拉面板 -->
+        <block wx:if="{{activeTab}}">
+          <view class="filter__mask" bindtap="onMaskTap" catchtouchmove="noop"></view>
+
+          <view class="filter__panel" catchtouchmove="noop">
+            <view class="filter__grid">
+              <view
+                class="filter__opt {{(draftOption === '' && item === '全部') || draftOption === item ? 'filter__opt--on' : ''}}"
+                wx:for="{{filterOptions[activeTab]}}"
+                wx:key="*this"
+                data-value="{{item}}"
+                bindtap="onPickOption"
+              >{{item}}</view>
+            </view>
+
+            <view class="filter__actions">
+              <view class="filter__btn filter__btn--reset" bindtap="onResetPanel">重置</view>
+              <view class="filter__btn filter__btn--ok" bindtap="onConfirmPanel">确定</view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <view wx:if="{{!loading && !displayDemands.length}}" class="card">
         <view class="empty">
           <view class="empty-icon">📭</view>
           <view class="empty-text">暂时没有可接订单</view>
         </view>
       </view>
 
-      <view class="dc" wx:for="{{pool}}" wx:key="demandId">
+      <view class="dc" wx:for="{{displayDemands}}" wx:key="demandId">
 
         <!-- 右上角状态角标 -->
         <view class="dc__badge {{item.statusClass}}">{{item.statusLabel}}</view>

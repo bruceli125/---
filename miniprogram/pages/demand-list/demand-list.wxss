@@ -20,6 +20,148 @@
   color: var(--ink-4, #8e929e);
 }
 
+/* ============================================================================
+ * 吸顶多维筛选栏（参考淘宝筛选）
+ * 注意：position: sticky 需要父级不 overflow:hidden；page 最小高度由内容撑开
+ * ========================================================================== */
+.filter {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: #ffffff;
+  border-radius: 0 0 16rpx 16rpx;
+  box-shadow: 0 8rpx 20rpx -18rpx rgba(10, 10, 12, 0.5);
+}
+
+.filter__tabs {
+  display: flex;
+  align-items: center;
+  height: 88rpx;
+}
+
+.filter__tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6rpx;
+  font-size: 25rpx;
+  color: #4a4e59;
+}
+
+.filter__tab--on .filter__label {
+  color: #6d4aff;
+  font-weight: 600;
+}
+
+.filter__tab--open .filter__label {
+  color: #6d4aff;
+  font-weight: 600;
+}
+
+.filter__arrow {
+  font-size: 16rpx;
+  color: #b0b4be;
+}
+
+.filter__tab--on .filter__arrow,
+.filter__tab--open .filter__arrow {
+  color: #6d4aff;
+}
+
+/* 遮罩：半透明，覆盖列表区但让面板浮在上面 */
+.filter__mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(10, 10, 12, 0.28);
+  z-index: 58;
+}
+
+/* 白色下拉面板 */
+.filter__panel {
+  position: absolute;
+  top: 88rpx;
+  left: 0;
+  right: 0;
+  z-index: 61;
+  background: #ffffff;
+  border-radius: 0 0 20rpx 20rpx;
+  padding: 24rpx 24rpx 0;
+  box-shadow: 0 24rpx 48rpx -28rpx rgba(10, 10, 12, 0.45);
+  animation: panel-down 180ms ease-out;
+}
+
+@keyframes panel-down {
+  from {
+    opacity: 0;
+    transform: translateY(-16rpx);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 选项网格：三列自适应 */
+.filter__grid {
+  /* 用 flex-wrap 代替 grid：低版本 WebView 对 grid 支持不稳，换行效果一致 */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  padding-bottom: 20rpx;
+}
+
+.filter__opt {
+  /* 三列等宽：(100% - 2*16rpx) / 3 */
+  width: calc((100% - 32rpx) / 3);
+  height: 68rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10rpx;
+  background: #f5f6f9;
+  font-size: 24rpx;
+  color: #4a4e59;
+}
+
+.filter__opt--on {
+  background: #ece9ff;
+  color: #6d4aff;
+  font-weight: 700;
+}
+
+/* 底部固定按钮 */
+.filter__actions {
+  display: flex;
+  gap: 16rpx;
+  padding: 16rpx 0 20rpx;
+  border-top: 1rpx solid #f0f1f5;
+}
+
+.filter__btn {
+  flex: 1;
+  height: 76rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.filter__btn--reset {
+  background: #f5f6f9;
+  color: #5c5f6b;
+}
+
+.filter__btn--ok {
+  background: #6d4aff;
+  color: #ffffff;
+}
+
 /* ---------------- 卡片容器 ---------------- */
 .dc {
   position: relative;
