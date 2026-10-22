@@ -11,6 +11,12 @@
       左：120rpx 圆形头像（button open-type="chooseAvatar" 包裹，微信官方唯一头像获取方式）
       右：昵称（input type="nickname"）+ 角色说明
     -->
+    <!--
+      用户头部：Flex 横向、垂直居中
+      左：120rpx 圆形头像（chooseAvatar）
+      中：昵称 +（学校 · 角色）两行，flex:1 且左对齐
+      右：切换身份胶囊按钮，自动贴边
+    -->
     <view class="user-head">
       <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
         <image wx:if="{{avatarUrl}}" class="avatar-img" src="{{avatarUrl}}" mode="aspectFill" />
@@ -29,7 +35,11 @@
           bindinput="onNicknameInput"
           bindblur="onNicknameBlur"
         />
-        <view class="user-role">{{roleLabel}}</view>
+        <view class="user-sub">
+          <text class="user-school">{{isTutor ? (badge.school || '未填写学校') : '家长账号'}}</text>
+          <text class="user-dot">·</text>
+          <text class="user-role">{{roleLabel}}</text>
+        </view>
       </view>
 
       <view class="role-switch" bindtap="onSwitchRole">切换身份</view>

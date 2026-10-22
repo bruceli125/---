@@ -407,3 +407,102 @@
   font-size: 22rpx;
   color: var(--ink-3, #5c5f6b);
 }
+
+/* ===== 用户头部：最终覆盖（修复头像与昵称间的大空白） ===== */
+/* 外层：横向 flex + 垂直居中，子项紧挨着排 */
+.user-head {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+/* 头像：固定尺寸圆形，右侧留 30rpx，不留其他外边距 */
+.user-head .avatar-btn {
+  flex: 0 0 auto;
+  width: 120rpx;
+  height: 120rpx;
+  min-width: 120rpx;
+  padding: 0;
+  margin: 0 30rpx 0 0;      /* 关键：只留右边距，消除中间大空白 */
+  border-radius: 50%;
+  background: transparent;
+  line-height: 1;
+  overflow: visible;
+}
+
+.user-head .avatar-btn::after {
+  border: none;              /* 去掉小程序 button 默认边框 */
+}
+
+/* 中间信息区：占满剩余空间，内部纵向左对齐 */
+.user-head .user-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  margin-left: 0;            /* 清除旧的 margin-left: 24rpx，间距统一由头像右边距控制 */
+}
+
+/* 第一行：昵称（加大加粗，输入框铺满信息区宽度） */
+.user-head .user-name {
+  width: 100%;
+  font-size: 36rpx;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ink, #0a0a0c);
+  padding: 0;
+  min-height: 44rpx;
+  text-align: left;
+}
+
+.user-head .nickname-ph {
+  color: #b9bcc6;
+  font-weight: 500;
+}
+
+/* 第二行：学校 · 角色（小字、浅色、同一行） */
+.user-head .user-sub {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: var(--ink-4, #8e929e);
+  max-width: 100%;
+}
+
+.user-head .user-school {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+.user-head .user-dot {
+  color: #c9ccd4;
+}
+
+.user-head .user-role {
+  flex: 0 0 auto;
+  margin: 0;
+  font-size: 22rpx;
+  color: var(--ink-4, #8e929e);
+}
+
+/* 右侧按钮：胶囊形、白底、浅边框、小字号，自动贴右边 */
+.user-head .role-switch {
+  flex: 0 0 auto;
+  margin-left: 16rpx;
+  padding: 10rpx 22rpx;
+  border-radius: 30rpx;
+  background: #ffffff;
+  border: 1rpx solid var(--line-2, #d8dbe4);
+  font-size: 22rpx;
+  line-height: 1.4;
+  color: var(--ink-3, #5c5f6b);
+  white-space: nowrap;
+}
