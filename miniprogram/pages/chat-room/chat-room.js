@@ -41,13 +41,12 @@ Page({
       tip: ''
     },
 
-    /** 预设话术：降低学生/家长的开场成本，也避免"聊不起来" */
-    presets: [
-      '您好，我已通过认证，想了解一下孩子的学习情况。',
-      '请问上课时间可以安排在周末吗？',
-      '课时费可以按 ¥120 / 小时 吗？',
-      '我可以先试讲 30 分钟，您看方便吗？'
-    ]
+    /**
+     * 预设话术：按角色区分（在 onLoad 里根据 currentRole 注入）
+     * 学生端 = 自我介绍与时间确认；家长端 = 资历询问与试课请求。
+     * 之前两端共用一套「我已通过认证」的文案，导致家长端出现学生的自我介绍。
+     */
+    presets: []
   },
 
   onLoad(options) {
@@ -61,12 +60,18 @@ Page({
       tutorId = (app.globalData && app.globalData.tutorProfileId) || FALLBACK_TUTOR_ID;
     }
 
+    const isParent = role === C.ROLES.PARENT;
+
     this.setData({
       demandId: opt.demandId || '',
       tutorId: tutorId,
       peerName: opt.peerName ? decodeURIComponent(opt.peerName) : '',
       role: role,
-      isParent: role === C.ROLES.PARENT
+      isParent: isParent,
+      // 学生：自我介绍 + 时间确认；家长：资历询问 + 试课请求
+      presets: isParent
+        ? ['您好，请问您带过几届毕业班？', '可以先试课一次看看效果吗？', '孩子目前的基础一般，您会怎么安排第一节课？']
+        : ['您好，我已通过认证，想了解一下孩子的学习情况。', '请问上课时间可以安排在周末吗？', '课时费可以按 ¥120 / 小时 吗？']
     });
 
     this.load();
@@ -121,6 +126,18 @@ Page({
         });
 
         wx.setNavigationBarTitle({ title: '协商中 - ' + (self.data.demandTitle || '家教需求') });
+
+        // 进入聊天室即视为已读：清掉这个会话的未读，并刷新 TabBar 角标
+        api
+          .markThreadRead({
+            demandId: self.data.demandId,
+            tutorId: self.data.tutorId,
+            role: self.data.isParent ? 'parent' : 'tutor'
+          })
+          .then(function () {
+            const app = getApp();
+            if (app && app.refreshChatBadge) app.refreshChatBadge();
+          });
       });
   },
 
@@ -160,6 +177,8 @@ Page({
         }
         self.setData({ draft: '' });
         self.load();
+        const app2 = getApp();
+        if (app2 && app2.refreshChatBadge) app2.refreshChatBadge();
       });
   },
 

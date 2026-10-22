@@ -8,9 +8,27 @@
     <view class="card user-card">
       <view class="row-between">
         <view class="row">
-          <view class="user-avatar">{{avatarText}}</view>
-          <view>
-            <view class="user-name">{{nickname}}</view>
+          <!--
+            头像：button open-type="chooseAvatar" 是微信官方唯一可用的头像获取方式。
+            拿到的是临时路径，直接存进 Storage + globalData（正式项目应上传云存储换永久 URL）。
+          -->
+          <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+            <image wx:if="{{avatarUrl}}" class="user-avatar-img" src="{{avatarUrl}}" mode="aspectFill" />
+            <view wx:else class="user-avatar">{{avatarText}}</view>
+            <view class="avatar-edit">换</view>
+          </button>
+          <view class="user-info">
+            <!-- 昵称：input type="nickname" 会唤起微信昵称快捷填写 -->
+            <input
+              class="user-name-input"
+              type="nickname"
+              value="{{nickname}}"
+              placeholder="点击设置昵称"
+              placeholder-class="placeholder"
+              maxlength="16"
+              bindinput="onNicknameInput"
+              bindblur="onNicknameBlur"
+            />
             <view class="text-weak">{{roleLabel}}</view>
           </view>
         </view>
@@ -244,6 +262,8 @@
           data-index="{{index}}"
           bindtap="onTogglePref"
         >{{item.label}}</view>
+        <!-- 自定义：追加到当前标签数组末尾并自动选中 -->
+        <view class="chip chip-add" bindtap="onAddPref">＋ 自定义</view>
       </view>
 
       <view class="form-label mt-24">性格特点（可多选）</view>
@@ -255,6 +275,7 @@
           data-index="{{index}}"
           bindtap="onTogglePersona"
         >{{item.label}}</view>
+        <view class="chip chip-add" bindtap="onAddPersona">＋ 自定义</view>
       </view>
 
       <view class="btn btn-primary btn-block mt-24" bindtap="onSaveTags">

@@ -480,6 +480,12 @@
   flex: 0 0 auto;
 }
 
+.footer-cancel {
+  flex: 0 0 auto;
+  padding: 0 28rpx;
+  margin-left: 16rpx;
+}
+
 .cand-hint {
   flex: 0 0 auto;
   font-size: 20rpx;

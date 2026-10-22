@@ -265,10 +265,11 @@
 <!-- 底部操作：学生 —— 长按 2 秒报名，报名成功即开启沟通（三期） -->
 <view class="footer-bar" wx:if="{{!loading && !notFound && isTutor}}">
 
-  <!-- 已报名：按钮变成「沟通中，点击进入对话」 -->
-  <view wx:if="{{applied}}" class="btn btn-primary flex-1" bindtap="goChatRoom">
-    沟通中，点击进入对话
-  </view>
+  <!-- 已报名：进入沟通 + 取消报名（与列表页状态严格同步） -->
+  <block wx:if="{{applied}}">
+    <view class="btn btn-primary flex-1" bindtap="goChatRoom">已报名，进入沟通</view>
+    <view class="btn btn-ghost footer-cancel" bindtap="onCancelSignup">取消报名</view>
+  </block>
 
   <!--
     未报名：长按报名

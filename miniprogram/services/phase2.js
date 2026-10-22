@@ -686,6 +686,19 @@ function cancelApplication(payload) {
   });
   writeStore(STORAGE_KEYS.APPLICATIONS, rest);
 
+  /*
+   * 取消报名后，把学生侧的会话隐藏（不再出现在「沟通」列表）。
+   * 家长侧**不隐藏**：已发生的沟通记录需要可追溯，避免"人突然消失"。
+   * 学生重新报名时会在 signupByHold 里把 hidden 改回来。
+   */
+  const chatsAfterCancel = loadChats();
+  const cid = threadIdOf(p.demandId, p.tutorId);
+  chatsAfterCancel.forEach(function (c) {
+    if (c.id !== cid) return;
+    c.hidden = Object.assign({ tutor: false, parent: false }, c.hidden || {}, { tutor: true });
+  });
+  saveChats(chatsAfterCancel);
+
   // 需求侧申请数减一（不低于 0）
   for (let i = 0; i < demands.length; i++) {
     if (demands[i].id === p.demandId) {
@@ -819,7 +832,18 @@ function ensureThread(demand, tutorId) {
     createdAt: fmt.formatDateTime(Date.now()),
     createdAtTs: Date.now(),
     lastMessage: '',
-    lastMessageAt: ''
+    lastMessageAt: '',
+    /**
+     * 已读时间戳（按角色分别记录）
+     * 未读数 = 该角色上次已读之后、对方发来的消息条数（系统消息不算未读）。
+     */
+    reads: { tutor: 0, parent: 0 },
+    /**
+     * 会话可见性（按角色分别记录）
+     * 学生取消报名后把自己的会话隐藏，家长侧仍保留沟通记录可追溯，
+     * 学生重新报名时再取消隐藏。
+     */
+    hidden: { tutor: false, parent: false }
   };
   chats.unshift(thread);
   saveChats(chats);
@@ -910,6 +934,17 @@ function signupByHold(payload) {
   /* ---- 3. 建会话 + 开场白（仅首次） ---- */
   const ensured = ensureThread(demand, p.tutorId);
   const thread = ensured.thread;
+
+  /* 重新报名：把取消报名时隐藏的会话恢复可见 */
+  if (thread.hidden && thread.hidden.tutor) {
+    const chatsRestore = loadChats();
+    chatsRestore.forEach(function (c) {
+      if (c.id !== thread.id) return;
+      c.hidden = Object.assign({ tutor: false, parent: false }, c.hidden || {}, { tutor: false });
+    });
+    saveChats(chatsRestore);
+    thread.hidden = Object.assign({}, thread.hidden, { tutor: false });
+  }
   let opened = [];
 
   if (ensured.created) {
@@ -1162,18 +1197,31 @@ function updateTutorTags(payload) {
   const tutor = findById(tutors, p.tutorId);
   if (!tutor) return Promise.resolve(fail('学生档案不存在'));
 
+  /**
+   * 标签白名单：内置值 + "custom:xxx" 自定义值
+   * 自定义值保留原文（去掉前缀后最多 12 字），既不影响匹配（自定义无法预置交集），
+   * 也能在档案与推荐理由里原样展示。
+   */
+  function keepTag(v, list) {
+    if (typeof v !== 'string') return false;
+    if (list.some(function (o) {
+      return o.value === v;
+    })) return true;
+    if (v.indexOf('custom:') === 0) {
+      const text = v.slice(7).trim();
+      return text.length > 0 && text.length <= 12;
+    }
+    return false;
+  }
+
   if (Array.isArray(p.preferences)) {
     tutor.preferences = p.preferences.filter(function (v) {
-      return TUTOR_PREFERENCES.some(function (o) {
-        return o.value === v;
-      });
+      return keepTag(v, TUTOR_PREFERENCES);
     });
   }
   if (Array.isArray(p.personality)) {
     tutor.personality = p.personality.filter(function (v) {
-      return PERSONALITY_TAGS.some(function (o) {
-        return o.value === v;
-      });
+      return keepTag(v, PERSONALITY_TAGS);
     });
   }
   tutor.tagsUpdatedAt = fmt.formatDateTime(Date.now());
@@ -1198,14 +1246,20 @@ function getChatList(query) {
   const tutors = loadTutors();
   const currentParentId = q.parentId || mockDemands.CURRENT_PARENT_ID;
 
-  let picked = chats;
+  /** 当前角色是否把这通会话隐藏了（取消报名后） */
+  function visibleFor(c) {
+    const h = c.hidden || {};
+    return !h[role];
+  }
+
+  let picked = chats.filter(visibleFor);
   if (role === 'tutor') {
     if (!q.tutorId) return Promise.resolve(fail('缺少 tutorId'));
-    picked = chats.filter(function (c) {
+    picked = picked.filter(function (c) {
       return c.tutorId === q.tutorId;
     });
   } else {
-    picked = chats.filter(function (c) {
+    picked = picked.filter(function (c) {
       const d = findById(demands, c.demandId);
       return d && d.parentId === currentParentId;
     });
@@ -1227,7 +1281,9 @@ function getChatList(query) {
         lastMessage: c.lastMessage || '已开启沟通',
         lastMessageAt: c.lastMessageAt || c.createdAt || '',
         status: status,
-        statusLabel: DEMAND_STATUS_LABEL[status] || status
+        statusLabel: DEMAND_STATUS_LABEL[status] || status,
+        /** 未读条数：用于沟通列表头像右上角的红点数字 */
+        unread: countUnread(c, role)
       };
     })
     .sort(function (a, b) {
@@ -1235,6 +1291,86 @@ function getChatList(query) {
     });
 
   return Promise.resolve(ok({ list: items, total: items.length, role: role }));
+}
+
+/**
+ * 统计某会话对某角色的未读数
+ * 规则：只看对方发来的普通消息；系统消息与自己发的消息都不算未读。
+ * @param {object} chat 会话对象
+ * @param {'tutor'|'parent'} role
+ */
+function countUnread(chat, role) {
+  if (!chat) return 0;
+  const reads = chat.reads || {};
+  const since = Number(reads[role] || 0);
+  const mySender = role === 'parent' ? CHAT_SENDER.PARENT : CHAT_SENDER.STUDENT;
+  return loadMessages().filter(function (m) {
+    if (m.threadId !== chat.id) return false;
+    if (m.sender === CHAT_SENDER.SYSTEM) return false;
+    if (m.sender === mySender) return false;
+    return Number(m.createdAtTs || 0) > since;
+  }).length;
+}
+
+/**
+ * 把会话标记为已读（进入聊天室时调用）
+ * 注意：只更新当前角色的读取时间，不影响对方的未读状态。
+ */
+function markThreadRead(payload) {
+  const p = payload || {};
+  if (!p.demandId || !p.tutorId) return Promise.resolve(fail('缺少 demandId 或 tutorId'));
+  const role = p.role === 'parent' ? 'parent' : 'tutor';
+
+  const chats = loadChats();
+  const id = threadIdOf(p.demandId, p.tutorId);
+  let hit = false;
+  chats.forEach(function (c) {
+    if (c.id !== id) return;
+    c.reads = c.reads || { tutor: 0, parent: 0 };
+    c.reads[role] = Date.now();
+    hit = true;
+  });
+  if (hit) saveChats(chats);
+  return Promise.resolve(ok({ threadId: id, role: role, marked: hit }, '已读'));
+}
+
+/**
+ * 汇总未读（用于 TabBar 角标）
+ * @returns {{total:number, byThread:object}}
+ */
+function getChatUnread(query) {
+  const q = query || {};
+  const role = q.role === 'parent' ? 'parent' : 'tutor';
+  const demands = loadDemands();
+  const currentParentId = q.parentId || mockDemands.CURRENT_PARENT_ID;
+
+  let picked = loadChats().filter(function (c) {
+    const h = c.hidden || {};
+    return !h[role];
+  });
+
+  if (role === 'tutor') {
+    if (!q.tutorId) return Promise.resolve(ok({ total: 0, byThread: {} }));
+    picked = picked.filter(function (c) {
+      return c.tutorId === q.tutorId;
+    });
+  } else {
+    picked = picked.filter(function (c) {
+      const d = findById(demands, c.demandId);
+      return d && d.parentId === currentParentId;
+    });
+  }
+
+  const byThread = {};
+  let total = 0;
+  picked.forEach(function (c) {
+    const n = countUnread(c, role);
+    if (n > 0) {
+      byThread[c.id] = n;
+      total += n;
+    }
+  });
+  return Promise.resolve(ok({ total: total, byThread: byThread, role: role }));
 }
 
 /** 读取学生的接单偏好与性格标签（档案页编辑用） */
@@ -1285,7 +1421,9 @@ module.exports = {
   getDemandChats: getDemandChats,
   updateTutorTags: updateTutorTags,
   getTutorTags: getTutorTags,
-  getChatList: getChatList
+  getChatList: getChatList,
+  getChatUnread: getChatUnread,
+  markThreadRead: markThreadRead
 };
 
 /* ==================================================================

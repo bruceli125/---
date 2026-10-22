@@ -24,6 +24,12 @@ App({
      */
     currentRole: '',
     role: '',                // @deprecated 兼容别名，始终与 currentRole 保持一致
+    /** 用户自定义头像（chooseAvatar 返回的临时/永久路径） */
+    avatarUrl: '',
+    /** 用户自定义昵称（nickname 输入） */
+    nickname: '',
+    /** 沟通 Tab 的未读数总量（用于 TabBar 角标） */
+    unreadTotal: 0,
     useCloud: APP_INFO.useCloud,
     systemInfo: null,
     launchAt: 0,
@@ -47,7 +53,8 @@ App({
   },
 
   onShow() {
-    // TODO(二期)：小程序回到前台时刷新需求/匹配缓存、校验认证状态是否过期
+    // 回到前台时刷新沟通未读角标（可能有新消息）
+    this.refreshChatBadge();
   },
 
   onError(msg) {
@@ -80,6 +87,12 @@ App({
       const tutorProfileId = wx.getStorageSync(STORAGE_KEYS.TUTOR_PROFILE_ID);
       if (tutorProfileId) {
         this.globalData.tutorProfileId = tutorProfileId;
+      }
+      // 恢复用户自定义头像与昵称（chooseAvatar / nickname 输入的结果）
+      const profile = wx.getStorageSync(STORAGE_KEYS.PROFILE);
+      if (profile && typeof profile === 'object') {
+        this.globalData.avatarUrl = profile.avatarUrl || '';
+        this.globalData.nickname = profile.nickname || '';
       }
     } catch (err) {
       console.warn('[app] 读取本地角色失败：', err);
@@ -231,6 +244,93 @@ App({
       wx.switchTab({ url: '/pages/index/index' });
     }, 900);
     return false;
+  },
+
+  /* ==================================================================
+   * 用户自定义资料（头像 / 昵称）
+   * ================================================================== */
+
+  /** 读取本地保存的自定义资料 */
+  getLocalProfile() {
+    try {
+      const p = wx.getStorageSync(STORAGE_KEYS.PROFILE);
+      if (p && typeof p === 'object') return p;
+    } catch (err) {
+      console.warn('[app] 读取自定义资料失败：', err);
+    }
+    return { avatarUrl: '', nickname: '' };
+  },
+
+  /**
+   * 保存自定义资料（局部更新）
+   * @param {{avatarUrl?:string, nickname?:string}} patch
+   */
+  setLocalProfile(patch) {
+    const next = Object.assign(this.getLocalProfile(), patch || {});
+    this.globalData.avatarUrl = next.avatarUrl || '';
+    this.globalData.nickname = next.nickname || '';
+    try {
+      wx.setStorageSync(STORAGE_KEYS.PROFILE, next);
+    } catch (err) {
+      console.warn('[app] 保存自定义资料失败：', err);
+    }
+    return next;
+  },
+
+  /* ==================================================================
+   * 沟通 Tab 未读角标
+   * ================================================================== */
+
+  /**
+   * 刷新并设置 TabBar 未读角标
+   * 调用方：聊天室收发消息后、沟通列表 onShow、app.onShow
+   * 注：index = 2 对应 tabBar 第 3 项（沟通）
+   */
+  refreshChatBadge() {
+    const self = this;
+    const role = this.getRole() || ROLES.PARENT;
+    const query = { role: role };
+    if (role === ROLES.TUTOR) {
+      query.tutorId = this.globalData.tutorProfileId || 'tutor_001';
+    }
+    return api
+      .getChatUnread(query)
+      .then(function (res) {
+        const total = res && res.code === 0 ? res.data.total || 0 : 0;
+        self.globalData.unreadTotal = total;
+        self.applyTabBadge(total);
+        return total;
+      })
+      .catch(function () {
+        self.applyTabBadge(0);
+        return 0;
+      });
+  },
+
+  /** 真正去设置/清除角标（微信要求 text 必须是字符串且 ≤4 字符） */
+  applyTabBadge(total) {
+    const text = total > 99 ? '99+' : String(total || '');
+    if (!total) {
+      wx.removeTabBarBadge({
+        index: 2,
+        fail: function () {}
+      });
+      return;
+    }
+    wx.setTabBarBadge({
+      index: 2,
+      text: text,
+      fail: function (err) {
+        // 非 tabBar 页面或页面未就绪时会失败，属正常情况，忽略即可
+        console.warn('[app] 设置 TabBar 角标失败：', err);
+      }
+    });
+  },
+
+  /** 清除沟通 Tab 角标（进入沟通列表时调用） */
+  clearChatBadge() {
+    this.globalData.unreadTotal = 0;
+    this.applyTabBadge(0);
   },
 
   /** 统一 toast，减少各页面重复代码 */

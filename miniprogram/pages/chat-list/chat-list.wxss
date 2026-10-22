@@ -27,6 +27,27 @@
   background: var(--snow, #fafafc);
 }
 
+.session__avatar-wrap {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.session__badge {
+  position: absolute;
+  top: -6rpx;
+  right: -8rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  padding: 0 8rpx;
+  border-radius: 999rpx;
+  background: #f04438;
+  color: #fff;
+  font-size: 19rpx;
+  line-height: 32rpx;
+  text-align: center;
+  box-shadow: 0 0 0 3rpx #fff;
+}
+
 .session__avatar {
   width: 88rpx;
   height: 88rpx;

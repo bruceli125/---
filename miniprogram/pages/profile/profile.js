@@ -68,6 +68,8 @@ Page({
 
     /* 用户卡 */
     nickname: '',
+    /** 自定义头像（chooseAvatar 返回的路径） */
+    avatarUrl: '',
     phoneText: '',
     openidShort: '',
     avatarText: '京',
@@ -143,6 +145,104 @@ Page({
   },
 
   /* ==================================================================
+   * 四期：头像与昵称自定义
+   * ================================================================== */
+
+  /** 选择头像（button open-type="chooseAvatar" 的回调） */
+  onChooseAvatar(e) {
+    const url = (e.detail && e.detail.avatarUrl) || '';
+    if (!url) return;
+    const app = getApp();
+    // 存全局 + 本地存储，冷启动也能恢复
+    if (app && app.setLocalProfile) app.setLocalProfile({ avatarUrl: url });
+    this.setData({ avatarUrl: url });
+    toast('头像已更新');
+  },
+
+  /** 昵称输入中：实时同步到本地（不每次都写盘，交给 blur 落盘） */
+  onNicknameInput(e) {
+    this.setData({ nickname: e.detail.value || '' });
+  },
+
+  /** 昵称失焦：落盘 + 同步全局 */
+  onNicknameBlur(e) {
+    const name = String((e.detail && e.detail.value) || this.data.nickname || '').trim();
+    if (!name) {
+      toast('昵称不能为空');
+      this.setData({ nickname: this.data.nickname });
+      return;
+    }
+    const app = getApp();
+    if (app && app.setLocalProfile) app.setLocalProfile({ nickname: name });
+    this.setData({
+      nickname: name,
+      avatarText: name.slice(0, 1) || this.data.avatarText
+    });
+    toast('昵称已保存');
+  },
+
+  /* ==================================================================
+   * 四期：自定义标签（追加到数组末尾并自动选中）
+   * ================================================================== */
+
+  /**
+   * 弹输入框添加自定义标签
+   * @param {'pref'|'persona'} kind
+   */
+  addCustomTag(kind) {
+    const self = this;
+    const isPref = kind === 'pref';
+    const key = isPref ? 'prefOptions' : 'personaOptions';
+
+    wx.showModal({
+      title: isPref ? '自定义接单偏好' : '自定义性格特点',
+      editable: true,
+      placeholderText: isPref ? '例如：只接初三冲刺' : '例如：擅长鼓励式教学',
+      confirmText: '添加',
+      success(res) {
+        if (!res.confirm) return;
+        const text = String(res.content || '').trim();
+        if (!text) {
+          toast('请输入内容');
+          return;
+        }
+        if (text.length > 12) {
+          toast('最多 12 个字');
+          return;
+        }
+
+        const options = (self.data[key] || []).slice();
+        // 去重：同名标签直接选中，不再追加
+        for (let i = 0; i < options.length; i++) {
+          if (options[i].label === text) {
+            options[i] = Object.assign({}, options[i], { active: true });
+            self.setData({ [key]: options });
+            toast('已选中该标签');
+            return;
+          }
+        }
+
+        options.push({
+          value: 'custom:' + text,
+          label: text,
+          active: true,
+          custom: true
+        });
+        self.setData({ [key]: options });
+        toast('已添加并选中');
+      }
+    });
+  },
+
+  onAddPref() {
+    this.addCustomTag('pref');
+  },
+
+  onAddPersona() {
+    this.addCustomTag('persona');
+  },
+
+  /* ==================================================================
    * 三期：接单标签（偏好 / 性格）
    * ================================================================== */
 
@@ -156,6 +256,21 @@ Page({
   loadTags() {
     const self = this;
     const app = getApp();
+
+    // 顺带恢复自定义头像与昵称
+    if (app && app.getLocalProfile) {
+      const local = app.getLocalProfile();
+      if (local.avatarUrl || local.nickname) {
+        const patch = {};
+        if (local.avatarUrl) patch.avatarUrl = local.avatarUrl;
+        if (local.nickname) {
+          patch.nickname = local.nickname;
+          patch.avatarText = local.nickname.slice(0, 1);
+        }
+        this.setData(patch);
+      }
+    }
+
     if (app.getRole() !== C.ROLES.TUTOR) return;
     const tutorId = this.resolveTutorId();
     if (!tutorId) return;

@@ -14,6 +14,7 @@ Page({
     role: 'tutor',
     isTutor: true,
     list: [],
+    unreadTotal: 0,
     loading: true,
     emptyTip: ''
   },
@@ -23,6 +24,9 @@ Page({
     const role = app.getRole() || C.ROLES.PARENT;
     this.setData({ role: role, isTutor: role === C.ROLES.TUTOR });
     this.load(role);
+
+    // 进入「沟通」Tab 即清掉底部角标；具体会话的未读红点仍保留，直到点进去
+    if (app && app.clearChatBadge) app.clearChatBadge();
   },
 
   onPullDownRefresh() {
@@ -54,9 +58,13 @@ Page({
           return;
         }
         const list = res.data.list || [];
+        const unreadTotal = list.reduce(function (n, it) {
+          return n + (it.unread || 0);
+        }, 0);
         self.setData({
           loading: false,
           list: list,
+          unreadTotal: unreadTotal,
           emptyTip:
             role === C.ROLES.TUTOR
               ? '还没有沟通中的家长。去「接单池」长按报名，即可开启沟通。'
@@ -72,6 +80,17 @@ Page({
   onOpenChat(e) {
     const ds = e.currentTarget.dataset || {};
     if (!ds.demandid || !ds.tutorid) return;
+
+    // 先标记已读，保证从聊天室返回时这条记录的红点已消失
+    api
+      .markThreadRead({
+        demandId: ds.demandid,
+        tutorId: ds.tutorid,
+        role: this.data.role === C.ROLES.PARENT ? 'parent' : 'tutor'
+      })
+      .then(function () {
+        // 本地先清零，避免等待刷新造成"点进去还有红点"的错觉
+      });
     wx.navigateTo({
       url:
         '/pages/chat-room/chat-room?demandId=' +

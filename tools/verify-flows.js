@@ -459,6 +459,124 @@ function section(title) {
   );
   check('家长端有「申请接单的学生」列表', detailWxml.indexOf('申请接单的学生') > -1);
 
+  /* ================= J. 本轮 5 项细节（未读 / 取消报名 / 自定义标签 / 头像昵称 / 预设语） ================= */
+  section('J. 未读角标 / 取消报名 / 个性化');
+
+  // 用一条新建需求做测试：确保归属当前 demo 家长（parent_demo_001），
+  // 否则家长的沟通列表按 parentId 过滤时会查不到，造成假失败。
+  const jc = await api.createDemand({
+    subject: '数学',
+    grade: '初二',
+    teachMode: 'online',
+    address: '',
+    isDiscipline: false,
+    timeRange: ['weekday_evening'],
+    budgetMax: 120,
+    teachType: 'long_term',
+    expectedPersonality: []
+  });
+  const H2_DEMAND = jc.code === 0 ? jc.data.demand.id : '';
+  const H2_TUTOR = 'tutor_002';
+  const H2_THREAD = 'chat__' + H2_DEMAND + '__' + H2_TUTOR;
+  check('测试需求创建成功', jc.code === 0 && !!H2_DEMAND, H2_DEMAND);
+
+  // 报名后学生开场消息对家长是未读（按 threadId 精确断言，避免其他会话干扰）
+  await api.signupByHold({ demandId: H2_DEMAND, tutorId: H2_TUTOR, tutorName: '陈知远' });
+  const parentUnread = await api.getChatUnread({ role: 'parent' });
+  const unreadOfThread =
+    parentUnread.code === 0 ? (parentUnread.data.byThread || {})[H2_THREAD] || 0 : -1;
+  check('该会话对学生开场消息计为未读', unreadOfThread === 1, '未读=' + unreadOfThread);
+
+  // 标记已读后该会话未读消失
+  await api.markThreadRead({ demandId: H2_DEMAND, tutorId: H2_TUTOR, role: 'parent' });
+  const parentUnread2 = await api.getChatUnread({ role: 'parent' });
+  const unreadAfter =
+    parentUnread2.code === 0 ? (parentUnread2.data.byThread || {})[H2_THREAD] || 0 : -1;
+  check('标记已读后该会话未读归零', unreadAfter === 0, '未读=' + unreadAfter);
+
+  // 家长发消息 → 学生侧该会话未读
+  await api.sendChatMessage({
+    demandId: H2_DEMAND,
+    tutorId: H2_TUTOR,
+    sender: 'parent',
+    text: '您好，请问带过几届毕业班？'
+  });
+  const tutorUnread = await api.getChatUnread({ role: 'tutor', tutorId: H2_TUTOR });
+  const tUnread = tutorUnread.code === 0 ? (tutorUnread.data.byThread || {})[H2_THREAD] || 0 : -1;
+  check('学生侧收到家长消息后该会话未读 = 1', tUnread === 1, '未读=' + tUnread);
+
+  // 取消报名：学生侧会话隐藏，家长侧保留
+  const cancelH2 = await api.cancelApplication({ demandId: H2_DEMAND, tutorId: H2_TUTOR });
+  check('取消报名成功', cancelH2.code === 0, cancelH2.message);
+
+  const tutorList = await api.getChatList({ role: 'tutor', tutorId: H2_TUTOR });
+  const tutorHasThread =
+    tutorList.code === 0 &&
+    tutorList.data.list.some(function (it) {
+      return it.demandId === H2_DEMAND;
+    });
+  check('取消后学生侧沟通列表隐藏该会话', tutorList.code === 0 && !tutorHasThread, '会话数=' + (tutorList.code === 0 ? tutorList.data.list.length : '?'));
+
+  const parentList = await api.getChatList({ role: 'parent' });
+  const parentHasThread =
+    parentList.code === 0 &&
+    parentList.data.list.some(function (it) {
+      return it.demandId === H2_DEMAND;
+    });
+  check('取消后家长侧仍保留沟通记录', parentHasThread, '家长会话数=' + (parentList.code === 0 ? parentList.data.list.length : '?'));
+
+  // 重新报名 → 会话恢复可见
+  await api.signupByHold({ demandId: H2_DEMAND, tutorId: H2_TUTOR, tutorName: '陈知远' });
+  const tutorList2 = await api.getChatList({ role: 'tutor', tutorId: H2_TUTOR });
+  check(
+    '重新报名后会话恢复可见',
+    tutorList2.code === 0 &&
+      tutorList2.data.list.some(function (it) {
+        return it.demandId === H2_DEMAND;
+      }),
+    '会话数=' + (tutorList2.code === 0 ? tutorList2.data.list.length : '?')
+  );
+
+  // 自定义标签（custom: 前缀）
+  const customTags = await api.updateTutorTags({
+    tutorId: 'tutor_002',
+    preferences: ['custom:只接初三冲刺'],
+    personality: ['custom:擅长鼓励式教学']
+  });
+  check(
+    '自定义标签可保存（custom: 前缀）',
+    customTags.code === 0 && customTags.data.preferences.length === 1 && customTags.data.personality.length === 1,
+    JSON.stringify(customTags.code === 0 ? customTags.data.preferences : [])
+  );
+  const badCustom = await api.updateTutorTags({ tutorId: 'tutor_002', preferences: ['custom:'], personality: [] });
+  check(
+    '空白自定义标签被过滤',
+    badCustom.code === 0 && badCustom.data.preferences.length === 0,
+    '过滤后=' + JSON.stringify(badCustom.code === 0 ? badCustom.data.preferences : [])
+  );
+
+  /* ---- 结构性断言：页面确实实现了对应 UI ---- */
+  const fsJ = require('fs');
+  const pathJ = require('path');
+  const MPJ = pathJ.join(__dirname, '../miniprogram');
+
+  const profileWxml = fsJ.readFileSync(pathJ.join(MPJ, 'pages/profile/profile.wxml'), 'utf8');
+  check('个人中心有 chooseAvatar 按钮', profileWxml.indexOf('open-type="chooseAvatar"') > -1);
+  check('个人中心有 nickname 输入', profileWxml.indexOf('type="nickname"') > -1);
+  check('标签列表有「＋ 自定义」入口', (profileWxml.match(/＋ 自定义/g) || []).length === 2);
+
+  const roomJs = fsJ.readFileSync(pathJ.join(MPJ, 'pages/chat-room/chat-room.js'), 'utf8');
+  check('聊天室按角色注入预设语', roomJs.indexOf('带过几届毕业班') > -1 && roomJs.indexOf('我已通过认证') > -1);
+
+  const detailWxml2 = fsJ.readFileSync(pathJ.join(MPJ, 'pages/demand-detail/demand-detail.wxml'), 'utf8');
+  check('需求详情有「取消报名」按钮', detailWxml2.indexOf('onCancelSignup') > -1 && detailWxml2.indexOf('取消报名') > -1);
+
+  const listWxml2 = fsJ.readFileSync(pathJ.join(MPJ, 'pages/demand-list/demand-list.wxml'), 'utf8');
+  check('接单池使用长按报名组件', listWxml2.indexOf('hold-button') > -1);
+
+  const badgeJs = fsJ.readFileSync(pathJ.join(MPJ, 'app.js'), 'utf8');
+  check('TabBar 角标接口已实现（index: 2）', badgeJs.indexOf('setTabBarBadge') > -1 && badgeJs.indexOf('index: 2') > -1);
+
   /* ================= 汇总 ================= */
   console.log('');
   const total = pass + failures.length;

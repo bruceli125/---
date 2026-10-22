@@ -51,7 +51,9 @@ const STORAGE_KEYS = {
   /** 沟通会话（每个 demandId × tutorId 一条） */
   CHATS: 'js_chats',
   /** 沟通消息（按 threadId 分组） */
-  MESSAGES: 'js_messages'
+  MESSAGES: 'js_messages',
+  /** 用户自定义资料：头像 URL + 昵称（chooseAvatar / nickname 输入） */
+  PROFILE: 'js_profile'
 };
 
 /** 风险等级 */

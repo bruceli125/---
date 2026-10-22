@@ -105,6 +105,16 @@ Component({
       }, 40);
     },
 
+    /**
+     * 原生长按事件（约 350ms 触发）
+     * 微信的 bindlongpress 阈值不可配置，无法表达"按住 2 秒"，
+     * 所以它只负责给一次触感反馈，真正的报名判定仍是下面的 2 秒计时器。
+     */
+    onLongPress() {
+      if (this.data.disabled || this.data.isDone) return;
+      if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+    },
+
     /** 手指移动超过 10px 视为取消（避免想滚列表时误接单） */
     onMove(e) {
       if (!this.data.holding) return;

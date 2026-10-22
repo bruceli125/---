@@ -5,6 +5,7 @@
   bindtouchmove="onMove"
   bindtouchend="onEnd"
   bindtouchcancel="onEnd"
+  bindlongpress="onLongPress"
   catchtap="noop"
 >
   <view class="hb__ringwrap">

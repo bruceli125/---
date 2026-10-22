@@ -1,4 +1,4 @@
-<!-- 沟通列表：学生看家长，家长看学生；一行一条会话 -->
+<!-- 沟通列表：学生看家长，家长看学生；一行一条会话（未读在头像右上角显示数字） -->
 <view class="page chat-page">
 
   <view class="chat-tip" wx:if="{{!loading && !list.length}}">{{emptyTip}}</view>
@@ -12,7 +12,10 @@
     data-peername="{{item.peerName}}"
     bindtap="onOpenChat"
   >
-    <view class="session__avatar">{{item.peerAvatarText}}</view>
+    <view class="session__avatar-wrap">
+      <view class="session__avatar">{{item.peerAvatarText}}</view>
+      <view class="session__badge" wx:if="{{item.unread > 0}}">{{item.unread > 99 ? '99+' : item.unread}}</view>
+    </view>
 
     <view class="session__main">
       <view class="session__top">

@@ -106,6 +106,8 @@ Page({
     generating: false,
     applying: false,
     applied: false,
+    /** 取消报名进行中（防重复点击） */
+    canceling: false,
     applyBtnText: '申请接单',
     applyBtnClass: 'btn-green',
 
@@ -712,6 +714,52 @@ Page({
         // 五.1：报名成功直接进入聊天室
         self.goChatRoom();
       });
+  },
+
+  /**
+   * 取消报名
+   * ------------------------------------------------------------------
+   * 闭环三件事：
+   *   1. 调 api.cancelApplication 删掉投递记录（家长端申请列表随之消失）
+   *   2. 本页 applied 置 false → 底部回到「长按报名」
+   *   3. 该学生会话在「沟通」列表隐藏（服务端已处理），并刷新 TabBar 角标
+   * 返回接单池时列表页 onShow 重新拉取 getTutorPool，applied 自然变回未报名。
+   */
+  onCancelSignup() {
+    const self = this;
+    if (this.data.canceling) return;
+
+    wx.showModal({
+      title: '取消报名',
+      content: '确定要取消报名吗？取消后可重新报名。',
+      confirmText: '取消报名',
+      confirmColor: '#D92D20',
+      success(res) {
+        if (!res.confirm) return;
+        self.setData({ canceling: true });
+
+        api
+          .cancelApplication({
+            demandId: self.data.demandId,
+            tutorId: self.data.tutorId
+          })
+          .then(function (r) {
+            self.setData({ canceling: false });
+            if (!r || r.code !== 0) {
+              wx.showToast({ title: (r && r.message) || '取消失败，请重试', icon: 'none' });
+              return;
+            }
+            // 本地立即复位，避免等待接口刷新造成"按钮没反应"的错觉
+            self.setData({ applied: false, applyBtnText: '申请接单' });
+            self.paintHold(0);
+            wx.showToast({ title: '已取消报名', icon: 'none' });
+
+            const app = getApp();
+            if (app && app.refreshChatBadge) app.refreshChatBadge();
+            self.loadDetail();
+          });
+      }
+    });
   },
 
   /** 学生：进入与家长的聊天室 */

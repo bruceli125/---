@@ -9,6 +9,63 @@
   border: 2rpx solid var(--brand-primary-soft);
 }
 
+/* ---------- 头像 / 昵称自定义 ---------- */
+.avatar-btn {
+  position: relative;
+  width: 108rpx;
+  height: 108rpx;
+  padding: 0;
+  margin: 0 20rpx 0 0;
+  border-radius: 50%;
+  background: transparent;
+  line-height: 1;
+  overflow: hidden;
+}
+
+.avatar-btn::after {
+  border: none;
+}
+
+.user-avatar-img {
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 50%;
+  display: block;
+}
+
+.avatar-edit {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: rgba(10, 10, 12, 0.72);
+  color: #fff;
+  font-size: 18rpx;
+  line-height: 36rpx;
+  text-align: center;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name-input {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: var(--ink, #0a0a0c);
+  padding: 4rpx 0;
+  min-height: 48rpx;
+}
+
+.chip-add {
+  border-style: dashed;
+  color: var(--violet, #6d4aff);
+  border-color: rgba(109, 74, 255, 0.4);
+}
+
 .user-avatar {
   width: 104rpx;
   height: 104rpx;
