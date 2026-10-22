@@ -1,4 +1,7 @@
-<!-- 接单池：学生看池子，家长看自己的需求（家长从 Tab 进入会被拦截） -->
+<!--
+  接单池（学生视图按设计图三重构）
+  卡片层级：角标 → 标题+分类 → 报名提示条 → 胶囊标签 → 地址/要求 → 匹配度区块 → 底部操作
+-->
 <view class="page">
 
   <!-- 权限拦截占位 -->
@@ -14,43 +17,87 @@
     <block wx:if="{{isTutor}}">
       <view class="head">
         <view class="head__title">接单池</view>
-        <view class="head__sub">共 {{poolTotal}} 条可接订单 · 长按 2 秒报名并开启沟通</view>
+        <view class="head__sub">共 {{poolTotal}} 条 · 长按 2 秒报名</view>
       </view>
 
       <view wx:if="{{!loading && !pool.length}}" class="card">
         <view class="empty">
           <view class="empty-icon">📭</view>
-          <view class="empty-text">暂时没有可接订单，稍后再来看看</view>
+          <view class="empty-text">暂时没有可接订单</view>
         </view>
       </view>
 
-      <view class="card pool-item" wx:for="{{pool}}" wx:key="demandId">
+      <view class="dc" wx:for="{{pool}}" wx:key="demandId">
+
+        <!-- 右上角状态角标 -->
+        <view class="dc__badge {{item.statusClass}}">{{item.statusLabel}}</view>
+
         <view data-demandid="{{item.demandId}}" bindtap="onOpenDemand">
-          <view class="pool-item__top">
-            <text class="pool-item__title">{{item.title}}</text>
-            <text class="pool-item__score">{{item.matchScore}} 分</text>
+          <!-- 标题 + 分类 -->
+          <view class="dc__title">{{item.title}}</view>
+          <view class="dc__cat {{item.categoryClass}}">{{item.category}}</view>
+
+          <!-- 已报名提示条 -->
+          <view class="dc__notice" wx:if="{{item.applied}}">
+            已投递，等待家长确认（可在详情查看进度）
           </view>
-          <view class="pool-item__meta">
-            <text class="tag tag-line">{{item.teachTypeText}}</text>
-            <text class="tag tag-line">{{item.modeText}}</text>
-            <text class="tag tag-line">{{item.budgetText}}</text>
+
+          <!-- 胶囊标签（自动换行） -->
+          <view class="dc__tags">
+            <view class="pill" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">
+              <text class="pill__dot"></text>{{tag}}
+            </view>
           </view>
-          <view class="pool-item__time">{{item.timeText}} · {{item.personText}}</view>
-          <view class="pool-item__status">
-            <text class="tag tag-line">{{item.statusLabel}}</text>
-            <text class="text-weak" wx:if="{{item.applied}}">已报名</text>
+
+          <!-- 地址 / 特殊要求 -->
+          <view class="dc__meta">
+            <view class="dc__meta-row">
+              <text class="dc__meta-key">地址</text>
+              <text class="dc__meta-val {{item.addressText ? '' : 'dc__meta-val--empty'}}">{{item.addressText || '未填写地址'}}</text>
+            </view>
+            <view class="dc__meta-row">
+              <text class="dc__meta-key">要求</text>
+              <text class="dc__meta-val dc__meta-val--clamp {{item.specialRequirements ? '' : 'dc__meta-val--empty'}}">{{item.specialRequirements || '家长未填写特殊要求'}}</text>
+            </view>
+          </view>
+
+          <!-- 匹配度区块 -->
+          <view class="dc__match">
+            <view class="dc__match-title">匹配度 {{item.matchScore}} 分</view>
+            <view class="dc__match-row">
+              <text class="dc__match-item">需求匹配度 {{item.matchScore}} 分</text>
+              <text class="dc__match-sep">·</text>
+              <text class="dc__match-item">{{item.distanceText}}</text>
+              <text class="dc__match-sep">·</text>
+              <text class="dc__match-item {{item.overBudget ? 'dc__match-item--warn' : ''}}">{{item.priceNote}}</text>
+            </view>
           </view>
         </view>
 
-        <!-- 长按报名：仅学生视图渲染，家长根本看不到这个按钮（六.3） -->
-        <view class="pool-item__action">
-          <hold-button
-            label="{{item.applied ? '已报名 · 长按再次进入' : '长按报名'}}"
-            done-label="已报名"
-            duration="{{2000}}"
-            disabled="{{item.applied}}"
-            bind:confirm="onSignup"
-          />
+        <!-- 底部操作 -->
+        <view class="dc__foot">
+          <view class="dc__foot-left">
+            <text class="dc__time">{{item.timeText}}</text>
+            <text class="dc__count">{{item.applyCount}}人已申请 · {{item.viewCount}}次浏览</text>
+          </view>
+
+          <view class="dc__foot-right">
+            <block wx:if="{{item.applied}}">
+              <text class="dc__cancel" data-demandid="{{item.demandId}}" catchtap="onCancelSignup">取消接单</text>
+              <view class="dc__done" data-demandid="{{item.demandId}}" catchtap="onOpenDemand">
+                <text class="dc__done-check">✓</text>已接单
+              </view>
+            </block>
+
+            <view wx:else class="dc__hold">
+              <hold-button
+                label="长按报名"
+                duration="{{2000}}"
+                demand-id="{{item.demandId}}"
+                bind:confirm="onSignup"
+              />
+            </view>
+          </view>
         </view>
       </view>
     </block>

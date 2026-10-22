@@ -22,6 +22,7 @@
  */
 const api = require('../../services/api.js');
 const C = require('../../utils/constants.js');
+const appliedStore = require('../../utils/applied.js');
 const fmt = require('../../utils/format.js');
 const riskService = require('../../services/risk.js');
 const {
@@ -189,6 +190,10 @@ Page({
       return;
     }
     if (!this.data.loading && !this.data.notFound && this.data.demandId) {
+      // 先用缓存同步一帧（从列表页返回时立刻显示正确状态），再向服务端对齐
+      if (this.data.isTutor) {
+        this.setData({ applied: appliedStore.has(this.data.demandId) });
+      }
       this.loadDetail();
       if (this.data.isParent) this.loadChatList();
     }
@@ -289,8 +294,18 @@ Page({
 
     api.getMyApplications(tutorId).then((res) => {
       if (res && res.code === 0) {
-        const applied = (res.data || []).filter((a) => a.demandId === demand.id).length > 0;
-        this.setData({ applied: applied });
+        /*
+         * 报名状态以 utils/applied 的全局缓存为准：
+         * 列表页报名后会先写缓存，这里直接读缓存，
+         * 不再出现"列表已报名、详情仍显示长按报名"的错位。
+         * 服务端结果只做一次校正：有记录就补进缓存，缓存为空时以服务端为准。
+         */
+        const serverApplied = (res.data || []).some(function (a) {
+          return a.demandId === demand.id;
+        });
+        if (serverApplied) appliedStore.add(demand.id);
+
+        this.setData({ applied: appliedStore.has(demand.id) });
         this.syncApplyBtn();
       }
     });
@@ -709,6 +724,8 @@ Page({
 
         if (wx.vibrateShort) wx.vibrateShort({ type: 'medium' });
         wx.showToast({ title: '报名成功，已开启沟通', icon: 'none' });
+        // 同步全局缓存，保证返回列表页也是「已接单」
+        appliedStore.add(self.data.demandId);
         self.setData({ applied: true, applying: false, applyBtnText: '沟通中' });
         self.loadDetail();
         // 五.1：报名成功直接进入聊天室
@@ -749,7 +766,8 @@ Page({
               wx.showToast({ title: (r && r.message) || '取消失败，请重试', icon: 'none' });
               return;
             }
-            // 本地立即复位，避免等待接口刷新造成"按钮没反应"的错觉
+            // 同步全局缓存 + 本地立即复位，返回列表页同样是「长按报名」
+            appliedStore.remove(self.data.demandId);
             self.setData({ applied: false, applyBtnText: '申请接单' });
             self.paintHold(0);
             wx.showToast({ title: '已取消报名', icon: 'none' });

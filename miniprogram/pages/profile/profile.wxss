@@ -309,3 +309,101 @@
   width: 360rpx;
   margin: 24rpx auto 0;
 }
+
+/* ============================================================================
+ * 个人信息区（Flex 布局重构）
+ * 左：120rpx 圆形头像；右：昵称 + 角色；右侧：切换身份
+ * ========================================================================== */
+.user-head {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.avatar-btn {
+  position: relative;
+  flex: 0 0 auto;
+  width: 120rpx;
+  height: 120rpx;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+  background: transparent;
+  line-height: 1;
+  overflow: visible;
+}
+
+.avatar-btn::after {
+  border: none;
+}
+
+.avatar-img {
+  display: block;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: #f2f4f8;
+}
+
+.avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  font-size: 44rpx;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ffb27a, #a78bfa);
+}
+
+.avatar-edit {
+  position: absolute;
+  right: -2rpx;
+  bottom: -2rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: rgba(10, 10, 12, 0.72);
+  color: #ffffff;
+  font-size: 18rpx;
+  line-height: 40rpx;
+  text-align: center;
+  box-shadow: 0 0 0 3rpx #ffffff;
+}
+
+.user-main {
+  flex: 1;
+  min-width: 0;
+  margin-left: 24rpx;
+}
+
+.user-name {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--ink, #0a0a0c);
+  line-height: 1.3;
+  min-height: 46rpx;
+}
+
+.nickname-ph {
+  color: #b9bcc6;
+  font-weight: 500;
+}
+
+.user-role {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: var(--ink-4, #8e929e);
+}
+
+.role-switch {
+  flex: 0 0 auto;
+  margin-left: 16rpx;
+  padding: 12rpx 22rpx;
+  border-radius: 999rpx;
+  border: 1rpx solid var(--line-2, #d8dbe4);
+  font-size: 22rpx;
+  color: var(--ink-3, #5c5f6b);
+}

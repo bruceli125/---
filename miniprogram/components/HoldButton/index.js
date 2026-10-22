@@ -22,7 +22,9 @@ Component({
     /** 按住时长（毫秒） */
     duration: { type: Number, value: 1200 },
     disabled: { type: Boolean, value: false },
-    done: { type: Boolean, value: false }
+    done: { type: Boolean, value: false },
+    /** 关联的需求 id：confirm 事件会带回，父组件无需再读 dataset */
+    demandId: { type: String, value: '' }
   },
 
   data: {
@@ -149,7 +151,7 @@ Component({
       this.setData({ holding: false, isDone: true, text: this.data.doneLabel });
       this.paint(100);
       if (wx.vibrateShort) wx.vibrateShort({ type: 'medium' });
-      this.triggerEvent('confirm', { at: Date.now() });
+      this.triggerEvent('confirm', { at: Date.now(), demandId: this.data.demandId });
     },
 
     noop() {}

@@ -1,6 +1,10 @@
-/* 接单池：学生池子 / 家长我的需求 / 权限占位 */
+/* ============================================================================
+ * 接单池卡片（按设计图三重构）
+ * 视觉基线：白卡片 + 22rpx 圆角 + 极浅阴影；靠字号/留白/灰底区块分层，不用重边框
+ * ========================================================================== */
+
 .head {
-  padding: 8rpx 4rpx 24rpx;
+  padding: 8rpx 4rpx 22rpx;
 }
 
 .head__title {
@@ -16,7 +20,235 @@
   color: var(--ink-4, #8e929e);
 }
 
-/* ---------- 权限占位 ---------- */
+/* ---------------- 卡片容器 ---------------- */
+.dc {
+  position: relative;
+  background: #ffffff;
+  border-radius: 22rpx;
+  padding: 30rpx 28rpx 0;
+  margin-bottom: 22rpx;
+  box-shadow: 0 2rpx 8rpx rgba(10, 10, 12, 0.04), 0 12rpx 28rpx -18rpx rgba(10, 10, 12, 0.12);
+}
+
+/* ---------------- 右上角角标 ---------------- */
+.dc__badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 8rpx 22rpx;
+  font-size: 21rpx;
+  font-weight: 600;
+  color: #fff;
+  border-radius: 0 22rpx 0 18rpx;
+}
+
+.badge--violet {
+  background: linear-gradient(135deg, #8b6bff, #6d4aff);
+}
+
+.badge--dark {
+  background: #0a0a0c;
+}
+
+/* ---------------- 标题与分类 ---------------- */
+.dc__title {
+  font-size: 36rpx;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink, #0a0a0c);
+  padding-right: 120rpx;
+}
+
+.dc__cat {
+  display: inline-block;
+  margin-top: 12rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 6rpx;
+  font-size: 20rpx;
+  font-weight: 500;
+}
+
+.cat--discipline {
+  background: #eef1ff;
+  color: #4b3fbf;
+}
+
+.cat--quality {
+  background: #e9f8f3;
+  color: #0a7a52;
+}
+
+/* ---------------- 已报名提示条 ---------------- */
+.dc__notice {
+  margin-top: 16rpx;
+  padding: 12rpx 18rpx;
+  border-radius: 10rpx;
+  background: #f4f5f8;
+  font-size: 21rpx;
+  color: #6b6f7a;
+}
+
+/* ---------------- 胶囊标签 ---------------- */
+.dc__tags {
+  margin-top: 16rpx;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+  background: #f6f7fa;
+  font-size: 21rpx;
+  color: #4a4e59;
+}
+
+.pill__dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffb27a, #a78bfa);
+  flex: 0 0 auto;
+}
+
+/* ---------------- 地址 / 特殊要求 ---------------- */
+.dc__meta {
+  margin-top: 18rpx;
+}
+
+.dc__meta-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+  margin-top: 8rpx;
+}
+
+.dc__meta-key {
+  flex: 0 0 auto;
+  font-size: 21rpx;
+  color: #9aa0ac;
+}
+
+.dc__meta-val {
+  flex: 1;
+  min-width: 0;
+  font-size: 22rpx;
+  line-height: 1.6;
+  color: #3d414c;
+}
+
+.dc__meta-val--empty {
+  color: #b6bac4;
+}
+
+.dc__meta-val--clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* ---------------- 匹配度区块 ---------------- */
+.dc__match {
+  margin-top: 20rpx;
+  padding: 20rpx 22rpx;
+  border-radius: 14rpx;
+  background: #f6f7fa;
+}
+
+.dc__match-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: var(--ink, #0a0a0c);
+}
+
+.dc__match-row {
+  margin-top: 10rpx;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.dc__match-item {
+  font-size: 20rpx;
+  color: #7b808c;
+}
+
+.dc__match-item--warn {
+  color: #b26a00;
+  font-weight: 600;
+}
+
+.dc__match-sep {
+  font-size: 20rpx;
+  color: #c9ccd4;
+}
+
+/* ---------------- 底部操作 ---------------- */
+.dc__foot {
+  margin-top: 22rpx;
+  padding: 18rpx 0 20rpx;
+  border-top: 1rpx solid #f0f1f5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.dc__foot-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.dc__time {
+  font-size: 21rpx;
+  color: #8b909c;
+}
+
+.dc__count {
+  font-size: 20rpx;
+  color: #b0b4be;
+}
+
+.dc__foot-right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+.dc__cancel {
+  font-size: 23rpx;
+  color: #d92d20;
+  padding: 12rpx 4rpx;
+}
+
+.dc__done {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  height: 64rpx;
+  padding: 0 26rpx;
+  border-radius: 999rpx;
+  background: #0a0a0c;
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.dc__done-check {
+  font-size: 22rpx;
+}
+
+/* ---------------- 家长视图 / 权限占位 ---------------- */
 .blocked {
   text-align: center;
   padding: 64rpx 40rpx;
@@ -39,60 +271,6 @@
   margin-top: 26rpx;
 }
 
-/* ---------- 学生：订单卡片 ---------- */
-.pool-item {
-  padding: 26rpx 28rpx;
-}
-
-.pool-item__top {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16rpx;
-}
-
-.pool-item__title {
-  font-size: 31rpx;
-  font-weight: 600;
-  color: var(--ink, #0a0a0c);
-}
-
-.pool-item__score {
-  font-size: 24rpx;
-  font-weight: 600;
-  color: var(--violet, #6d4aff);
-  flex: 0 0 auto;
-}
-
-.pool-item__meta {
-  margin-top: 14rpx;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10rpx;
-}
-
-.pool-item__time {
-  margin-top: 12rpx;
-  font-size: 22rpx;
-  color: var(--ink-4, #8e929e);
-}
-
-.pool-item__status {
-  margin-top: 12rpx;
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-}
-
-.pool-item__action {
-  margin-top: 20rpx;
-  padding-top: 18rpx;
-  border-top: 1rpx solid var(--line, #e6e8ef);
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* ---------- 家长：我的需求 ---------- */
 .create-btn {
   margin-bottom: 24rpx;
 }
