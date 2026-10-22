@@ -408,6 +408,12 @@ function createDemand(form, options) {
     budgetMin: Number(payload.budgetMin || 0),
     budgetMax: Number(payload.budgetMax || payload.budget || 0),
     specialRequirements: payload.specialRequirements || '',
+    /* 三期：授课类型（灵活岗位）+ 家长对老师性格的期望 */
+    teachType: payload.teachType || 'long_term',
+    expectedPersonality: [].concat(payload.expectedPersonality || []).filter(Boolean),
+    /* 三期：双向确认标记，报名→沟通→双方确认后才变 matched */
+    studentConfirmed: false,
+    parentConfirmed: false,
     riskLevel: risk.level,
     riskHits: risk.hits,
     /** 双减政策已通过（未通过时根本不会走到这里） */

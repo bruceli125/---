@@ -21,6 +21,8 @@
 const api = require('../../services/api.js');
 const fmt = require('../../utils/format.js');
 const riskService = require('../../services/risk.js');
+/* 三期：灵活岗位与性格期望的选项表（值域与师范生接单偏好一致，才能做交集匹配） */
+const { TEACH_TYPES, EXPECTED_PERSONALITY } = require('../../utils/constants.js');
 const {
   SUBJECTS,
   STAGES,
@@ -52,6 +54,16 @@ Page({
     stages: [],
     gradeOptions: [],
     frequencies: FREQUENCIES,
+    /* 三期：授课类型（单选）与对老师性格的期望（多选） */
+    teachTypeOptions: TEACH_TYPES,
+    teachType: 'long_term',
+    teachTypeDesc: '',
+    personalityOptions: EXPECTED_PERSONALITY.map((p) => ({
+      value: p.value,
+      label: p.label,
+      active: false
+    })),
+    expectedPersonality: [],
     timeRangeOptions: [],
     teachModes: TEACH_MODES,
     districtLabels: [],
@@ -130,7 +142,9 @@ Page({
     this.setData({
       stages: STAGES.map((s) => ({ value: s.value, label: s.label })),
       timeRangeOptions: TIME_RANGES.map((t) => ({ value: t.value, label: t.label, active: false })),
-      districtLabels: DISTRICTS.map((d) => d.label)
+      districtLabels: DISTRICTS.map((d) => d.label),
+      // 默认授课类型为「长期稳定」，提示语一并初始化
+      teachTypeDesc: (TEACH_TYPES[0] || {}).desc || ''
     });
     this.lastPolicy = null;
     this.pendingForm = null;
@@ -233,6 +247,39 @@ Page({
       districtIndex: index,
       district: district.value || '',
       districtLabel: district.label || ''
+    });
+  },
+
+  /* ---------- 三期：授课类型 / 期望性格 ---------- */
+
+  /** 选择授课类型（单选）：直接影响能不能被"按次 / 周末 / 线上碎片化"的学生接住 */
+  onSelectTeachType(e) {
+    const value = e.currentTarget.dataset.value;
+    let desc = '';
+    for (let i = 0; i < TEACH_TYPES.length; i++) {
+      if (TEACH_TYPES[i].value === value) {
+        desc = TEACH_TYPES[i].desc;
+        break;
+      }
+    }
+    this.setData({ teachType: value, teachTypeDesc: desc });
+  },
+
+  /** 勾选/取消「对老师性格的期望」（多选） */
+  onTogglePersonality(e) {
+    const index = Number(e.currentTarget.dataset.index);
+    const options = this.data.personalityOptions.slice();
+    if (!options[index]) return;
+    options[index] = Object.assign({}, options[index], { active: !options[index].active });
+    this.setData({
+      personalityOptions: options,
+      expectedPersonality: options
+        .filter(function (o) {
+          return o.active;
+        })
+        .map(function (o) {
+          return o.value;
+        })
     });
   },
 
@@ -445,6 +492,9 @@ Page({
       budgetMax: Number(d.budgetMax || d.budgetMin || 0),
       budget: Number(d.budgetMax || d.budgetMin || 0),
       specialRequirements: d.specialRequirements,
+      /* 三期：灵活岗位与性格期望（参与匹配加分） */
+      teachType: d.teachType,
+      expectedPersonality: d.expectedPersonality,
       phone: d.phone,
       deadline: ''
     };

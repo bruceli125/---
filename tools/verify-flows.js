@@ -278,6 +278,132 @@ function section(title) {
   const matchedCancel = await api.cancelApplication({ demandId: 'demo_demand_005', tutorId: 'tutor_001' });
   check('已成单订单禁止撤回（code 3）', matchedCancel.code === 3, matchedCancel.message);
 
+  /* ================= H. 三期：长按报名 → 沟通 → 双向确认 ================= */
+  section('H. 沟通与双向确认状态机');
+  const C3 = require('../miniprogram/utils/constants.js');
+
+  // 权重总和必须是 100，否则分数会越界
+  const wSum =
+    C3.MATCH_WEIGHTS.subject +
+    C3.MATCH_WEIGHTS.grade +
+    C3.MATCH_WEIGHTS.timePlace +
+    C3.MATCH_WEIGHTS.price +
+    C3.MATCH_WEIGHTS.credit +
+    C3.MATCH_WEIGHTS.cert +
+    C3.MATCH_WEIGHTS.preference;
+  check('匹配权重合计 = 100', wSum === 100, '合计=' + wSum + ' 偏好=' + C3.MATCH_WEIGHTS.preference);
+
+  // 偏好与性格维度：命中 vs 未命中要有明显分差
+  const m3 = require('../miniprogram/services/match.js');
+  const tutors3 = require('../miniprogram/mock/tutors.js').tutors;
+  const demand3 = require('../miniprogram/mock/demands.js').demands[0]; // 001：长期稳定 + 期望耐心
+  const t1 = tutors3.filter(function (t) { return t.id === 'tutor_001'; })[0];
+  const t3 = tutors3.filter(function (t) { return t.id === 'tutor_003'; })[0];
+  const p1 = m3.scorePreference(demand3, t1);
+  const p3 = m3.scorePreference(demand3, t3);
+  check(
+    '偏好命中得分 > 未命中得分',
+    p1.score > p3.score && p1.score <= C3.MATCH_WEIGHTS.preference,
+    '林嘉怡=' + p1.score + ' vs 苏雨萌=' + p3.score
+  );
+  check('推荐理由包含性格匹配说明', m3.scoreTutor(demand3, t1).reasons.join('').indexOf('耐心细致') > -1);
+
+  // —— 状态机：recruiting → communicating → matched ——
+  const H_DEMAND = 'demo_demand_001';
+  const H_TUTOR = 'tutor_001';
+
+  const beforeH = await api.getDemandDetail(H_DEMAND);
+  check('初始状态为招募中', beforeH.code === 0 && beforeH.data.status === 'recruiting', beforeH.data && beforeH.data.status);
+
+  const signup = await api.signupByHold({ demandId: H_DEMAND, tutorId: H_TUTOR, tutorName: '林嘉怡' });
+  check('长按报名成功', signup.code === 0, signup.message);
+  check(
+    '报名后状态 → 沟通中',
+    signup.code === 0 && signup.data.demand.status === 'communicating',
+    signup.code === 0 ? signup.data.demand.status : ''
+  );
+  check(
+    '自动生成开场消息（含认证说明）',
+    signup.code === 0 &&
+      signup.data.messages.length === 1 &&
+      signup.data.messages[0].auto === true &&
+      signup.data.messages[0].text.indexOf('已通过') > -1,
+    signup.code === 0 ? signup.data.messages[0].text.slice(0, 42) : ''
+  );
+
+  const againSignup = await api.signupByHold({ demandId: H_DEMAND, tutorId: H_TUTOR, tutorName: '林嘉怡' });
+  check(
+    '重复报名幂等（不重复发开场白）',
+    againSignup.code === 0 && againSignup.data.messages.length === 1,
+    '消息数=' + (againSignup.code === 0 ? againSignup.data.messages.length : '?')
+  );
+
+  const sent = await api.sendChatMessage({
+    demandId: H_DEMAND,
+    tutorId: H_TUTOR,
+    sender: 'student',
+    text: '您好，我周三晚上都有空，可以试课。'
+  });
+  check('发送文字消息', sent.code === 0, sent.message);
+
+  const thread1 = await api.getChatThread({ demandId: H_DEMAND, tutorId: H_TUTOR });
+  check(
+    '会话消息累计',
+    thread1.code === 0 && thread1.data.messages.length === 2,
+    '条数=' + (thread1.code === 0 ? thread1.data.messages.length : '?')
+  );
+
+  const sc = await api.confirmByStudent({ demandId: H_DEMAND, tutorId: H_TUTOR });
+  check('学生确认后仍未成单（单向确认不成单）', sc.code === 0 && sc.data.matched === false, sc.message);
+
+  const afterStudent = await api.getDemandDetail(H_DEMAND);
+  check(
+    '单向确认：状态仍是沟通中',
+    afterStudent.code === 0 && afterStudent.data.status === 'communicating' && afterStudent.data.studentConfirmed === true,
+    'status=' + (afterStudent.code === 0 ? afterStudent.data.status : '?')
+  );
+
+  const pc = await api.confirmByParent({ demandId: H_DEMAND, tutorId: H_TUTOR });
+  check('家长同意雇佣 → 双向确认完成', pc.code === 0 && pc.data.matched === true, pc.message);
+
+  const afterParent = await api.getDemandDetail(H_DEMAND);
+  check(
+    '双向确认后状态 → 已匹配',
+    afterParent.code === 0 && afterParent.data.status === 'matched' && afterParent.data.matchedTutorId === H_TUTOR,
+    'status=' + (afterParent.code === 0 ? afterParent.data.status : '?')
+  );
+
+  const thread2 = await api.getChatThread({ demandId: H_DEMAND, tutorId: H_TUTOR });
+  const sysMatched = (thread2.code === 0 ? thread2.data.messages : []).filter(function (m) {
+    return m.sender === 'system' && m.text.indexOf('正式匹配成功') > -1;
+  });
+  check('写入系统消息「正式匹配成功」', sysMatched.length === 1, '系统消息=' + sysMatched.length);
+
+  const chats = await api.getDemandChats({ demandId: H_DEMAND });
+  check(
+    '家长端沟通列表可见该会话',
+    chats.code === 0 && chats.data.list.length === 1 && chats.data.list[0].tutorId === H_TUTOR,
+    '会话数=' + (chats.code === 0 ? chats.data.list.length : '?')
+  );
+
+  const matchedSignup = await api.signupByHold({ demandId: H_DEMAND, tutorId: 'tutor_002', tutorName: '陈知远' });
+  check('已成单需求禁止再报名（code 3）', matchedSignup.code === 3, matchedSignup.message);
+
+  // 标签写回
+  const savedTags = await api.updateTutorTags({
+    tutorId: 'tutor_003',
+    preferences: ['trial_once', 'online_frag'],
+    personality: ['patient', 'humorous']
+  });
+  check('学生标签可保存', savedTags.code === 0 && savedTags.data.preferences.length === 2, savedTags.message);
+
+  const badTags = await api.updateTutorTags({ tutorId: 'tutor_003', preferences: ['not_a_real_value'], personality: [] });
+  check(
+    '非法标签被过滤',
+    badTags.code === 0 && badTags.data.preferences.length === 0,
+    '过滤后=' + JSON.stringify(badTags.code === 0 ? badTags.data.preferences : [])
+  );
+
   /* ================= 汇总 ================= */
   console.log('');
   const total = pass + failures.length;

@@ -137,7 +137,9 @@ Page({
     sortNote: C.POOL_SORT_NOTE,
     emptyIcon: '📭',
     emptyText: '暂无可接订单，稍后再来看看',
-    showResetFilter: false
+    showResetFilter: false,
+    /** 权限拦截态：非师范生进入本页时置 true，渲染"无权限"占位并自动退回首页 */
+    blocked: false
   },
 
   onLoad() {
@@ -147,9 +149,41 @@ Page({
       isTutor: role === C.ROLES.TUTOR,
       creditRangeText: C.CREDIT_RULES.min + ' - ' + C.CREDIT_RULES.max
     });
+    // 订阅角色变更：首页切换身份后，本页无需重新进入即可同步视图
+    this._offRole = app.onRoleChange((next) => {
+      this.setData({ isTutor: next === C.ROLES.TUTOR, blocked: next !== C.ROLES.TUTOR });
+      if (next === C.ROLES.TUTOR) this.loadAll(true);
+    });
   },
 
+  onUnload() {
+    if (this._offRole) {
+      this._offRole();
+      this._offRole = null;
+    }
+  },
+
+  /**
+   * 每次显示都过一道权限闸门
+   * ------------------------------------------------------------------
+   * 【角色越权 Bug 的正面修复】
+   * 接单池是师范生专属页面。家长从 TabBar 也能点进来（微信不允许动态移除单个 Tab），
+   * 所以必须在 onShow 拦截：不加载数据、不渲染卡片、提示后自动退回首页。
+   * 注意用 onShow 而不是只在 onLoad：tabBar 页面切走再切回不会重新 onLoad。
+   */
   onShow() {
+    const app = getApp();
+    const allowed = app.guardRole(C.ROLES.TUTOR, {
+      redirect: 'home',
+      tip: '仅师范生可进入接单池'
+    });
+    if (!allowed) {
+      // 立即清空列表，避免上一帧的学生视图残留在屏幕上
+      this.setData({ blocked: true, list: [], loading: false, loadError: '' });
+      return;
+    }
+    this.setData({ blocked: false, isTutor: true });
+
     // 需求状态可能被其它页面改变（申请 / 成单 / 关闭），每次进入都刷新
     const silent = !!this._shownOnce;
     this._shownOnce = true;
@@ -502,6 +536,11 @@ Page({
           });
       }
     });
+  },
+
+  /** 权限拦截态下的"返回首页" */
+  onGoHome() {
+    wx.switchTab({ url: '/pages/index/index' });
   },
 
   /* ================= 角色与认证 ================= */

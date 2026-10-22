@@ -272,3 +272,26 @@
   width: 260rpx;
   margin: 24rpx auto 0;
 }
+
+/* ---------- 权限拦截占位（非师范生进入接单池） ---------- */
+.blocked-card {
+  text-align: center;
+  padding: 64rpx 40rpx;
+}
+
+.blocked-icon {
+  font-size: 76rpx;
+  line-height: 1;
+}
+
+.blocked-title {
+  margin-top: 22rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--ink, #0a0a0c);
+}
+
+.blocked-card .btn {
+  display: inline-flex;
+  margin-top: 28rpx;
+}

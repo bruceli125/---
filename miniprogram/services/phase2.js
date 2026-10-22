@@ -24,7 +24,13 @@ const {
   REVIEW_STATUS,
   CREDIT_RULES,
   POOL_WEIGHTS,
-  MATCH_CONFIG
+  MATCH_CONFIG,
+  CHAT_SENDER,
+  NEGOTIATION,
+  normalizeDemandStatus,
+  DEMAND_STATUS_LABEL,
+  TUTOR_PREFERENCES,
+  PERSONALITY_TAGS
 } = require('../utils/constants.js');
 const fmt = require('../utils/format.js');
 const matchService = require('./match.js');
@@ -687,6 +693,499 @@ function cancelApplication(payload) {
   return Promise.resolve(ok({ removed: target, demandId: p.demandId }, '已取消接单'));
 }
 
+/* ==================================================================
+ * 八、三期：沟通会话 + 双向确认状态机
+ * ------------------------------------------------------------------
+ * 状态主线：recruiting（招募中）→ communicating（沟通中）→ matched（已匹配）
+ *
+ *   [学生] 长按报名 signupByHold()
+ *        ├─ 写 applications（投递记录）
+ *        ├─ demands.status: recruiting → communicating
+ *        ├─ 建沟通会话（demandId × tutorId 唯一）
+ *        └─ 自动生成一条开场消息（长得像学生发的，但由系统写入，标记 auto）
+ *
+ *   [双方] 在会话里自由发文字消息 sendChatMessage()
+ *
+ *   [学生] 确认接单 confirmByStudent()   → studentConfirmed = true
+ *   [家长] 同意雇佣 confirmByParent()    → parentConfirmed  = true
+ *
+ *   两者都为 true 时才 matched（见 settleIfBothConfirmed），并写入系统消息
+ *   「双方已达成共识，正式匹配成功！」。任一方单独确认只发提示消息，状态不变。
+ *
+ * 为什么不做「学生确认即 matched」：家长可能同时和多个学生沟通，
+ * 若学生单方点击就成单，会造成一个需求被多次占用。双向确认是撮合的最小安全集。
+ * ================================================================== */
+
+/** 会话 id：一个需求 + 一个学生 = 一条独立会话 */
+function threadIdOf(demandId, tutorId) {
+  return 'chat__' + demandId + '__' + tutorId;
+}
+
+/** 极简模板替换：{name} 形式的占位符换成变量值 */
+function renderTemplate(tpl, vars) {
+  return String(tpl || '').replace(/\{(\w+)\}/g, function (m, key) {
+    const v = vars && vars[key];
+    return v === undefined || v === null ? '' : String(v);
+  });
+}
+
+function loadChats() {
+  return readStore(STORAGE_KEYS.CHATS, []);
+}
+
+function saveChats(list) {
+  writeStore(STORAGE_KEYS.CHATS, list);
+}
+
+function loadMessages() {
+  return readStore(STORAGE_KEYS.MESSAGES, []);
+}
+
+function saveMessages(list) {
+  writeStore(STORAGE_KEYS.MESSAGES, list);
+}
+
+/** 认证等级 → 中文，用于开场白 */
+function certLevelText(level) {
+  const map = { 1: '学籍认证', 2: '双重认证', 3: '三重认证' };
+  return map[Number(level)] || '平台认证';
+}
+
+/**
+ * 追加一条消息
+ * @param {string} threadId
+ * @param {'student'|'parent'|'system'} sender
+ * @param {string} text
+ * @param {object} [extra] 额外字段（如 auto:true 表示系统代学生生成）
+ */
+function appendMessage(threadId, sender, text, extra) {
+  const messages = loadMessages();
+  const msg = Object.assign(
+    {
+      id: fmt.genId('msg'),
+      threadId: threadId,
+      sender: sender,
+      text: text,
+      createdAt: fmt.formatDateTime(Date.now()),
+      createdAtTs: Date.now()
+    },
+    extra || {}
+  );
+  messages.push(msg);
+
+  // 只保留最近 N 条，避免 storage 无限增长（mock 阶段的简单容量控制）
+  const limit = NEGOTIATION.maxMessages || 200;
+  const trimmed = messages.length > limit ? messages.slice(messages.length - limit) : messages;
+  saveMessages(trimmed);
+  return msg;
+}
+
+/** 取某会话的消息（按时间正序） */
+function messagesOf(threadId) {
+  return loadMessages()
+    .filter(function (m) {
+      return m.threadId === threadId;
+    })
+    .sort(function (a, b) {
+      return a.createdAtTs - b.createdAtTs;
+    });
+}
+
+/**
+ * 确保会话存在
+ * @returns {{thread:object, created:boolean}}
+ */
+function ensureThread(demand, tutorId) {
+  const chats = loadChats();
+  const id = threadIdOf(demand.id, tutorId);
+  let thread = chats.filter(function (c) {
+    return c.id === id;
+  })[0];
+  if (thread) return { thread: thread, created: false };
+
+  thread = {
+    id: id,
+    demandId: demand.id,
+    demandTitle: demand.title || demand.subject + ' / ' + demand.grade,
+    parentId: demand.parentId || '',
+    parentName: demand.parentName || '家长',
+    tutorId: tutorId,
+    status: 'open',
+    createdAt: fmt.formatDateTime(Date.now()),
+    createdAtTs: Date.now(),
+    lastMessage: '',
+    lastMessageAt: ''
+  };
+  chats.unshift(thread);
+  saveChats(chats);
+  return { thread: thread, created: true };
+}
+
+/** 更新会话的最后一条消息摘要（列表页要展示） */
+function touchThread(threadId, text) {
+  const chats = loadChats();
+  for (let i = 0; i < chats.length; i++) {
+    if (chats[i].id === threadId) {
+      chats[i].lastMessage = text;
+      chats[i].lastMessageAt = fmt.formatDateTime(Date.now());
+      break;
+    }
+  }
+  saveChats(chats);
+}
+
+/**
+ * 学生长按报名（三期入口）
+ * ------------------------------------------------------------------
+ * 与一期 applyDemand 的差别：报名即开启沟通，并把需求推进到 communicating。
+ * 幂等：重复长按不会重复建会话、不会重复发开场白。
+ */
+function signupByHold(payload) {
+  const p = payload || {};
+  if (!p.demandId) return Promise.resolve(fail('缺少 demandId'));
+  if (!p.tutorId) return Promise.resolve(fail('缺少 tutorId'));
+
+  const demands = loadDemands();
+  const demand = findById(demands, p.demandId);
+  if (!demand) return Promise.resolve(fail('需求不存在'));
+
+  const status = normalizeDemandStatus(demand.status);
+  if (status === DEMAND_STATUS.MATCHED) {
+    return Promise.resolve({
+      code: 3,
+      data: { demand: demand },
+      message: '该需求已完成匹配，无法再报名'
+    });
+  }
+  if (status === DEMAND_STATUS.CLOSED) {
+    return Promise.resolve({ code: 3, data: { demand: demand }, message: '该需求已结束' });
+  }
+
+  /* ---- 1. 写投递记录（已存在则复用，不重复计数） ---- */
+  const apps = readStore(STORAGE_KEYS.APPLICATIONS, []);
+  let record = apps.filter(function (a) {
+    return a.demandId === p.demandId && a.tutorId === p.tutorId;
+  })[0];
+
+  if (record && record.status === APPLY_STATUS.ACCEPTED) {
+    return Promise.resolve(ok({ demand: demand, application: record }, '您已被家长选中，无需重复报名'));
+  }
+
+  const now = fmt.formatDateTime(Date.now());
+  if (!record) {
+    record = {
+      id: fmt.genId('apply'),
+      demandId: p.demandId,
+      tutorId: p.tutorId,
+      tutorName: p.tutorName || '',
+      status: APPLY_STATUS.APPLIED,
+      message: '',
+      channel: 'hold_longpress',
+      createdAt: now,
+      createdAtTs: Date.now(),
+      updatedAt: now
+    };
+    apps.unshift(record);
+    writeStore(STORAGE_KEYS.APPLICATIONS, apps);
+    demand.applyCount = Number(demand.applyCount || 0) + 1;
+  } else {
+    record.status = APPLY_STATUS.APPLIED;
+    record.updatedAt = now;
+    writeStore(STORAGE_KEYS.APPLICATIONS, apps);
+  }
+
+  /* ---- 2. 状态机：recruiting / matching → communicating ---- */
+  if (status === DEMAND_STATUS.RECRUITING || status === DEMAND_STATUS.MATCHING) {
+    demand.status = DEMAND_STATUS.COMMUNICATING;
+  }
+  if (demand.studentConfirmed === undefined) demand.studentConfirmed = false;
+  if (demand.parentConfirmed === undefined) demand.parentConfirmed = false;
+  writeStore(STORAGE_KEYS.DEMANDS, demands);
+
+  /* ---- 3. 建会话 + 开场白（仅首次） ---- */
+  const ensured = ensureThread(demand, p.tutorId);
+  const thread = ensured.thread;
+  let opened = [];
+
+  if (ensured.created) {
+    const tutor = findById(loadTutors(), p.tutorId) || {};
+    const text = renderTemplate(NEGOTIATION.templates.signup, {
+      university: tutor.school || '首都师范大学',
+      name: tutor.name || p.tutorName || '同学',
+      certLevel: certLevelText(tutor.certLevel),
+      demandTitle: thread.demandTitle
+    });
+    // sender=student 让家长端看起来像学生发来的；auto=true 标明是系统代写
+    appendMessage(thread.id, CHAT_SENDER.STUDENT, text, { auto: true });
+    touchThread(thread.id, text);
+    opened = messagesOf(thread.id);
+  }
+
+  return Promise.resolve(
+    ok(
+      {
+        demand: demand,
+        application: record,
+        thread: thread,
+        messages: opened.length ? opened : messagesOf(thread.id)
+      },
+      '报名成功，已开启沟通'
+    )
+  );
+}
+
+/** 会话详情（消息 + 协商状态），页面进入沟通弹层时调用 */
+function getChatThread(query) {
+  const q = query || {};
+  if (!q.demandId || !q.tutorId) return Promise.resolve(fail('缺少 demandId 或 tutorId'));
+
+  const demand = findById(loadDemands(), q.demandId);
+  if (!demand) return Promise.resolve(fail('需求不存在'));
+
+  const chats = loadChats();
+  const thread = chats.filter(function (c) {
+    return c.id === threadIdOf(q.demandId, q.tutorId);
+  })[0];
+
+  const status = normalizeDemandStatus(demand.status);
+  const messages = thread ? messagesOf(thread.id) : [];
+
+  return Promise.resolve(
+    ok({
+      demand: demand,
+      thread: thread || null,
+      messages: messages,
+      negotiation: {
+        status: status,
+        statusLabel: DEMAND_STATUS_LABEL[status] || status,
+        studentConfirmed: !!demand.studentConfirmed,
+        parentConfirmed: !!demand.parentConfirmed,
+        bothConfirmed: !!demand.studentConfirmed && !!demand.parentConfirmed,
+        tip: NEGOTIATION.statusTip[status] || ''
+      }
+    })
+  );
+}
+
+/** 发一条文字消息（双方都走这个接口，sender 由页面按当前角色传） */
+function sendChatMessage(payload) {
+  const p = payload || {};
+  if (!p.demandId || !p.tutorId) return Promise.resolve(fail('缺少 demandId 或 tutorId'));
+  const text = String(p.text || '').trim();
+  if (!text) return Promise.resolve(fail('消息不能为空'));
+  if (text.length > (NEGOTIATION.maxMessageLen || 500)) {
+    return Promise.resolve(fail('单条消息过长，请精简'));
+  }
+
+  const sender = p.sender === CHAT_SENDER.PARENT ? CHAT_SENDER.PARENT : CHAT_SENDER.STUDENT;
+  const demand = findById(loadDemands(), p.demandId);
+  if (!demand) return Promise.resolve(fail('需求不存在'));
+
+  const ensured = ensureThread(demand, p.tutorId);
+  const msg = appendMessage(ensured.thread.id, sender, text);
+  touchThread(ensured.thread.id, text);
+
+  return Promise.resolve(ok({ message: msg, thread: ensured.thread }, '已发送'));
+}
+
+/**
+ * 双方都确认 → 正式匹配（内部函数）
+ * @returns {boolean} 是否完成匹配
+ */
+function settleIfBothConfirmed(demand, tutorId) {
+  if (!demand.studentConfirmed || !demand.parentConfirmed) return false;
+
+  const now = fmt.formatDateTime(Date.now());
+  demand.status = DEMAND_STATUS.MATCHED;
+  demand.matchedTutorId = tutorId;
+  demand.acceptedAt = now;
+  writeStore(STORAGE_KEYS.DEMANDS, loadDemands().map(function (d) {
+    return d.id === demand.id ? demand : d;
+  }));
+
+  // 投递记录：中标者 accepted，同需求其他投递置 rejected（避免"一对多"悬空）
+  const apps = readStore(STORAGE_KEYS.APPLICATIONS, []);
+  apps.forEach(function (a) {
+    if (a.demandId !== demand.id) return;
+    a.status = a.tutorId === tutorId ? APPLY_STATUS.ACCEPTED : APPLY_STATUS.REJECTED;
+    a.updatedAt = now;
+  });
+  writeStore(STORAGE_KEYS.APPLICATIONS, apps);
+
+  const threadId = threadIdOf(demand.id, tutorId);
+  const sys = NEGOTIATION.templates.matched;
+  appendMessage(threadId, CHAT_SENDER.SYSTEM, sys);
+  touchThread(threadId, sys);
+  return true;
+}
+
+/** 学生点【确认接单】 */
+function confirmByStudent(payload) {
+  const p = payload || {};
+  if (!p.demandId || !p.tutorId) return Promise.resolve(fail('缺少 demandId 或 tutorId'));
+
+  const demands = loadDemands();
+  const demand = findById(demands, p.demandId);
+  if (!demand) return Promise.resolve(fail('需求不存在'));
+
+  const status = normalizeDemandStatus(demand.status);
+  if (status === DEMAND_STATUS.MATCHED) {
+    return Promise.resolve({ code: 3, data: { demand: demand }, message: '该需求已匹配成功' });
+  }
+  if (demand.studentConfirmed) {
+    return Promise.resolve(ok({ demand: demand }, '您已确认过，等待家长确认'));
+  }
+
+  demand.studentConfirmed = true;
+  if (demand.parentConfirmed === undefined) demand.parentConfirmed = false;
+  writeStore(STORAGE_KEYS.DEMANDS, demands);
+
+  const threadId = threadIdOf(p.demandId, p.tutorId);
+  ensureThread(demand, p.tutorId);
+  const sys = NEGOTIATION.templates.studentConfirmed;
+  appendMessage(threadId, CHAT_SENDER.SYSTEM, sys);
+  touchThread(threadId, sys);
+
+  const matched = settleIfBothConfirmed(demand, p.tutorId);
+  return Promise.resolve(
+    ok(
+      { demand: demand, matched: matched },
+      matched ? NEGOTIATION.templates.matched : '已确认接单，等待家长同意雇佣'
+    )
+  );
+}
+
+/** 家长点【同意雇佣】 */
+function confirmByParent(payload) {
+  const p = payload || {};
+  if (!p.demandId || !p.tutorId) return Promise.resolve(fail('缺少 demandId 或 tutorId'));
+
+  const demands = loadDemands();
+  const demand = findById(demands, p.demandId);
+  if (!demand) return Promise.resolve(fail('需求不存在'));
+
+  const status = normalizeDemandStatus(demand.status);
+  if (status === DEMAND_STATUS.MATCHED) {
+    return Promise.resolve({ code: 3, data: { demand: demand }, message: '该需求已匹配成功' });
+  }
+  if (demand.parentConfirmed) {
+    return Promise.resolve(ok({ demand: demand }, '您已同意过，等待学生确认'));
+  }
+
+  demand.parentConfirmed = true;
+  if (demand.studentConfirmed === undefined) demand.studentConfirmed = false;
+  writeStore(STORAGE_KEYS.DEMANDS, demands);
+
+  const threadId = threadIdOf(p.demandId, p.tutorId);
+  ensureThread(demand, p.tutorId);
+  const sys = NEGOTIATION.templates.parentConfirmed;
+  appendMessage(threadId, CHAT_SENDER.SYSTEM, sys);
+  touchThread(threadId, sys);
+
+  const matched = settleIfBothConfirmed(demand, p.tutorId);
+  return Promise.resolve(
+    ok(
+      { demand: demand, matched: matched },
+      matched ? NEGOTIATION.templates.matched : '已同意雇佣，等待学生确认接单'
+    )
+  );
+}
+
+/**
+ * 家长端：某需求下的全部沟通会话（含学生基本信息与最后一条消息）
+ * 用于"家长在需求详情页看沟通列表"
+ */
+function getDemandChats(query) {
+  const q = query || {};
+  if (!q.demandId) return Promise.resolve(fail('缺少 demandId'));
+
+  const demand = findById(loadDemands(), q.demandId);
+  if (!demand) return Promise.resolve(fail('需求不存在'));
+
+  const tutors = loadTutors();
+  const chats = loadChats().filter(function (c) {
+    return c.demandId === q.demandId;
+  });
+
+  const list = chats.map(function (c) {
+    const tutor = findById(tutors, c.tutorId) || {};
+    const msgs = messagesOf(c.id);
+    return {
+      threadId: c.id,
+      tutorId: c.tutorId,
+      tutorName: tutor.name || c.tutorName || '同学',
+      tutorMajor: tutor.major || '',
+      certLevel: tutor.certLevel || 1,
+      creditScore: tutor.creditScore || 0,
+      lastMessage: c.lastMessage || '',
+      lastMessageAt: c.lastMessageAt || '',
+      messageCount: msgs.length,
+      /** 该学生是否已确认接单 */
+      studentConfirmed: !!demand.studentConfirmed
+    };
+  });
+
+  return Promise.resolve(
+    ok({
+      demand: demand,
+      list: list,
+      status: normalizeDemandStatus(demand.status),
+      parentConfirmed: !!demand.parentConfirmed
+    })
+  );
+}
+
+
+/**
+ * 三期：更新师范生的「接单偏好」与「性格特点」
+ * ------------------------------------------------------------------
+ * 这两个标签同时服务于：① 匹配算法加分；② 家长在推荐理由里看到差异化信息。
+ * 只允许写入 constants 里定义的合法值，防止前端传脏数据进来。
+ */
+function updateTutorTags(payload) {
+  const p = payload || {};
+  if (!p.tutorId) return Promise.resolve(fail('缺少 tutorId'));
+
+  const tutors = loadTutors();
+  const tutor = findById(tutors, p.tutorId);
+  if (!tutor) return Promise.resolve(fail('师范生档案不存在'));
+
+  if (Array.isArray(p.preferences)) {
+    tutor.preferences = p.preferences.filter(function (v) {
+      return TUTOR_PREFERENCES.some(function (o) {
+        return o.value === v;
+      });
+    });
+  }
+  if (Array.isArray(p.personality)) {
+    tutor.personality = p.personality.filter(function (v) {
+      return PERSONALITY_TAGS.some(function (o) {
+        return o.value === v;
+      });
+    });
+  }
+  tutor.tagsUpdatedAt = fmt.formatDateTime(Date.now());
+  writeStore(STORAGE_KEYS.TUTORS, tutors);
+
+  return Promise.resolve(
+    ok({ tutor: tutor, preferences: tutor.preferences, personality: tutor.personality }, '标签已保存')
+  );
+}
+
+/** 读取师范生的接单偏好与性格标签（档案页编辑用） */
+function getTutorTags(tutorId) {
+  if (!tutorId) return Promise.resolve(fail('缺少 tutorId'));
+  const tutor = findById(loadTutors(), tutorId);
+  if (!tutor) return Promise.resolve(fail('师范生档案不存在'));
+  return Promise.resolve(
+    ok({
+      tutorId: tutorId,
+      preferences: tutor.preferences || [],
+      personality: tutor.personality || []
+    })
+  );
+}
+
 module.exports = {
   /* 信用分 */
   getCredit: getCredit,
@@ -710,7 +1209,17 @@ module.exports = {
   getReviews: getReviews,
 
   /* 接单池（覆盖 api.js 的一期实现） */
-  getTutorPool: getTutorPool
+  getTutorPool: getTutorPool,
+
+  /* 三期：沟通 + 双向确认 */
+  signupByHold: signupByHold,
+  getChatThread: getChatThread,
+  sendChatMessage: sendChatMessage,
+  confirmByStudent: confirmByStudent,
+  confirmByParent: confirmByParent,
+  getDemandChats: getDemandChats,
+  updateTutorTags: updateTutorTags,
+  getTutorTags: getTutorTags
 };
 
 /* ==================================================================
@@ -736,7 +1245,14 @@ if (USE_CLOUD) {
     'getReviewState',
     'submitReview',
     'getReviews',
-    'getTutorPool'
+    'getTutorPool',
+    /* 三期：沟通与双向确认（云函数未接线前一律显式报错，避免半截数据） */
+    'signupByHold',
+    'getChatThread',
+    'sendChatMessage',
+    'confirmByStudent',
+    'confirmByParent',
+    'getDemandChats'
   ];
   GUARDED.forEach(function (name) {
     module.exports[name] = function () {

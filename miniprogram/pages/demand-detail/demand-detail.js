@@ -127,6 +127,21 @@ Page({
     acceptedAtText: '',
     canCheckin: false,
 
+    /* ---------- 三期：长按报名 + 沟通 + 双向确认 ---------- */
+    /** 是否正在长按（驱动按钮文案与环形进度） */
+    holding: false,
+    /** 长按进度百分比（0~100） */
+    holdPercent: 0,
+    /** 环形进度条的 conic-gradient 背景（JS 定时写入） */
+    holdRingStyle: 'background: conic-gradient(#0A0A0C 0%, #E6E8EF 0)',
+    /** 沟通面板可见性 */
+    chatVisible: false,
+    /** 当前面板对应的师范生（学生看自己，家长看被点开的那位） */
+    chatTutorId: '',
+    chatPeerName: '',
+    /** 家长端：该需求下的沟通会话列表 */
+    chatList: [],
+
     /* 打卡摘要 */
     checkinCount: 0,
     checkinEmpty: true,
@@ -160,6 +175,8 @@ Page({
       complianceItems: [DISCLAIMER.full[2], DISCLAIMER.full[3], DISCLAIMER.full[4]]
     });
     this.loadDetail();
+    // 家长视角额外拉一次沟通列表（谁报名了、聊到哪一步）
+    if (from !== 'tutor') this.loadChatList();
   },
 
   onShow() {
@@ -170,6 +187,7 @@ Page({
     }
     if (!this.data.loading && !this.data.notFound && this.data.demandId) {
       this.loadDetail();
+      if (this.data.isParent) this.loadChatList();
     }
   },
 
@@ -617,6 +635,181 @@ Page({
    * 四、师范生申请
    * ================================================================ */
 
+  /* ================================================================
+   * 六、三期：长按报名 → 开启沟通 → 双向确认
+   * ================================================================ */
+
+  /**
+   * 长按开始
+   * ------------------------------------------------------------------
+   * 【为什么不用 bindlongpress 直接触发报名】
+   * 微信原生长按事件 bindlongpress 的触发阈值固定约 350ms，WXML 里没有参数能改成 2 秒。
+   * 需求要求"长按 2 秒后报名成功"，所以这里自己用 50ms 定时器累计按住时长，
+   * 满 2000ms 才调完成逻辑；同时保留 bindlongpress 绑定（onHoldLongPress）给触感反馈。
+   * 松手 / 手势中断（touchcancel / 手指滑动）都会走 onHoldEnd 复位，不会误报名。
+   */
+  onHoldStart() {
+    if (this.data.applied || this.data.holding) return;
+    const self = this;
+    const total = 2000; // 需求指定：2 秒
+
+    this._holdStartAt = Date.now();
+    this._holdDone = false;
+    this.setData({ holding: true, holdPercent: 0 });
+    this.paintHold(0);
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+
+    this.clearHoldTimer();
+    this._holdTimer = setInterval(function () {
+      const percent = Math.min(100, ((Date.now() - self._holdStartAt) / total) * 100);
+      self.paintHold(percent);
+      if (percent >= 100 && !self._holdDone) {
+        self._holdDone = true;
+        self.clearHoldTimer();
+        self.completeHold();
+      }
+    }, 50);
+  },
+
+  /** 画环形进度（0~100） */
+  paintHold(percent) {
+    const v = Math.max(0, Math.min(100, Math.round(percent)));
+    this.setData({
+      holdPercent: v,
+      holdRingStyle: 'background: conic-gradient(#0A0A0C ' + v + '%, #E6E8EF 0)'
+    });
+  },
+
+  clearHoldTimer() {
+    if (this._holdTimer) {
+      clearInterval(this._holdTimer);
+      this._holdTimer = null;
+    }
+  },
+
+  /** 原生长按（约 350ms）命中：只给一次触感，真正的报名由 2 秒计时器触发 */
+  onHoldLongPress() {
+    if (this.data.applied) return;
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+  },
+
+  /** 松手 / 中断：未满 2 秒则取消并复位 */
+  onHoldEnd() {
+    if (!this.data.holding || this._holdDone) return;
+    this.clearHoldTimer();
+    this.setData({ holding: false, holdPercent: 0 });
+    this.paintHold(0);
+    wx.showToast({ title: '需按住 2 秒才能报名', icon: 'none' });
+  },
+
+  /**
+   * 长按满 2 秒 → 报名
+   * 走 api.signupByHold：写投递 + 需求推进到 communicating + 建会话 + 生成开场白
+   */
+  completeHold() {
+    const self = this;
+    const tutorId = this.data.tutorId;
+    if (!tutorId) {
+      this.setData({ holding: false });
+      wx.showToast({ title: '请先完成师范生认证', icon: 'none' });
+      return;
+    }
+
+    this.setData({ holding: false, holdPercent: 100 });
+
+    api
+      .signupByHold({
+        demandId: this.data.demandId,
+        tutorId: tutorId,
+        tutorName: this.data.tutorName
+      })
+      .then(function (res) {
+        if (!res || (res.code !== 0 && res.code !== 3)) {
+          wx.showToast({ title: (res && res.message) || '报名失败', icon: 'none' });
+          self.paintHold(0);
+          return;
+        }
+        if (res.code === 3) {
+          // 已完成匹配 / 已关闭等不可报名状态
+          wx.showToast({ title: res.message, icon: 'none' });
+          self.paintHold(0);
+          self.loadDetail();
+          return;
+        }
+
+        if (wx.vibrateShort) wx.vibrateShort({ type: 'medium' });
+        wx.showToast({ title: '报名成功，已开启沟通', icon: 'none' });
+        self.setData({ applied: true, applying: false, applyBtnText: '沟通中' });
+        self.loadDetail();
+        // 报名成功直接打开沟通面板，减少一次点击
+        self.openChat();
+      });
+  },
+
+  /** 打开沟通面板（学生：与家长；家长：与指定学生） */
+  openChat() {
+    const demand = this.data.demand || {};
+    const tutorId = this.data.isParent ? this.data.chatTutorId : this.data.tutorId;
+    if (!tutorId) {
+      wx.showToast({ title: '缺少沟通对象', icon: 'none' });
+      return;
+    }
+    this.setData({
+      chatVisible: true,
+      chatTutorId: tutorId,
+      chatPeerName: this.data.isParent ? this.data.chatPeerName : demand.parentName || '家长'
+    });
+  },
+
+  /** 家长从沟通列表里点开某位学生 */
+  openChatWith(e) {
+    const ds = e.currentTarget.dataset || {};
+    this.setData({ chatTutorId: ds.tutorid, chatPeerName: ds.name || '学生' });
+    this.openChat();
+  },
+
+  closeChat() {
+    this.setData({ chatVisible: false });
+  },
+
+  /** 面板里确认 / 发消息后：刷新本页状态（状态机由服务端推进，页面只跟随） */
+  onChatUpdated(e) {
+    const detail = e.detail || {};
+    this.loadDetail();
+    if (this.data.isParent) this.loadChatList();
+    if (detail.matched) {
+      wx.showToast({ title: '已正式匹配，可开始打卡', icon: 'none' });
+    }
+  },
+
+  /**
+   * 家长端：拉取沟通列表
+   * 每位报名学生一条会话，带最后一条消息与条数，便于快速判断聊没聊起来。
+   */
+  loadChatList() {
+    const self = this;
+    if (!this.data.demandId) return;
+    api
+      .getDemandChats({ demandId: this.data.demandId })
+      .then(function (res) {
+        if (!res || res.code !== 0) return;
+        const certText = { 1: '学籍认证', 2: '双重认证', 3: '三重认证' };
+        const list = (res.data.list || []).map(function (it) {
+          return Object.assign({}, it, {
+            avatarText: (it.tutorName || '?').slice(0, 1),
+            certLevelText: certText[it.certLevel] || '平台认证',
+            lastMessage: (it.lastMessage || '').slice(0, 40)
+          });
+        });
+        self.setData({ chatList: list });
+      });
+  },
+
+  /**
+   * @deprecated 一期的一键申请入口（单击）。
+   * 三期起订单详情页改用「长按 2 秒报名」→ completeHold()，
+   * 这里保留是为了兼容可能存在的旧分享链接与埋点，不再绑定到界面。
+   */
   onApply() {
     if (this.data.applied) {
       app.toast('您已申请过该需求');

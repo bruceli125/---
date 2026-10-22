@@ -136,6 +136,32 @@
       >{{item.icon}} {{item.label}}</view>
     </view>
 
+    <!-- 三期：授课类型（灵活岗位）——决定能被哪类学生接住 -->
+    <view class="form-label form-label-required mt-24">授课类型</view>
+    <view class="chip-group">
+      <view
+        class="chip {{teachType === item.value ? 'chip-active' : ''}}"
+        wx:for="{{teachTypeOptions}}"
+        wx:key="value"
+        data-value="{{item.value}}"
+        bindtap="onSelectTeachType"
+      >{{item.label}}</view>
+    </view>
+    <view class="form-tip">{{teachTypeDesc}}</view>
+
+    <!-- 三期：对老师性格的期望（多选，参与匹配加分） -->
+    <view class="form-label mt-24">对老师性格的期望（可多选）</view>
+    <view class="chip-group">
+      <view
+        class="chip {{item.active ? 'chip-active' : ''}}"
+        wx:for="{{personalityOptions}}"
+        wx:key="value"
+        data-index="{{index}}"
+        bindtap="onTogglePersonality"
+      >{{item.label}}</view>
+    </view>
+    <view class="form-tip">已选 {{expectedPersonality.length}} 项，与师范生性格标签匹配后会在推荐理由中说明</view>
+
     <view class="form-label mt-24">所在区域</view>
     <picker mode="selector" range="{{districtLabels}}" value="{{districtIndex < 0 ? 0 : districtIndex}}" bindchange="onDistrictChange">
       <view class="picker-value {{districtLabel ? '' : 'placeholder'}}">{{districtLabel || '请选择区域（用于距离匹配）'}}</view>

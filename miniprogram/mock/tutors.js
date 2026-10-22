@@ -10,7 +10,10 @@
 const tutors = [
   {
     id: 'tutor_001',
-    userId: 'user_demo_tutor_001',
+
+    // 三期：接单偏好（值域同 TEACH_TYPES）与性格特点（值域同 PERSONALITY_TAGS）
+    preferences: ['long_term', 'weekend_focus'],
+    personality: ['patient', 'guide'],    userId: 'user_demo_tutor_001',
     name: '林嘉怡',
     gender: 'female',
     school: '首都师范大学',
@@ -45,7 +48,10 @@ const tutors = [
   },
   {
     id: 'tutor_002',
-    userId: 'user_demo_tutor_002',
+
+    // 三期：接单偏好（值域同 TEACH_TYPES）与性格特点（值域同 PERSONALITY_TAGS）
+    preferences: ['long_term', 'trial_once'],
+    personality: ['humorous', 'warm'],    userId: 'user_demo_tutor_002',
     name: '陈知远',
     gender: 'male',
     school: '首都师范大学',
@@ -80,7 +86,10 @@ const tutors = [
   },
   {
     id: 'tutor_003',
-    userId: 'user_demo_tutor_003',
+
+    // 三期：接单偏好（值域同 TEACH_TYPES）与性格特点（值域同 PERSONALITY_TAGS）
+    preferences: ['trial_once', 'online_frag'],
+    personality: ['patient', 'warm'],    userId: 'user_demo_tutor_003',
     name: '苏雨萌',
     gender: 'female',
     school: '首都师范大学',
@@ -115,7 +124,10 @@ const tutors = [
   },
   {
     id: 'tutor_004',
-    userId: 'user_demo_tutor_004',
+
+    // 三期：接单偏好（值域同 TEACH_TYPES）与性格特点（值域同 PERSONALITY_TAGS）
+    preferences: ['long_term', 'weekend_focus'],
+    personality: ['strict', 'guide'],    userId: 'user_demo_tutor_004',
     name: '赵沐阳',
     gender: 'male',
     school: '首都师范大学',
@@ -150,7 +162,10 @@ const tutors = [
   },
   {
     id: 'tutor_005',
-    userId: 'user_demo_tutor_005',
+
+    // 三期：接单偏好（值域同 TEACH_TYPES）与性格特点（值域同 PERSONALITY_TAGS）
+    preferences: ['online_frag', 'weekend_focus'],
+    personality: ['humorous', 'patient'],    userId: 'user_demo_tutor_005',
     name: '何雨桐',
     gender: 'female',
     school: '首都师范大学',
@@ -185,7 +200,10 @@ const tutors = [
   },
   {
     id: 'tutor_006',
-    userId: 'user_demo_tutor_006',
+
+    // 三期：接单偏好（值域同 TEACH_TYPES）与性格特点（值域同 PERSONALITY_TAGS）
+    preferences: ['online_frag', 'trial_once'],
+    personality: ['guide', 'humorous'],    userId: 'user_demo_tutor_006',
     name: '郑一诺',
     gender: 'male',
     school: '首都师范大学',

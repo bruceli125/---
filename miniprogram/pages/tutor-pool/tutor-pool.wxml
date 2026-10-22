@@ -4,12 +4,18 @@
 -->
 <view class="page">
 
-  <!-- 家长身份提示 -->
-  <view wx:if="{{!isTutor}}" class="card role-hint">
-    <view class="role-hint-title">当前为家长身份</view>
-    <view class="text-sub mt-8">接单池仅供师范生使用。切换到师范生身份后即可查看可接订单、投递申请并完成认证提分。</view>
-    <view class="btn btn-primary btn-sm mt-16" bindtap="onSwitchRole">切换到师范生身份</view>
+  <!--
+    权限拦截（三期修复角色越权）
+    非师范生进入本页时只渲染这块占位，列表完全不渲染，随后由 app.guardRole 自动退回首页。
+  -->
+  <view wx:if="{{blocked}}" class="card blocked-card">
+    <view class="blocked-icon">🔒</view>
+    <view class="blocked-title">仅师范生可进入接单池</view>
+    <view class="text-sub mt-8">接单池用于接收家长需求并报名沟通。当前身份为家长，正在为你返回首页。</view>
+    <view class="btn btn-primary btn-sm mt-16" bindtap="onGoHome">返回首页</view>
   </view>
+
+  <block wx:if="{{!blocked}}">
 
   <!-- ================= 我的状态卡 ================= -->
   <view class="card my-card">
@@ -172,4 +178,5 @@
 
   <!-- 合规红线：平台定位声明（非培训机构 / 非办学场所） -->
   <platform-notice />
+  </block>
 </view>

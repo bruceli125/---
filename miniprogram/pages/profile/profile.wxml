@@ -230,6 +230,38 @@
       <view class="btn btn-gray mt-16" bindtap="onResetMock">重置演示数据</view>
     </view>
 
+    <!-- ============ 三期：我的接单标签（学生端） ============ -->
+    <view class="card" wx:if="{{isTutor}}">
+      <view class="section-title">我的接单标签</view>
+      <view class="text-weak">告诉家长你能接什么、是什么风格的老师。匹配算法会用到这两组标签，推荐理由里也会写出来。</view>
+
+      <view class="form-label mt-24">接单偏好（可多选）</view>
+      <view class="chip-group">
+        <view
+          class="chip {{item.active ? 'chip-active' : ''}}"
+          wx:for="{{prefOptions}}"
+          wx:key="value"
+          data-index="{{index}}"
+          bindtap="onTogglePref"
+        >{{item.label}}</view>
+      </view>
+
+      <view class="form-label mt-24">性格特点（可多选）</view>
+      <view class="chip-group">
+        <view
+          class="chip {{item.active ? 'chip-active' : ''}}"
+          wx:for="{{personaOptions}}"
+          wx:key="value"
+          data-index="{{index}}"
+          bindtap="onTogglePersona"
+        >{{item.label}}</view>
+      </view>
+
+      <view class="btn btn-primary btn-block mt-24" bindtap="onSaveTags">
+        {{savingTags ? '保存中…' : '保存接单标签'}}
+      </view>
+    </view>
+
     <view class="version-line">{{about.name}} · v{{about.version}} · MVP 演示版</view>
   </block>
   <platform-notice />

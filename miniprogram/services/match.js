@@ -2,7 +2,10 @@
  * 匹配打分（前端规则版）
  *
  * 评分公式（总分 100）：
- *   科目匹配 40 + 年级学段匹配 20 + 时间地点匹配 15 + 价格匹配 10 + 信用分 10 + 认证完整度 5
+ *   科目 36 + 年级学段 18 + 时间地点 12 + 价格 9 + 信用分 10 + 认证完整度 5 + 偏好与性格 10
+ *
+ * 三期新增「偏好与性格」维度：家长选「按次试课/周末集中/线上碎片化」这类**灵活岗位**时，
+ * 学生能否接得住，比距离近不近更决定撮合是否成立，因此单独给 10 分权重。
  *
  * 与云函数 matchTutors 保持同一套规则；云函数版本是权威结果，
  * 前端版本用于「进入页面前先算一版、离线也能演示」。
@@ -10,7 +13,16 @@
  * TODO(二期)：把 scoreTutor 的科目/年级匹配替换为语义匹配（向量召回），
  *            把 buildReasons 替换为 LLM 生成（generateReasonsByLLM 已留接口）。
  */
-const { MATCH_WEIGHTS, MATCH_CONFIG, POOL_WEIGHTS, DISTRICTS } = require('../utils/constants.js');
+const {
+  MATCH_WEIGHTS,
+  MATCH_CONFIG,
+  POOL_WEIGHTS,
+  DISTRICTS,
+  TEACH_TYPES,
+  PERSONALITY_TAGS,
+  labelOf,
+  labelsOf
+} = require('../utils/constants.js');
 const { getStageByGrade, round } = require('../utils/format.js');
 
 /** 判断两个数组是否有交集 */
@@ -82,7 +94,7 @@ function scoreGrade(demand, tutor) {
   return { score: 0, note: '学段不匹配' };
 }
 
-/** 3. 时间地点匹配（满分 15：授课方式/地点 9 + 时间段 6） */
+/** 3. 时间地点匹配（满分 12：授课方式/地点 9 + 时间段 6，按权重归一后在 12 内） */
 function scoreTimePlace(demand, tutor) {
   const max = MATCH_WEIGHTS.timePlace;
   let score = 0;
@@ -107,10 +119,11 @@ function scoreTimePlace(demand, tutor) {
     notes.push('同在' + districtText(demand.district) + '，通勤方便');
   } else if (distance !== null && distance <= 5) {
     score += 3;
-    notes.push('距离约 ' + round(distance, 1) + 'km');
+    // 距离文案统一由 buildReasons 输出，这里只说"范围"，避免同一句里出现两次距离
+    notes.push('距离在可上门范围内');
   } else if (distance !== null && distance <= MATCH_CONFIG.maxDistanceKm) {
     score += 1.5;
-    notes.push('距离约 ' + round(distance, 1) + 'km');
+    notes.push('距离稍远但仍在可协商范围');
   }
 
   // 时间段
@@ -205,6 +218,84 @@ function findDistrict(value) {
 }
 
 /**
+ * 偏好与性格匹配（满分 10 = 授课类型 6 + 性格期望 4）
+ * ---------------------------------------------------------------------------
+ * 为什么单独做一个维度：
+ *   灵活岗位（按次试课 / 周末集中 / 线上碎片化）能不能接，是"能不能成"的前置条件，
+ *   而不是加分项。把它混进"时间地点"里会被距离分数稀释，所以独立成维度。
+ *
+ * 打分规则：
+ *   1) 授课类型命中（teachType ∈ tutor.preferences）→ 6 分；未命中 → 1 分（不是 0，
+ *      因为愿意谈的老师仍可能协商，只是优先级低）
+ *   2) 性格期望命中（expectedPersonality ∩ tutor.personality）：
+ *      命中 ≥2 个 → 4 分；命中 1 个 → 2.5 分；未命中 → 0.5 分
+ *   3) 任一侧数据缺失（老数据/未填写）→ 该子项按 50% 给分，避免"没填就吃亏"
+ *
+ * @returns {{score:number, note:string, hitTeachType:boolean, hitPersonality:string[]}}
+ */
+function scorePreference(demand, tutor) {
+  const max = MATCH_WEIGHTS.preference || 10;
+  const teachMax = max * 0.6; // 6
+  const personaMax = max * 0.4; // 4
+
+  const teachType = demand && demand.teachType;
+  const prefs = (tutor && tutor.preferences) || [];
+  const expected = (demand && demand.expectedPersonality) || [];
+  const persona = (tutor && tutor.personality) || [];
+
+  /* ---- 授课类型 ---- */
+  let teachScore;
+  let hitTeachType = false;
+  const teachLabel = teachType ? labelOf(TEACH_TYPES, teachType) : '';
+  if (!teachType) {
+    teachScore = teachMax * 0.5; // 家长没指定授课类型
+  } else if (!prefs.length) {
+    teachScore = teachMax * 0.5; // 学生没填偏好
+  } else if (prefs.indexOf(teachType) > -1) {
+    teachScore = teachMax;
+    hitTeachType = true;
+  } else {
+    teachScore = teachMax * (1 / 6); // 1 分
+  }
+
+  /* ---- 性格期望 ---- */
+  const hitPersonality = expected.filter(function (p) {
+    return persona.indexOf(p) > -1;
+  });
+  let personaScore;
+  if (!expected.length || !persona.length) {
+    personaScore = personaMax * 0.5;
+  } else if (hitPersonality.length >= 2) {
+    personaScore = personaMax;
+  } else if (hitPersonality.length === 1) {
+    personaScore = personaMax * 0.625; // 2.5
+  } else {
+    personaScore = personaMax * 0.125; // 0.5
+  }
+
+  const score = round(Math.min(teachScore + personaScore, max), 1);
+
+  /* ---- 一句话说明（同时用于推荐理由） ---- */
+  const parts = [];
+  if (teachType) {
+    parts.push(hitTeachType ? '支持' + teachLabel + '授课' : '偏好中未包含' + teachLabel);
+  }
+  if (hitPersonality.length) {
+    parts.push('性格标签包含' + labelsOf(PERSONALITY_TAGS, hitPersonality).join('、'));
+  } else if (expected.length) {
+    parts.push('性格标签与期望不完全一致');
+  }
+  const note = parts.length ? parts.join('，') : '偏好与性格信息待完善';
+
+  return {
+    score: score,
+    note: note,
+    hitTeachType: hitTeachType,
+    hitPersonality: hitPersonality
+  };
+}
+
+/**
  * 单个师范生打分
  * @returns {{score:number, detail:object, reasons:string[], distanceKm:number|null}}
  */
@@ -215,9 +306,16 @@ function scoreTutor(demand, tutor) {
   const price = scorePrice(demand, tutor);
   const credit = scoreCredit(demand, tutor);
   const cert = scoreCert(demand, tutor);
+  const preference = scorePreference(demand, tutor);
 
   const total =
-    subject.score + grade.score + timePlace.score + price.score + credit.score + cert.score;
+    subject.score +
+    grade.score +
+    timePlace.score +
+    price.score +
+    credit.score +
+    cert.score +
+    preference.score;
 
   const detail = {
     subject,
@@ -226,6 +324,7 @@ function scoreTutor(demand, tutor) {
     price,
     credit,
     cert,
+    preference,
     weights: MATCH_WEIGHTS
   };
 
@@ -269,6 +368,25 @@ function buildReasons(demand, tutor, detail) {
       (dist !== null ? '，距离您约 ' + round(dist, 1) + 'km' : '') +
       '。'
     );
+  }
+
+  // 偏好与性格：命中时给一条"人话"理由，这是三期最想让家长看到的差异化信息
+  if (detail.preference) {
+    const pref = detail.preference;
+    const teachLabel = demand && demand.teachType ? labelOf(TEACH_TYPES, demand.teachType) : '';
+    const personaText = pref.hitPersonality.length
+      ? labelsOf(PERSONALITY_TAGS, pref.hitPersonality).join('、')
+      : '';
+
+    if (pref.hitTeachType && personaText) {
+      reasons.push(
+        '该老师标签包含' + personaText + '，符合您的期望，且支持' + teachLabel + '授课。'
+      );
+    } else if (pref.hitTeachType) {
+      reasons.push('支持' + teachLabel + '授课，适配您的时间安排。');
+    } else if (personaText) {
+      reasons.push('该老师标签包含' + personaText + '，符合您对老师性格的期望。');
+    }
   }
 
   reasons.push(
@@ -374,6 +492,7 @@ module.exports = {
   scorePrice,
   scoreCredit,
   scoreCert,
+  scorePreference,
   scoreTutor,
   buildReasons,
   generateReasonsByLLM,

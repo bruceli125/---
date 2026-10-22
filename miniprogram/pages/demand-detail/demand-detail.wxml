@@ -192,6 +192,40 @@
     <view class="text-weak mt-8">平台不收取中介费与押金；请勿向家长索要或提供身份证、学生证原件。</view>
   </view>
 
+  <!-- 家长视角：沟通列表（三期，报名学生在这里逐个沟通与确认雇佣） -->
+  <view class="card" wx:if="{{isParent}}">
+    <view class="row-between">
+      <view class="section-title" style="margin-bottom:0">沟通列表</view>
+      <view class="chat-list-count">{{chatList.length}} 人报名</view>
+    </view>
+
+    <view class="text-weak mt-16" wx:if="{{!chatList.length}}">
+      还没有师范生报名。可先生成智能匹配，再把 Top3 推荐给对方。
+    </view>
+
+    <view
+      class="chat-item"
+      wx:for="{{chatList}}"
+      wx:key="threadId"
+      data-tutorid="{{item.tutorId}}"
+      data-name="{{item.tutorName}}"
+      bindtap="openChatWith"
+    >
+      <view class="chat-item__avatar">{{item.avatarText}}</view>
+      <view class="chat-item__main">
+        <view class="chat-item__name">
+          {{item.tutorName}}
+          <text class="chat-item__cert">{{item.certLevelText}}</text>
+        </view>
+        <view class="chat-item__last">{{item.lastMessage || '已报名，等待与您沟通'}}</view>
+      </view>
+      <view class="chat-item__side">
+        <view class="chat-item__badge">{{item.messageCount}} 条</view>
+        <view class="chat-item__enter">进入 ›</view>
+      </view>
+    </view>
+  </view>
+
   <!-- 免责声明 -->
   <view class="disclaimer">
     <view class="disclaimer-title">免责声明</view>
@@ -223,7 +257,45 @@
   <view class="btn btn-primary flex-1" bindtap="goMatch">查看智能匹配 Top3</view>
 </view>
 
-<!-- 底部操作：师范生 -->
+<!-- 底部操作：师范生 —— 长按 2 秒报名，报名成功即开启沟通（三期） -->
 <view class="footer-bar" wx:if="{{!loading && !notFound && isTutor}}">
-  <view class="btn {{applyBtnClass}} flex-1" bindtap="onApply">{{applyBtnText}}</view>
+
+  <!-- 已报名：按钮变成「沟通中，点击进入对话」 -->
+  <view wx:if="{{applied}}" class="btn btn-primary flex-1" bindtap="openChat">
+    沟通中，点击进入对话
+  </view>
+
+  <!--
+    未报名：长按报名
+    为什么同时绑 touchstart/end 和 longpress：
+      · bindlongpress 是微信原生长按事件，触发阈值固定约 350ms，WXML 里无法配置成 2 秒；
+      · 需求要求"长按 2 秒"，所以真正的判定放在 onHoldStart 的 2 秒计时器里；
+      · longpress 仍然绑定，用于在原生判定成立时给一次触感反馈（见 onHoldLongPress）。
+  -->
+  <view
+    wx:else
+    class="hold-btn {{holding ? 'hold-btn--active' : ''}}"
+    bindtouchstart="onHoldStart"
+    bindtouchend="onHoldEnd"
+    bindtouchcancel="onHoldEnd"
+    bindlongpress="onHoldLongPress"
+  >
+    <view class="hold-btn__rw">
+      <view class="hold-btn__ring" style="{{holdRingStyle}}"></view>
+      <view class="hold-btn__hole"></view>
+    </view>
+    <text class="hold-btn__text">{{holding ? '继续按住…' : '长按报名'}}</text>
+  </view>
 </view>
+
+<!-- 沟通面板（学生 / 家长共用同一个组件） -->
+<chat-panel
+  visible="{{chatVisible}}"
+  demand-id="{{demandId}}"
+  tutor-id="{{chatTutorId}}"
+  role="{{isParent ? 'parent' : 'tutor'}}"
+  peer-name="{{chatPeerName}}"
+  demand-title="{{titleText}}"
+  bind:close="closeChat"
+  bind:updated="onChatUpdated"
+/>

@@ -19,7 +19,12 @@ const CURRENT_PARENT_ID = 'parent_demo_001';
 const demands = [
   {
     id: 'demo_demand_001',
-    parentId: 'parent_demo_001',
+
+    // 三期：授课类型 + 期望性格 + 双向确认标记
+    teachType: 'long_term',
+    expectedPersonality: ['patient'],
+    studentConfirmed: false,
+    parentConfirmed: false,    parentId: 'parent_demo_001',
     parentName: '王女士',
     contactPhone: '138****6621',
     subject: '数学',
@@ -52,7 +57,12 @@ const demands = [
   },
   {
     id: 'demo_demand_002',
-    parentId: 'parent_demo_002',
+
+    // 三期：授课类型 + 期望性格 + 双向确认标记
+    teachType: 'weekend_focus',
+    expectedPersonality: ['humorous'],
+    studentConfirmed: false,
+    parentConfirmed: false,    parentId: 'parent_demo_002',
     parentName: '李先生',
     contactPhone: '139****3382',
     // 合规：素质拓展类（美术），不受休息日限制，作为"周末 + 非学科类"的正面样例
@@ -87,7 +97,12 @@ const demands = [
   },
   {
     id: 'demo_demand_003',
-    parentId: 'parent_demo_003',
+
+    // 三期：授课类型 + 期望性格 + 双向确认标记
+    teachType: 'trial_once',
+    expectedPersonality: ['warm'],
+    studentConfirmed: false,
+    parentConfirmed: false,    parentId: 'parent_demo_003',
     parentName: '张先生',
     contactPhone: '137****9014',
     subject: '物理',
@@ -120,7 +135,12 @@ const demands = [
   },
   {
     id: 'demo_demand_004',
-    parentId: 'parent_demo_004',
+
+    // 三期：授课类型 + 期望性格 + 双向确认标记
+    teachType: 'long_term',
+    expectedPersonality: ['strict'],
+    studentConfirmed: false,
+    parentConfirmed: false,    parentId: 'parent_demo_004',
     parentName: '赵女士',
     contactPhone: '186****7752',
     subject: '英语',
@@ -158,7 +178,12 @@ const demands = [
   },
   {
     id: 'demo_demand_005',
-    parentId: 'parent_demo_001',
+
+    // 三期：授课类型 + 期望性格 + 双向确认标记
+    teachType: 'long_term',
+    expectedPersonality: ['patient'],
+    studentConfirmed: false,
+    parentConfirmed: false,    parentId: 'parent_demo_001',
     parentName: '王女士',
     contactPhone: '138****6621',
     subject: '数学',
@@ -191,7 +216,12 @@ const demands = [
   },
   {
     id: 'demo_demand_006',
-    parentId: 'parent_demo_003',
+
+    // 三期：授课类型 + 期望性格 + 双向确认标记
+    teachType: 'weekend_focus',
+    expectedPersonality: ['guide'],
+    studentConfirmed: false,
+    parentConfirmed: false,    parentId: 'parent_demo_003',
     parentName: '张先生',
     contactPhone: '137****9014',
     // 素质拓展 + 周末：用于证明"非学科类不受休息日限制"
@@ -223,7 +253,12 @@ const demands = [
   },
   {
     id: 'demo_demand_007',
-    parentId: 'parent_demo_005',
+
+    // 三期：授课类型 + 期望性格 + 双向确认标记
+    teachType: 'online_frag',
+    expectedPersonality: ['guide'],
+    studentConfirmed: false,
+    parentConfirmed: false,    parentId: 'parent_demo_005',
     parentName: '孙女士',
     contactPhone: '135****4408',
     subject: '化学',

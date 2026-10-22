@@ -627,3 +627,77 @@ node tools/make-preview.js     # 把 WXSS 转成浏览器可渲染的等价 CSS 
 > 布局与颜色与真机高度一致，可在提交前发现塌陷/重叠/挤压。
 
 ![首页主视觉](docs/ui/home-hero.png)
+
+---
+
+## 十七、三期迭代：角色治理 · 学生标签 · 沟通撮合
+
+### 1. 角色越权修复（单一事实来源）
+
+一期 `globalData` 只有 `role` 一个字段，页面各自从 storage 读，导致「首页切成家长、接单池仍按学生渲染」。
+
+三期的做法：
+
+| 位置 | 变化 |
+| --- | --- |
+| `app.globalData.currentRole` | 唯一事实来源；`role` 保留为兼容别名，两者始终同步 |
+| `app.setRole()` | 更新 globalData → 落盘 → **通知订阅者**（不再有页面绕过它写缓存） |
+| `app.guardRole(required, opts)` | 越权统一拦截：toast 提示 + 900ms 后自动 `switchTab` 回首页 |
+| `pages/tutor-pool` | `onShow` 过闸门，非师范生**不加载数据、不渲染列表**，只显示无权限占位 |
+
+> 微信不允许动态移除单个 TabBar 项，所以「隐藏入口」用守卫拦截实现，而不是改 tabBar。
+
+### 2. 学生标签与灵活岗位
+
+| 集合 | 新增字段 |
+| --- | --- |
+| `tutors` | `preferences`（接单偏好）、`personality`（性格特点） |
+| `demands` | `teachType`、`expectedPersonality`、`status`、`studentConfirmed`、`parentConfirmed` |
+
+选项常量集中在 `utils/constants.js`：`TEACH_TYPES` / `TUTOR_PREFERENCES` / `PERSONALITY_TAGS` / `EXPECTED_PERSONALITY`。
+两边值域**刻意一致**，匹配算法直接做集合交集。
+
+编辑入口：档案页「我的接单标签」（学生端）、发布页「授课类型 + 对老师性格的期望」（家长端）。
+
+### 3. 匹配权重调整
+
+```
+科目 36 + 年级 18 + 时间地点 12 + 价格 9 + 信用分 10 + 认证 5 + 偏好与性格 10 = 100
+```
+
+偏好维度内部再拆：授课类型 6 分 + 性格期望 4 分。命中时推荐理由会写出来，例如
+「该老师标签包含耐心细致，符合您的期望，且支持长期稳定授课。」
+
+### 4. 沟通撮合状态机
+
+```
+recruiting（招募中）
+   │  学生长按 2 秒报名 signupByHold()
+   ▼
+communicating（沟通中） ── 双方在 ChatPanel 自由发消息
+   │  学生【确认接单】+ 家长【同意雇佣】
+   ▼
+matched（已匹配）
+```
+
+- **单向确认不成单**：任一方单独确认只写一条系统消息，状态仍是 `communicating`；
+- 双向齐备才由 `settleIfBothConfirmed()` 置 `matched`，并写入系统消息「双方已达成共识，正式匹配成功！」；
+- 幂等：重复长按报名不会重复建会话、不会重复发开场白。
+
+### 5. 长按 2 秒怎么实现
+
+微信原生 `bindlongpress` 阈值固定约 350ms 且不可配置，所以：
+
+- `bindtouchstart` 起一个 50ms 定时器累计时长，满 **2000ms** 才报名；
+- `bindtouchend / bindtouchcancel` 未满则复位并提示；
+- `bindlongpress` 仍绑定，用于原生判定成立时给一次触感反馈。
+
+### 6. 新增文件
+
+`components/ChatPanel/` —— 沟通面板（双方共用，按 role 切换气泡方向与确认按钮）
+`services/phase2.js` 新增 —— `signupByHold` / `getChatThread` / `sendChatMessage` /
+`confirmByStudent` / `confirmByParent` / `getDemandChats` / `updateTutorTags` / `getTutorTags`
+
+### 7. 验收
+
+`node tools/verify-flows.js` → **76/76**（三期新增 19 项，含单向确认不成单、双向确认成单、幂等、非法标签过滤）

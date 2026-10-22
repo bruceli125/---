@@ -36,8 +36,8 @@ const ROLE_LABEL = {
 const STORAGE_KEYS = {
   ROLE: 'js_role',
   TUTOR_PROFILE_ID: 'js_tutor_profile_id',
-  // 二期：种子版本号升到 v2（新增订单状态、学科类字段、打卡与评价数据）
-  SEEDED: 'js_mock_seeded_v2',
+  // 三期：种子版本号升到 v3（新增授课类型、偏好/性格标签、沟通消息、双向确认字段）
+  SEEDED: 'js_mock_seeded_v3',
   USERS: 'js_users',
   DEMANDS: 'js_demands',
   TUTORS: 'js_tutors',
@@ -47,7 +47,11 @@ const STORAGE_KEYS = {
   APPLICATIONS: 'js_applications',
   CHECKINS: 'js_checkins',
   REVIEWS: 'js_reviews',
-  RISK_ACK: 'js_risk_ack'
+  RISK_ACK: 'js_risk_ack',
+  /** 沟通会话（每个 demandId × tutorId 一条） */
+  CHATS: 'js_chats',
+  /** 沟通消息（按 threadId 分组） */
+  MESSAGES: 'js_messages'
 };
 
 /** 风险等级 */
@@ -225,49 +229,87 @@ const DISTRICTS = [
   { value: 'tongzhou', label: '通州区', center: { lat: 39.909, lng: 116.657 } }
 ];
 
-/** 需求状态 */
+/**
+ * 需求状态（三期状态机）
+ * 主线：recruiting（招募中）→ communicating（沟通中）→ matched（已匹配）
+ * - matching 为一期遗留值，保留兼容旧数据（已投递、等待家长确认）
+ * - PUBLISHED 是一期常量名，现在等价于 recruiting，仅在旧代码里继续可用
+ */
 const DEMAND_STATUS = {
   DRAFT: 'draft',
-  PUBLISHED: 'published',
+  RECRUITING: 'recruiting',
+  COMMUNICATING: 'communicating',
   MATCHING: 'matching',
   MATCHED: 'matched',
   CLOSED: 'closed',
-  RISK_BLOCKED: 'risk_blocked'
+  RISK_BLOCKED: 'risk_blocked',
+  /** @deprecated 用 RECRUITING */
+  PUBLISHED: 'recruiting'
 };
 
 const DEMAND_STATUS_LABEL = {
   draft: '草稿',
-  published: '招募中',
+  recruiting: '招募中',
+  communicating: '沟通中',
   matching: '匹配中',
   matched: '已匹配',
   closed: '已结束',
-  risk_blocked: '风险拦截'
+  risk_blocked: '风险拦截',
+  published: '招募中'
 };
+
+/** 状态机允许的流转（用于校验，防止非法状态跳变） */
+const DEMAND_STATUS_FLOW = {
+  recruiting: ['communicating', 'closed'],
+  communicating: ['matched', 'recruiting', 'closed'],
+  matching: ['communicating', 'matched', 'recruiting', 'closed'],
+  matched: ['closed'],
+  draft: ['recruiting', 'closed'],
+  closed: [],
+  risk_blocked: []
+};
+
+/**
+ * 归一化历史状态值
+ * 一期数据里招募中写作 published，三期统一成 recruiting，读的时候统一转换。
+ */
+function normalizeDemandStatus(status) {
+  if (!status) return DEMAND_STATUS.RECRUITING;
+  if (status === 'published') return DEMAND_STATUS.RECRUITING;
+  return status;
+}
 
 /** 申请状态 */
 const APPLY_STATUS = {
   APPLIED: 'applied',
   ACCEPTED: 'accepted',
-  REJECTED: 'rejected'
+  REJECTED: 'rejected',
+  WITHDRAWN: 'withdrawn'
 };
 
 const APPLY_STATUS_LABEL = {
   applied: '待家长确认',
   accepted: '家长已同意',
-  rejected: '未通过'
+  rejected: '未通过',
+  withdrawn: '已撤回'
 };
 
 /**
  * 匹配打分权重（总分 100）
- * 科目 40 + 年级 20 + 时间地点 15 + 价格 10 + 信用分 10 + 认证完整度 5
+ * 科目 36 + 年级 18 + 时间地点 12 + 价格 9 + 信用分 10 + 认证完整度 5 + 偏好与性格 10
+ *
+ * 三期把「时间地点」从 15 降到 12、科目从 40 降到 36、年级 20→18、价格 10→9，
+ * 腾出 10 分给「偏好与性格」——灵活岗位场景下，"能不能按次/周末/线上碎片化接"
+ * 比"距离近不近"更决定撮合成败。
  */
 const MATCH_WEIGHTS = {
-  subject: 40,
-  grade: 20,
-  timePlace: 15,
-  price: 10,
+  subject: 36,
+  grade: 18,
+  timePlace: 12,
+  price: 9,
   credit: 10,
-  cert: 5
+  cert: 5,
+  preference: 10
 };
 
 /** 接单池排序权重（匹配度 + 距离 + 价格 + 信用分） */
@@ -471,6 +513,99 @@ const FULFILLMENT = {
     '双向盲评：双方都提交评价后才能看到对方的评价内容，避免互相影响判断。'
 };
 
+/* ==================================================================
+ * 三期：灵活岗位、学生偏好与性格、沟通协商
+ * ================================================================== */
+
+/**
+ * 授课类型（灵活岗位）
+ * 家长发布需求时单选；同时也是学生的「接单偏好」，两边值域一致才好求交集。
+ * 值域刻意与 TUTOR_PREFERENCES 相同，匹配算法可直接做集合比较。
+ */
+const TEACH_TYPES = [
+  { value: 'long_term', label: '长期稳定', short: '长期', desc: '每周固定课时，一学期起' },
+  { value: 'trial_once', label: '按次试课', short: '按次', desc: '单次结算，先试后定' },
+  { value: 'weekend_focus', label: '周末集中', short: '周末', desc: '周末连续排课' },
+  { value: 'online_frag', label: '线上碎片化', short: '碎片', desc: '30–60 分钟短时线上' }
+];
+
+/** 接单偏好（学生端多选，值域与 TEACH_TYPES 相同） */
+const TUTOR_PREFERENCES = TEACH_TYPES;
+
+/** 性格特点（学生端多选） */
+const PERSONALITY_TAGS = [
+  { value: 'patient', label: '耐心细致', desc: '讲得慢、不着急' },
+  { value: 'strict', label: '严厉负责', desc: '要求高、盯得紧' },
+  { value: 'humorous', label: '幽默风趣', desc: '课堂不沉闷' },
+  { value: 'guide', label: '善于引导', desc: '启发式提问' },
+  { value: 'warm', label: '亲和力强', desc: '容易亲近' }
+];
+
+/** 家长对老师性格的期望（值域与 PERSONALITY_TAGS 相同） */
+const EXPECTED_PERSONALITY = PERSONALITY_TAGS;
+
+/** 在 [{value,label}] 列表里取中文名 */
+function labelOf(list, value) {
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].value === value) return list[i].label;
+  }
+  return value || '';
+}
+
+/** 把 value 数组转成中文标签数组（过滤掉未知值） */
+function labelsOf(list, values) {
+  if (!Array.isArray(values)) return [];
+  return values
+    .map(function (v) {
+      return labelOf(list, v);
+    })
+    .filter(Boolean);
+}
+
+/** 授课类型中文名 */
+function teachTypeLabel(value) {
+  return labelOf(TEACH_TYPES, value);
+}
+
+/** 性格标签中文名 */
+function personalityLabel(value) {
+  return labelOf(PERSONALITY_TAGS, value);
+}
+
+/** 沟通消息发送方 */
+const CHAT_SENDER = {
+  STUDENT: 'student',
+  PARENT: 'parent',
+  SYSTEM: 'system'
+};
+
+/**
+ * 协商阶段常量与系统文案
+ * holdMs：长按报名需要按住的毫秒数（需求要求 2 秒）
+ * 文案里的 {xxx} 占位符由 services/phase2.js 的 renderTemplate 替换。
+ */
+const NEGOTIATION = {
+  holdMs: 2000,
+  maxMessageLen: 500,
+  /** 一条会话最多保留的 mock 消息数，避免 storage 无限增长 */
+  maxMessages: 200,
+  templates: {
+    signup:
+      '家长您好，我是{university}的{name}，已通过{certLevel}，对您发布的「{demandTitle}」很感兴趣，希望与您沟通。',
+    studentConfirmed: '学生已确认接单，等待家长确认雇佣。',
+    parentConfirmed: '家长已同意雇佣，等待学生确认接单。',
+    matched: '双方已达成共识，正式匹配成功！',
+    safetyTip: '沟通中请勿提前支付任何费用，平台不参与资金往来，也不收取中介费。'
+  },
+  /** 状态 → 协商区提示文案 */
+  statusTip: {
+    recruiting: '长按下方按钮报名，报名后即可与家长沟通',
+    communicating: '沟通中：双方确认后才会正式匹配',
+    matched: '已匹配：可进入打卡与履约流程',
+    closed: '该需求已结束'
+  }
+};
+
 module.exports = {
   APP_INFO,
   ROLES,
@@ -528,5 +663,19 @@ module.exports = {
   REVIEW_STATUS,
   CREDIT_RULES,
   TRIAL_ADVICE,
-  FULFILLMENT
+  FULFILLMENT,
+
+  /* 三期 */
+  TEACH_TYPES,
+  TUTOR_PREFERENCES,
+  PERSONALITY_TAGS,
+  EXPECTED_PERSONALITY,
+  labelOf,
+  labelsOf,
+  teachTypeLabel,
+  personalityLabel,
+  DEMAND_STATUS_FLOW,
+  normalizeDemandStatus,
+  CHAT_SENDER,
+  NEGOTIATION
 };

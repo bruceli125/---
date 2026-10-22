@@ -80,6 +80,10 @@ Page({
 
     /* 师范生视角 */
     tutorId: '',
+    /* 三期：接单偏好 / 性格特点（学生端可编辑） */
+    prefOptions: [],
+    personaOptions: [],
+    savingTags: false,
     badge: {
       level: 0,
       name: '',
@@ -128,12 +132,104 @@ Page({
   },
 
   onShow() {
+    // 三期：同步接单标签（可能刚在本页保存过，或从认证页改过档案）
+    this.loadTags();
     // 身份可能在首页 / 认证页被切换，回到本页时静默刷新（首次进入不重复请求）
     if (!this._shownOnce) {
       this._shownOnce = true;
       return;
     }
     this.load(true);
+  },
+
+  /* ==================================================================
+   * 三期：接单标签（偏好 / 性格）
+   * ================================================================== */
+
+  /** 解析当前师范生 id（本页 data 未就绪时回落到全局登录态） */
+  resolveTutorId() {
+    const app = getApp();
+    return this.data.tutorId || (app && app.globalData ? app.globalData.tutorProfileId : '') || '';
+  },
+
+  /** 拉取标签并转成 chip 选项 */
+  loadTags() {
+    const self = this;
+    const app = getApp();
+    if (app.getRole() !== C.ROLES.TUTOR) return;
+    const tutorId = this.resolveTutorId();
+    if (!tutorId) return;
+
+    api.getTutorTags(tutorId).then(function (res) {
+      if (!res || res.code !== 0) return;
+      const prefs = res.data.preferences || [];
+      const persona = res.data.personality || [];
+      self.setData({
+        prefOptions: C.TUTOR_PREFERENCES.map(function (o) {
+          return { value: o.value, label: o.label, active: prefs.indexOf(o.value) > -1 };
+        }),
+        personaOptions: C.PERSONALITY_TAGS.map(function (o) {
+          return { value: o.value, label: o.label, active: persona.indexOf(o.value) > -1 };
+        })
+      });
+    });
+  },
+
+  onTogglePref(e) {
+    const index = Number(e.currentTarget.dataset.index);
+    const options = this.data.prefOptions.slice();
+    if (!options[index]) return;
+    options[index] = Object.assign({}, options[index], { active: !options[index].active });
+    this.setData({ prefOptions: options });
+  },
+
+  onTogglePersona(e) {
+    const index = Number(e.currentTarget.dataset.index);
+    const options = this.data.personaOptions.slice();
+    if (!options[index]) return;
+    options[index] = Object.assign({}, options[index], { active: !options[index].active });
+    this.setData({ personaOptions: options });
+  },
+
+  /** 保存标签：直接写回档案，匹配算法下次打分立刻生效 */
+  onSaveTags() {
+    const self = this;
+    if (this.data.savingTags) return;
+    const tutorId = this.resolveTutorId();
+    if (!tutorId) {
+      toast('请先完成师范生认证');
+      return;
+    }
+
+    const prefs = this.data.prefOptions
+      .filter(function (o) {
+        return o.active;
+      })
+      .map(function (o) {
+        return o.value;
+      });
+    const persona = this.data.personaOptions
+      .filter(function (o) {
+        return o.active;
+      })
+      .map(function (o) {
+        return o.value;
+      });
+
+    if (!prefs.length) {
+      toast('至少选择一个接单偏好');
+      return;
+    }
+
+    this.setData({ savingTags: true });
+    api.updateTutorTags({ tutorId: tutorId, preferences: prefs, personality: persona }).then(function (res) {
+      self.setData({ savingTags: false });
+      if (!res || res.code !== 0) {
+        toast((res && res.message) || '保存失败');
+        return;
+      }
+      toast('接单标签已保存');
+    });
   },
 
   onPullDownRefresh() {
