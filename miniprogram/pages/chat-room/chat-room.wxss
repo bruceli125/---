@@ -54,6 +54,46 @@
   color: var(--ink-5, #b9bcc6);
 }
 
+/* ---------- 需求摘要卡片 ---------- */
+.demand-card {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin: 16rpx 24rpx 0;
+  padding: 18rpx 22rpx;
+  border-radius: var(--r-md, 18rpx);
+  background: #f6f7fa;
+}
+
+.demand-card__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.demand-card__title {
+  font-size: 25rpx;
+  font-weight: 600;
+  color: var(--ink, #0a0a0c);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.demand-card__sub {
+  margin-top: 4rpx;
+  font-size: 20rpx;
+  color: var(--ink-4, #8e929e);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.demand-card__arrow {
+  flex: 0 0 auto;
+  font-size: 30rpx;
+  color: var(--ink-5, #b9bcc6);
+}
+
 /* ---------- 协商进度 ---------- */
 .nego {
   display: flex;

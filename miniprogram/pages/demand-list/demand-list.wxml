@@ -82,10 +82,14 @@
           </view>
 
           <view class="dc__foot-right">
+            <!--
+              已报名：卡片不消失，右侧换成「取消报名 + 去沟通」
+              （是否已报名 = applied.has(demandId)，在 JS 的 buildCard 里算好）
+            -->
             <block wx:if="{{item.applied}}">
-              <text class="dc__cancel" data-demandid="{{item.demandId}}" catchtap="onCancelSignup">取消接单</text>
-              <view class="dc__done" data-demandid="{{item.demandId}}" catchtap="onOpenDemand">
-                <text class="dc__done-check">✓</text>已接单
+              <text class="dc__cancel" data-demandid="{{item.demandId}}" catchtap="onCancelSignup">取消报名</text>
+              <view class="dc__done" data-demandid="{{item.demandId}}" catchtap="goChat">
+                <text class="dc__done-check">💬</text>去沟通
               </view>
             </block>
 

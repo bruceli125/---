@@ -74,6 +74,28 @@
   gap: 16rpx;
 }
 
+.session__name-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  flex: 1;
+  min-width: 0;
+}
+
+/* 需求标签：浅色底 + 主题色文字，和昵称同排 */
+.session__demand-tag {
+  flex: 0 0 auto;
+  max-width: 62%;
+  padding: 2rpx 12rpx;
+  border-radius: 6rpx;
+  background: #f1edff;
+  color: #6d4aff;
+  font-size: 20rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .session__name {
   font-size: 29rpx;
   font-weight: 600;

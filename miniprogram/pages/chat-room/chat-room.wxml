@@ -13,6 +13,15 @@
     <view class="room-head__arrow">›</view>
   </view>
 
+  <!-- 需求摘要卡片：科目/年级 · 课时费 · 上课时间，右侧箭头进详情 -->
+  <view class="demand-card" bindtap="onOpenDemand">
+    <view class="demand-card__main">
+      <view class="demand-card__title">{{demandSummary}}</view>
+      <view class="demand-card__sub">{{demandSub}}</view>
+    </view>
+    <view class="demand-card__arrow">›</view>
+  </view>
+
   <!-- 双方确认进度 -->
   <view class="nego">
     <view class="nego__who">

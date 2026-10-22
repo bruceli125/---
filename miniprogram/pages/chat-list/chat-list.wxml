@@ -19,7 +19,11 @@
 
     <view class="session__main">
       <view class="session__top">
-        <text class="session__name">{{item.peerName}}</text>
+        <view class="session__name-wrap">
+          <!-- 需求标签：科目+年级，让家长一眼分辨是哪一单 -->
+          <text class="session__demand-tag" wx:if="{{item.demandTitle}}">[{{item.demandTitle}}]</text>
+          <text class="session__name">{{item.peerName}}</text>
+        </view>
         <text class="session__time">{{item.lastMessageAt}}</text>
       </view>
       <view class="session__demand">

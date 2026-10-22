@@ -235,6 +235,15 @@ Page({
     this.setData({ pool: pool });
   },
 
+  /** 去沟通：已报名的单子直接进对应聊天室 */
+  goChat(e) {
+    const demandId = e.currentTarget.dataset.demandid;
+    if (!demandId) return;
+    wx.navigateTo({
+      url: '/pages/chat-room/chat-room?demandId=' + demandId + '&tutorId=' + this.resolveTutorId()
+    });
+  },
+
   onOpenDemand(e) {
     const id = e.currentTarget.dataset.demandid;
     if (!id) return;

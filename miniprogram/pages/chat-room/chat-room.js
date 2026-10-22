@@ -22,6 +22,9 @@ Page({
     tutorId: '',
     peerName: '',
     demandTitle: '',
+    /** 需求摘要（科目·年级 · 课时费 · 上课时间），用于顶部卡片 */
+    demandSummary: '',
+    demandSub: '',
     role: 'tutor',
     isParent: false,
 
@@ -111,8 +114,17 @@ Page({
           });
         });
 
+        // 顶部摘要：主行 = 科目·年级 · 价格；副行 = 上课时间 / 授课类型
+        const subjectGrade =
+          (demand.subject || '家教') + (demand.grade ? '·' + demand.grade : '');
+        const priceText = demand.budget ? '¥' + demand.budget + '/小时' : '价格面议';
+        const timeText =
+          demand.timeRangeText || C.teachTypeLabel(demand.teachType) || '时间面议';
+
         self.setData({
           loading: false,
+          demandSummary: subjectGrade + ' · ' + priceText,
+          demandSub: timeText + (demand.teachType ? ' · ' + C.teachTypeLabel(demand.teachType) : ''),
           messages: messages,
           negotiation: data.negotiation || self.data.negotiation,
           demandTitle:

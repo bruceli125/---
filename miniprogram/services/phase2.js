@@ -703,6 +703,12 @@ function cancelApplication(payload) {
   for (let i = 0; i < demands.length; i++) {
     if (demands[i].id === p.demandId) {
       demands[i].applyCount = Math.max(0, Number(demands[i].applyCount || 0) - 1);
+      // 取消报名：把自己从 applicantIds 里移除，其他人不受影响
+      if (Array.isArray(demands[i].applicantIds)) {
+        demands[i].applicantIds = demands[i].applicantIds.filter(function (id) {
+          return id !== p.tutorId;
+        });
+      }
       break;
     }
   }
@@ -917,6 +923,15 @@ function signupByHold(payload) {
     apps.unshift(record);
     writeStore(STORAGE_KEYS.APPLICATIONS, apps);
     demand.applyCount = Number(demand.applyCount || 0) + 1;
+    /*
+     * 多人报名：一个需求可以有多名学生同时报名。
+     * applicantIds 记录全部报名学生 id，applyCount 与之保持同源，
+     * 便于家长端展示「N 人申请」以及后续按人逐个确认。
+     */
+    demand.applicantIds = Array.isArray(demand.applicantIds) ? demand.applicantIds : [];
+    if (demand.applicantIds.indexOf(p.tutorId) === -1) {
+      demand.applicantIds.push(p.tutorId);
+    }
   } else {
     record.status = APPLY_STATUS.APPLIED;
     record.updatedAt = now;
