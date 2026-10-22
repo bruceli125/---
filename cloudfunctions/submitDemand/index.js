@@ -14,7 +14,7 @@
  *      - 两步都通过才写库，并写入 subjectGroup / isDiscipline / policyChecked
  *   2) action === 'updateStatus'：{ demandId, status }
  *   3) action === 'accept'：{ demandId, tutorId }
- *      家长确认某位师范生成单 → status='matched'、matchedTutorId、acceptedAt，
+ *      家长确认某位学生成单 → status='matched'、matchedTutorId、acceptedAt，
  *      并把 applications 中该需求的申请置 accepted（被选中）/ rejected（其余）
  *
  * 返回：{ code, data, message }
@@ -32,7 +32,7 @@
  *     （当前 MVP 未强制，见 handleCreate / handleUpdateStatus / handleAccept 内的 TODO 标记）
  *   - 资金担保结算、需求置顶/推广、需求过期自动关闭（定时触发器）
  *   - 需求内容接入内容安全审核（security.msgSecCheck）
- *   - 成单后给师范生发订阅消息通知（当前无消息通道）
+ *   - 成单后给学生发订阅消息通知（当前无消息通道）
  */
 
 const cloud = require('wx-server-sdk');

@@ -9,8 +9,8 @@
 
 | 集合 | 用途（一句话） | 记录数 | 权限建议 |
 | --- | --- | --- | --- |
-| `users` | 用户账号（家长 / 师范生角色、脱敏联系方式） | 2 | 仅创建者可读写 |
-| `tutors` | 师范生档案（学科、学段、价格、信用分、认证等级、徽章编号） | 6 | 所有用户可读，仅创建者可写 |
+| `users` | 用户账号（家长 / 学生角色、脱敏联系方式） | 2 | 仅创建者可读写 |
+| `tutors` | 学生档案（学科、学段、价格、信用分、认证等级、徽章编号） | 6 | 所有用户可读，仅创建者可写 |
 | `certifications` | 三重认证记录（学籍 / 资质 / 能力）与 mock OCR 结果 | 15 | 仅创建者可读写 |
 | `demands` | 家长发布的家教需求（含风险等级、命中词、双减科目分组） | 7 | 仅创建者可读写（接单池由云函数代读） |
 | `matches` | 智能匹配结果（score / reasons / rank） | 3 | 仅创建者可读写 |
@@ -83,8 +83,8 @@ node -e "const fs=require('fs');for(const f of fs.readdirSync('database').filter
 | `role` | string | 角色 `parent` / `tutor` | `parent` |
 | `nickname` | string | 昵称 | `王女士（演示家长）` |
 | `phone` | string | 手机号 🫥 | `138****6621` |
-| `parentId` | string | 家长业务 id（师范生为空串） 🔒 | `parent_demo_001` |
-| `tutorProfileId` | string | 绑定的师范生档案 id（家长为空串） 🔒 | `tutor_001` |
+| `parentId` | string | 家长业务 id（学生为空串） 🔒 | `parent_demo_001` |
+| `tutorProfileId` | string | 绑定的学生档案 id（家长为空串） 🔒 | `tutor_001` |
 | `createdAt` | string | 注册时间 | `2026-01-05 09:00` |
 | `mock` | boolean | 演示数据标记 🔒 | `true` |
 
@@ -96,8 +96,8 @@ node -e "const fs=require('fs');for(const f of fs.readdirSync('database').filter
 | `userId` | string | 关联 `users.id` 🔒 | `user_demo_tutor_001` |
 | `name` | string | 姓名 | `林嘉怡` |
 | `gender` | string | `male` / `female` | `female` |
-| `school` | string | 学校（MVP 只放开首师大白名单） | `首都师范大学` |
-| `major` | string | 专业 | `数学与应用数学（师范）` |
+| `school` | string | 学校（MVP 只放开XX大学白名单） | `XX大学` |
+| `major` | string | 专业 | `数学与应用数学` |
 | `grade` | string | 年级 | `大三` |
 | `subjects` | array&lt;string&gt; | 可授科目（匹配打分依据） | `["数学","物理"]` |
 | `grades` | array&lt;string&gt; | 可授年级 | `["初二","初三","高一"]` |
@@ -113,7 +113,7 @@ node -e "const fs=require('fs');for(const f of fs.readdirSync('database').filter
 | `creditScore` | number | 平台信用分（0-100） | `92` |
 | `certLevel` | number | 认证等级 0/1/2/3 | `3` |
 | `certBadgeNo` | string | 认证徽章唯一编号 | `JS-2026-000101` |
-| `intro` | string | 自我介绍 | `首师大数学师范专业在读…` |
+| `intro` | string | 自我介绍 | `XX大学数学对口专业在读…` |
 | `avatar` | string | 头像路径 | `/assets/avatar/tutor-01.png` |
 | `avatarText` | string | 无图时的首字占位 | `林` |
 | `rating` | number | 评分 | `4.9` |
@@ -134,7 +134,7 @@ node -e "const fs=require('fs');for(const f of fs.readdirSync('database').filter
 | `type` | string | `student` 学籍 / `qualification` 资质 / `ability` 能力 | `student` |
 | `status` | string | `pending` 审核中 / `approved` 已通过 / `rejected` 未通过 | `approved` |
 | `files` | array&lt;object&gt; | 材料列表 `{name,url}`（url 为空 = 演示占位，云存储后填真实 fileID） | `[{"name":"教师资格证（mock）.jpg","url":""}]` |
-| `ocrResult` | object | mock OCR / 校验结果 `{verified, mock, fields}` 🔒 | `{"verified":true,"fields":{"school":"首都师范大学"}}` |
+| `ocrResult` | object | mock OCR / 校验结果 `{verified, mock, fields}` 🔒 | `{"verified":true,"fields":{"school":"XX大学"}}` |
 | `reviewNote` | string | 审核备注 | `校园邮箱 @cnu.edu.cn 校验通过…` |
 | `createdAt` | string | 提交时间 | `2025-09-10 09:12` |
 
@@ -165,7 +165,7 @@ node -e "const fs=require('fs');for(const f of fs.readdirSync('database').filter
 | `riskHits` | array&lt;object&gt; | 命中词 `{word,category,level,tip}` | `[{"word":"押金",...}]` |
 | `riskAcknowledged` | boolean | 高风险是否已二次确认 🔒 | `true` |
 | `policyChecked` | boolean | **二期**：发布时已通过双减检测（恒 `true`，审计用） | `true` |
-| `matchedTutorId` | string | **二期**：成单师范生（未成单为 `""`） | `tutor_001` |
+| `matchedTutorId` | string | **二期**：成单学生（未成单为 `""`） | `tutor_001` |
 | `acceptedAt` | string | **二期**：家长确认成单时间（未成单为 `""`） | `2026-01-03 20:12` |
 | `status` | string | `draft`/`published`/`matching`/`matched`/`closed`/`risk_blocked` | `published` |
 | `createdAt` | string | 发布时间 | `2026-01-08 19:24` |
@@ -190,9 +190,9 @@ node -e "const fs=require('fs');for(const f of fs.readdirSync('database').filter
 | --- | --- | --- | --- |
 | `_id` / `id` | string | 主键 | `match_001` |
 | `demandId` | string | 关联需求 | `demo_demand_001` |
-| `tutorId` | string | 关联师范生 | `tutor_001` |
+| `tutorId` | string | 关联学生 | `tutor_001` |
 | `score` | number | 匹配总分（100 分制） | `99.2` |
-| `reasons` | array&lt;string&gt; | 推荐理由（模板生成，二期换 LLM） | `["林嘉怡为首都师范大学…"]` |
+| `reasons` | array&lt;string&gt; | 推荐理由（模板生成，二期换 LLM） | `["林嘉怡为XX大学…"]` |
 | `rank` | number | 名次 1/2/3 | `1` |
 | `createdAt` | string | 生成时间 | `2026-01-08 19:26` |
 
@@ -212,7 +212,7 @@ node -e "const fs=require('fs');for(const f of fs.readdirSync('database').filter
 | `riskLevel` / `riskHits` | string / array | 风险等级与命中词快照 | `low` / `[]` |
 | `riskTips` | array&lt;string&gt; | 避坑提示（通用提示 + 免责声明短句） | `["任何要求先交押金…"]` |
 | `summary` | string | 中文摘要，四段以 `\n` 分隔（需求 / 推荐 / 认证 / 风险） | `家长需求：初三数学…` |
-| `nextSteps` | array&lt;string&gt; | 下一步建议（含资金担保结算 TODO） | `["在平台内向 1-2 位推荐师范生发起沟通…"]` |
+| `nextSteps` | array&lt;string&gt; | 下一步建议（含资金担保结算 TODO） | `["在平台内向 1-2 位推荐学生发起沟通…"]` |
 | `disclaimer` | array&lt;string&gt; | 6 条完整免责声明（与 `constants.DISCLAIMER.full` 一致） | `["本平台由高校学生团队运营…"]` |
 | `createdAt` | string | 生成时间 | `2026-01-08 19:26` |
 | `createdAtTs` | number | 生成时间戳（排序用） 🔒 | `1767871560000` |
@@ -264,7 +264,7 @@ node -e "const fs=require('fs');for(const f of fs.readdirSync('database').filter
 | `_id` / `id` | string | 主键 | `checkin_001` |
 | `orderId` | string | 订单号；**MVP 阶段复用 `demandId`**（见「十」） | `demo_demand_005` |
 | `demandId` | string | 兼容字段，值同 `orderId` | `demo_demand_005` |
-| `tutorId` / `tutorName` | string | 打卡师范生 🔒 | `tutor_001` / `林嘉怡` |
+| `tutorId` / `tutorName` | string | 打卡学生 🔒 | `tutor_001` / `林嘉怡` |
 | `parentId` | string | 家长（确认方） 🔒 | `parent_demo_001` |
 | `status` | string | `checked_in`（进行中）/ `finished`（待家长确认）/ `confirmed`（已确认） | `confirmed` |
 | `summaryStatus` | string | 小结状态：`pending` / `confirmed` | `confirmed` |
@@ -299,7 +299,7 @@ confirmed 为终态：finish / confirm 都会被拒绝
 | --- | --- | --- | --- |
 | `_id` / `id` | string | 主键 | `review_001` |
 | `orderId` / `demandId` | string | 订单号（MVP = `demandId`） | `demo_demand_005` |
-| `tutorId` | string | 被评/评价师范生 | `tutor_001` |
+| `tutorId` | string | 被评/评价学生 | `tutor_001` |
 | `parentId` | string | 家长用户 | `parent_demo_001` |
 | `direction` | string | `parent_to_tutor`（家长评老师）/ `tutor_to_parent`（老师评家长） | `parent_to_tutor` |
 | `reviewerRole` / `revieweeRole` | string | `parent` / `tutor` | `parent` / `tutor` |
@@ -394,10 +394,10 @@ form(demand) ──▶ checkDoubleReduction
 
 | 集合 | 建议权限 | 理由 |
 | --- | --- | --- |
-| `tutors` | 所有用户可读，仅创建者可写 | 接单池、匹配结果需要读到全部师范生档案；写操作只允许本人（云函数校验 `openid`） |
+| `tutors` | 所有用户可读，仅创建者可写 | 接单池、匹配结果需要读到全部学生档案；写操作只允许本人（云函数校验 `openid`） |
 | `risk_words` | 所有用户可读，仅创建者可写 | 词库对全端只读；仅管理员维护 |
 | `certifications` | 仅创建者可读写 | 含学号/邮箱等脱敏材料与 OCR 结果，不应全量外泄 |
-| `demands` | 仅创建者可读写 | 家长隐私（地址/联系方式）；师范生看接单池由云函数 `matchTutors` 以管理员权限转发**脱敏后的**字段 |
+| `demands` | 仅创建者可读写 | 家长隐私（地址/联系方式）；学生看接单池由云函数 `matchTutors` 以管理员权限转发**脱敏后的**字段 |
 | `matches` | 仅创建者可读写 | 只对发布该需求的家长可见 |
 | `reports` | 仅创建者可读写 | 含需求与联系方式快照 |
 | `checkins` | 仅创建者可读写 | 含 mock 定位与授课小结，属于履约凭证；家长确认由云函数 `submitCheckin` 以管理员权限代写 |
@@ -424,10 +424,10 @@ form(demand) ──▶ checkDoubleReduction
 | `reports` | `parentId` | 普通 | 「我的报告」 |
 | `checkins` | `orderId` | 普通 | **二期**：按订单查打卡记录（按 `createdAtTs` 正序展示履约时间线） |
 | `checkins` | `orderId + status` | 组合（可选） | **二期**：`start` 幂等校验（查是否已有 `checked_in`） |
-| `checkins` | `tutorId` | 普通 | **二期**：师范生课时统计与履约率 |
+| `checkins` | `tutorId` | 普通 | **二期**：学生课时统计与履约率 |
 | `reviews` | `orderId` | 普通 | **二期**：按订单取两条评价做盲评判定与揭晓 |
 | `reviews` | `direction` | 普通 | **二期**：区分「家长评老师 / 老师评家长」 |
-| `reviews` | `tutorId` | 普通 | **二期**：查某师范生已揭晓评价（详情页口碑区） |
+| `reviews` | `tutorId` | 普通 | **二期**：查某学生已揭晓评价（详情页口碑区） |
 | `reviews` | `orderId + direction` | 组合（唯一，可选） | **二期**：同一订单同一方向只允许一条（服务端已校验，索引做兜底） |
 | `risk_words` | `word` | 唯一 | 词库去重与命中查询 |
 
@@ -484,10 +484,10 @@ node -e "const b='./miniprogram/';const m=require(b+'services/match.js');const t
 - `nextSteps` = `services/api.js::buildNextSteps` 输出（3 条通用 + 线下监护人提示 + `TODO(二期)` 资金担保结算，共 5 条）；
 - `disclaimer` = `constants.DISCLAIMER.full` 全 6 条；
 - `tutors.json` / `demands.json` / `cert_001~003` 与 `miniprogram/mock/*.js` **逐字段完全一致**；
-- 每位师范生的 `certLevel` 都与其 `certifications` 中 `approved` 记录推出的等级一致。
+- 每位学生的 `certLevel` 都与其 `certifications` 中 `approved` 记录推出的等级一致。
 
 ### 其他备注
 
-- 演示账号绑定：`users` 只有 2 条演示账号。`user_demo_tutor`（演示师范生）的 `tutorProfileId = tutor_001`，而 `tutor_001.userId = user_demo_tutor_001`（沿用 mock 原值，未改字段以保证与前端一致）。
+- 演示账号绑定：`users` 只有 2 条演示账号。`user_demo_tutor`（演示学生）的 `tutorProfileId = tutor_001`，而 `tutor_001.userId = user_demo_tutor_001`（沿用 mock 原值，未改字段以保证与前端一致）。
 - `demands.json` 沿用 mock，未写 `createdAtTs`；如需按时间排序，导入后可用云函数或控制台补该字段（见索引建议）。
 - `tutors.distanceKm` 为演示距离；真实距离需 `wx.getLocation` + 云函数地理计算（`geoNear`），已在 `services/match.js` 标注 `TODO(二期)`。

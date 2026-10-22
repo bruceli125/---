@@ -28,7 +28,7 @@
  *   - 信用分申诉与人工复核（当前一评即生效，不可撤销）
  *   - 恶意评价识别（关键词 + 举报 + 人工审核后隐藏）
  *   - 评价提醒（订阅消息）与超时自动关闭（例如 7 天未评价视为放弃）
- *   - 权限：校验 OPENID 与该角色（家长 / 师范生）归属，防止代评
+ *   - 权限：校验 OPENID 与该角色（家长 / 学生）归属，防止代评
  */
 
 const cloud = require('wx-server-sdk');
@@ -204,7 +204,7 @@ async function findReviewById(reviewId) {
 /* ============================ 信用分结算 ============================ */
 
 /**
- * 更新师范生信用分（家长评老师）
+ * 更新学生信用分（家长评老师）
  * @returns {Promise<{role:string, before:number, after:number, applied:boolean}>}
  */
 async function updateTutorCredit(tutorId, delta) {
@@ -226,7 +226,7 @@ async function updateTutorCredit(tutorId, delta) {
     }
   }
   if (!tutor) {
-    console.warn('[submitReview] 未找到师范生档案，跳过信用分结算：' + tutorId);
+    console.warn('[submitReview] 未找到学生档案，跳过信用分结算：' + tutorId);
     return { role: 'tutor', before: 0, after: 0, applied: false };
   }
 
@@ -238,7 +238,7 @@ async function updateTutorCredit(tutorId, delta) {
     });
     return { role: 'tutor', before: before, after: after, applied: true };
   } catch (err) {
-    console.error('[submitReview] 更新师范生信用分失败：', err);
+    console.error('[submitReview] 更新学生信用分失败：', err);
     return { role: 'tutor', before: before, after: before, applied: false };
   }
 }

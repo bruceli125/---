@@ -4,7 +4,7 @@
  * 入参：{ role?: 'parent' | 'tutor' }
  * 返回：{ code, data: { openid, user, tutorProfileId, parentId }, message }
  *   user          users 集合文档（含 _id / id / openid / role / nickname / phone / createdAt）
- *   tutorProfileId 师范生档案 tutors._id（role=tutor 时查询；查不到返回空串）
+ *   tutorProfileId 学生档案 tutors._id（role=tutor 时查询；查不到返回空串）
  *   parentId       家长侧标识（MVP 直接复用 users._id 或 openid）
  * 依赖集合：users、tutors
  * 前端调用点：miniprogram/services/api.js -> login()（app.js onLaunch/ensureLogin 会调用）
@@ -109,7 +109,7 @@ exports.main = async (event, context) => {
       }
     }
 
-    // ---------- 5. 师范生档案 ----------
+    // ---------- 5. 学生档案 ----------
     let tutorProfileId = '';
     if (user.role === ROLES.TUTOR) {
       try {
@@ -122,8 +122,8 @@ exports.main = async (event, context) => {
         if (tutors.length) {
           tutorProfileId = tutors[0]._id;
         } else {
-          // TODO(二期)：新增 createTutorProfile 云函数，引导师范生首次填写档案（当前返回空串，前端走「我的认证」时提示先完善档案）
-          console.warn('[login] 该师范生尚无 tutors 档案，userId =', user._id);
+          // TODO(二期)：新增 createTutorProfile 云函数，引导学生首次填写档案（当前返回空串，前端走「我的认证」时提示先完善档案）
+          console.warn('[login] 该学生尚无 tutors 档案，userId =', user._id);
         }
       } catch (err) {
         // 档案查询失败不阻断登录

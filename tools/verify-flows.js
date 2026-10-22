@@ -173,7 +173,7 @@ function section(title) {
   const acc = await api.acceptApplication({ demandId: id, tutorId: 'tutor_002' });
   check('家长确认成单', acc.code === 0 && acc.data.demand.status === 'matched', 'status=' + (acc.data && acc.data.demand.status));
   check('成单后可打卡', api.canCheckin(acc.data.demand, 'tutor_002') === true);
-  check('非成单师范生不可打卡', api.canCheckin(acc.data.demand, 'tutor_003') === false);
+  check('非成单学生不可打卡', api.canCheckin(acc.data.demand, 'tutor_003') === false);
 
   const c1 = await api.startCheckin({ demandId: id, tutorId: 'tutor_002' });
   check('开始打卡（时间 + mock 定位）', c1.code === 0 && c1.data.checkin.location.mock === true, c1.data && c1.data.checkin.location.name);
@@ -191,7 +191,7 @@ function section(title) {
   /* ================= E. 双向盲评 ================= */
   section('E. 双向盲评与信用分');
   const s1 = await api.getReviewState({ demandId: 'demo_demand_005', role: 'tutor' });
-  check('师范生视角：对方已评但内容不可见', s1.data.hasOtherReviewed === true && s1.data.otherReview === null, 'hasOtherReviewed=' + s1.data.hasOtherReviewed);
+  check('学生视角：对方已评但内容不可见', s1.data.hasOtherReviewed === true && s1.data.otherReview === null, 'hasOtherReviewed=' + s1.data.hasOtherReviewed);
   check('可评价', s1.data.canReview === true);
   check('未揭晓时不泄露对方评价（响应里无对方内容）', JSON.stringify(s1.data).indexOf('错题复盘') === -1 && s1.data.otherReview === null);
 
@@ -200,7 +200,7 @@ function section(title) {
     demandId: 'demo_demand_005', role: 'tutor', rating: 5,
     tags: ['尊重老师', '付款及时'], comment: '家长很配合，提前准备好学习材料。'
   });
-  check('师范生提交评价 → 双方揭晓', r1.code === 0 && r1.data.revealed === true && !!r1.data.otherReview, '对方评分=' + (r1.data && r1.data.otherReview && r1.data.otherReview.rating));
+  check('学生提交评价 → 双方揭晓', r1.code === 0 && r1.data.revealed === true && !!r1.data.otherReview, '对方评分=' + (r1.data && r1.data.otherReview && r1.data.otherReview.rating));
   const creditAfter = (await api.getCredit({ role: 'tutor', tutorId: 'tutor_001' })).data.creditScore;
   check('信用分动态更新', creditAfter > creditBefore, creditBefore + ' → ' + creditAfter);
   const again = await api.submitReview({ demandId: 'demo_demand_005', role: 'tutor', rating: 4, tags: [], comment: '改一下' });

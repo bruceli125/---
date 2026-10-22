@@ -1,7 +1,7 @@
 {
   "name": "generateReport",
   "version": "1.0.0",
-  "description": "京师家教 - 对接报告云函数：聚合需求/匹配/师范生/风险，生成并保存 reports",
+  "description": "京师家教 - 对接报告云函数：聚合需求/匹配/学生/风险，生成并保存 reports",
   "main": "index.js",
   "dependencies": {
     "wx-server-sdk": "~2.6.3"

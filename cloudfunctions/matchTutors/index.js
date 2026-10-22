@@ -1,12 +1,12 @@
 /**
- * 云函数：matchTutors —— 智能匹配（TopN 推荐）/ 师范生接单池
+ * 云函数：matchTutors —— 智能匹配（TopN 推荐）/ 学生接单池
  * ------------------------------------------------------------------
  * 入参（两种 action）：
  *   1) 默认（不传 action 或 'match'）：{ demandId, topN? }
- *      - 读取需求与师范生档案，按规则打分，取 TopN（默认 3）
+ *      - 读取需求与学生档案，按规则打分，取 TopN（默认 3）
  *      - 写入 matches 集合（先清空该需求的旧记录），并把需求状态 published -> matching
  *   2) action === 'pool'：{ tutorId }
- *      - 返回该师范生可接的需求列表，按「匹配度 0.5 + 距离 0.2 + 价格 0.15 + 信用分 0.15」排序
+ *      - 返回该学生可接的需求列表，按「匹配度 0.5 + 距离 0.2 + 价格 0.15 + 信用分 0.15」排序
  *
  * 返回：{ code, data, message }
  *   match -> data: { demand, list: [{ tutorId, tutor, score, detail, reasons, rank, distanceKm }], matches }
@@ -21,7 +21,7 @@
  *   - 科目/年级匹配替换为语义匹配（向量召回 + 大模型），本文件保留 matchScoreByRules 主流程
  *   - 推荐理由替换为 LLM 生成（模板 buildReasons 作为兜底）
  *   - 距离替换为 wx.getLocation + 地理位置索引（geoNear），当前为 mock 估算
- *   - 云数据库单次查询上限 100 条，师范生/需求超过 100 条时需改为分页聚合
+ *   - 云数据库单次查询上限 100 条，学生/需求超过 100 条时需改为分页聚合
  */
 
 const cloud = require('wx-server-sdk');
@@ -192,7 +192,7 @@ function scoreSubject(demand, tutor) {
     return { score: max, note: '科目完全对口（' + target + '）' };
   }
   if (subjects.indexOf('全科') > -1) {
-    return { score: max * 0.8, note: '该师范生可全科辅导' };
+    return { score: max * 0.8, note: '该学生可全科辅导' };
   }
   // 同门类近似：数学/物理/化学 视为理科相关，语文/英语/历史 视为文科相关
   const science = ['数学', '物理', '化学', '生物', '科学', '编程'];
@@ -354,9 +354,9 @@ function estimateDistance(demand, tutor) {
  */
 function buildReasons(demand, tutor, detail) {
   const reasons = [];
-  const name = tutor.name || '该师范生';
-  const school = tutor.school || '首都师范大学';
-  const major = tutor.major || '师范专业';
+  const name = tutor.name || '该学生';
+  const school = tutor.school || 'XX大学';
+  const major = tutor.major || '对口专业';
 
   reasons.push(name + '为' + school + major + '，' + (detail.cert ? detail.cert.note : '') + '。');
 
@@ -388,7 +388,7 @@ function buildReasons(demand, tutor, detail) {
 }
 
 /**
- * 单个师范生打分
+ * 单个学生打分
  * @returns {{score:number, detail:object, reasons:string[], distanceKm:number|null}}
  */
 function scoreTutor(demand, tutor) {
@@ -460,7 +460,7 @@ function rankPoolDemands(tutor, demands) {
     const result = scoreTutor(demand, tutor);
     const distance = result.distanceKm === null ? MATCH_CONFIG.maxDistanceKm : result.distanceKm;
     const distanceScore = Math.max(0, 1 - distance / MATCH_CONFIG.maxDistanceKm) * 100;
-    // 价格维度：师范生报价相对家长预算越宽裕得分越高
+    // 价格维度：学生报价相对家长预算越宽裕得分越高
     const budget = Number(demand.budgetMax || demand.budget || 0);
     const price = Number(tutor.price || 0);
     let priceScore = 60;
@@ -514,10 +514,10 @@ async function getDemandById(demandId) {
   return null;
 }
 
-/** 读取可用师范生档案（status !== offline） */
+/** 读取可用学生档案（status !== offline） */
 async function listAvailableTutors() {
   // 注意：云数据库单次最多返回 100 条
-  // TODO(二期)：师范生超过 100 人时改为按科目/学段分片查询或使用聚合分页
+  // TODO(二期)：学生超过 100 人时改为按科目/学段分片查询或使用聚合分页
   const res = await db
     .collection(COLLECTIONS.TUTORS)
     .where({ status: _.neq('offline') })
@@ -527,20 +527,20 @@ async function listAvailableTutors() {
   return list.map(withId);
 }
 
-/** 按 _id 或 id 字段读取师范生 */
+/** 按 _id 或 id 字段读取学生 */
 async function getTutorById(tutorId) {
   try {
     const res = await db.collection(COLLECTIONS.TUTORS).doc(tutorId).get();
     if (res && res.data) return withId(res.data);
   } catch (err) {
-    console.warn('[matchTutors] 按 _id 查询师范生失败，尝试按 id 字段查询：', err);
+    console.warn('[matchTutors] 按 _id 查询学生失败，尝试按 id 字段查询：', err);
   }
   try {
     const res2 = await db.collection(COLLECTIONS.TUTORS).where({ id: tutorId }).limit(1).get();
     const list = (res2 && res2.data) || [];
     if (list.length) return withId(list[0]);
   } catch (err2) {
-    console.error('[matchTutors] 查询师范生失败：', err2);
+    console.error('[matchTutors] 查询学生失败：', err2);
   }
   return null;
 }
@@ -568,18 +568,18 @@ async function handleMatch(event) {
   if (!rawDemand) return fail('参数错误：需求不存在或已删除', 1);
   const demand = withId(rawDemand);
 
-  // ---------- 读取师范生并打分 ----------
+  // ---------- 读取学生并打分 ----------
   let tutors = [];
   try {
     tutors = await listAvailableTutors();
   } catch (err) {
-    console.error('[matchTutors] 读取师范生列表失败：', err);
-    return fail('匹配失败：师范生档案读取异常（' + err.message + '）');
+    console.error('[matchTutors] 读取学生列表失败：', err);
+    return fail('匹配失败：学生档案读取异常（' + err.message + '）');
   }
-  if (!tutors.length) return fail('匹配失败：暂无可推荐的师范生档案', 1);
+  if (!tutors.length) return fail('匹配失败：暂无可推荐的学生档案', 1);
 
   const list = rankTutors(demand, tutors, topN);
-  if (!list.length) return fail('匹配失败：暂无符合条件的师范生', 1);
+  if (!list.length) return fail('匹配失败：暂无符合条件的学生', 1);
 
   // ---------- 写入 matches（同一需求覆盖上一轮结果） ----------
   const now = Date.now();
@@ -638,7 +638,7 @@ async function handleMatch(event) {
   return ok({ demand: demand, list: list, matches: matches }, '匹配完成');
 }
 
-/** action='pool'：师范生接单池 */
+/** action='pool'：学生接单池 */
 async function handlePool(event) {
   const tutorId = event && event.tutorId;
 
@@ -648,7 +648,7 @@ async function handlePool(event) {
   }
 
   const tutor = await getTutorById(tutorId);
-  if (!tutor) return fail('参数错误：师范生档案不存在', 1);
+  if (!tutor) return fail('参数错误：学生档案不存在', 1);
 
   // ---------- 读取可接需求 ----------
   // 注意：云数据库单次最多返回 100 条

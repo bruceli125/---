@@ -96,7 +96,7 @@
       '<div class="card__body" style="display:flex;flex-direction:column;gap:10px;flex:1">' +
       C.insightCard('alert', 'danger', '学科类 × 休息日仍是拦截主力', '占全部拦截的 73%，建议在发布页把时段前置到第一步。') +
       C.insightCard('clock', 'amber', '匹配中订单平均滞留 2.4 天', '超过 48h 的 6 单已自动提醒家长确认成单。') +
-      C.insightCard('shield', 'teal', '三重认证率提升到 53.8%', '较上周 +4.2pp，认证完整的师范生匹配分平均高 9.6 分。') +
+      C.insightCard('shield', 'teal', '三重认证率提升到 53.8%', '较上周 +4.2pp，认证完整的学生匹配分平均高 9.6 分。') +
       '</div>' +
       '</div>' +
       '</div>' +
@@ -302,7 +302,7 @@
 
       '<div class="split">' +
       '<div style="display:flex;flex-direction:column;gap:12px">' +
-      '<div class="u-row u-between"><span class="section-label">推荐师范生 Top3</span>' +
+      '<div class="u-row u-between"><span class="section-label">推荐学生 Top3</span>' +
       '<span class="u-dim" style="font-size:11px">按匹配度降序</span></div>' +
       list +
       '</div>' +
@@ -361,7 +361,7 @@
     return (
       '<section class="view" data-view="verify">' +
       '<div class="page-head">' +
-      '<div><div class="page-head__title">师范生三重认证审核</div>' +
+      '<div><div class="page-head__title">学生三重认证审核</div>' +
       '<div class="page-head__desc">学籍 → 资质 → 能力三关。任一类通过即提升认证等级，三关全过生成唯一认证编号。</div></div>' +
       '<div class="page-head__actions">' +
       C.button('导出名单', { variant: 'ghost', iconLeft: 'download', action: 'export' }) +
@@ -390,10 +390,10 @@
       C.segmented([{ key: 'pending', label: '待审核' }, { key: 'all', label: '全部' }], 'all', 'cert-filter') +
       '</div>' +
       '<div class="table-wrap"><table class="table">' +
-      '<thead><tr><th>师范生</th><th>专业 / 年级</th><th>认证等级</th><th>学籍</th><th>资质</th><th>能力</th><th>信用分</th><th></th></tr></thead>' +
+      '<thead><tr><th>学生</th><th>专业 / 年级</th><th>认证等级</th><th>学籍</th><th>资质</th><th>能力</th><th>信用分</th><th></th></tr></thead>' +
       '<tbody>' + D.tutors.map(verifyRow).join('') + '</tbody>' +
       '</table></div>' +
-      '<div class="card__foot"><span>共 ' + D.tutors.length + ' 位师范生</span>' +
+      '<div class="card__foot"><span>共 ' + D.tutors.length + ' 位学生</span>' +
       '<span>认证编号格式 <code class="u-mono">JS-YYYY-NNNNNN</code></span></div>' +
       '</div>' +
       '</section>'
@@ -483,7 +483,7 @@
       '<div class="card__head"><div class="card__title">上课打卡记录</div>' +
       '<div class="card__head-actions">' + C.badge('定位为 mock', 'neutral') + '</div></div>' +
       '<div class="table-wrap"><table class="table">' +
-      '<thead><tr><th>记录号</th><th>订单</th><th>师范生</th><th>开始时间</th><th>时长</th><th>状态</th><th></th></tr></thead>' +
+      '<thead><tr><th>记录号</th><th>订单</th><th>学生</th><th>开始时间</th><th>时长</th><th>状态</th><th></th></tr></thead>' +
       '<tbody>' + D.checkins.map(checkinRow).join('') + '</tbody>' +
       '</table></div>' +
       '</div>' +
@@ -597,7 +597,7 @@
           ['区域', d.district],
           ['预算', '¥' + d.budget + ' / 小时'],
           ['匹配分', d.score ? d.score.toFixed(1) + ' 分' : '—'],
-          ['推荐师范生', d.tutor]
+          ['推荐学生', d.tutor]
         ]) +
         '</div>' +
         '<div>' + C.sectionLabel('特殊要求') + C.note(d.requirement) + '</div>' +

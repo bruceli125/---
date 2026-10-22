@@ -1,2 +1,2 @@
 {"_id":"user_demo_parent","id":"user_demo_parent","openid":"mock-openid-parent-0001","role":"parent","nickname":"王女士（演示家长）","phone":"138****6621","parentId":"parent_demo_001","tutorProfileId":"","createdAt":"2026-01-05 09:00","mock":true}
-{"_id":"user_demo_tutor","id":"user_demo_tutor","openid":"mock-openid-tutor-0001","role":"tutor","nickname":"林嘉怡（演示师范生）","phone":"138****6621","parentId":"","tutorProfileId":"tutor_001","createdAt":"2026-01-05 09:00","mock":true}
+{"_id":"user_demo_tutor","id":"user_demo_tutor","openid":"mock-openid-tutor-0001","role":"tutor","nickname":"林嘉怡（演示学生）","phone":"138****6621","parentId":"","tutorProfileId":"tutor_001","createdAt":"2026-01-05 09:00","mock":true}

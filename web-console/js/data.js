@@ -190,30 +190,30 @@
     }
   ];
 
-  /* ---------------- 师范生（认证审核队列） ---------------- */
+  /* ---------------- 学生（认证审核队列） ---------------- */
   var tutors = [
     {
-      id: 'TUT-0101', name: '林嘉怡', gender: '女', school: '首都师范大学', major: '数学与应用数学（师范）',
+      id: 'TUT-0101', name: '林嘉怡', gender: '女', school: 'XX大学', major: '数学与应用数学',
       grade: '大三', certLevel: 3, badgeNo: 'JS-2026-000101', credit: 92, price: 130,
       studentNo: '1202****0918', email: 'lin****@cnu.edu.cn', phone: '138****6621',
       subjects: ['数学', '物理'], grades: ['初二', '初三', '高一'],
       abilityTags: ['初三数学提分', '带过毕业班', '中考冲刺'],
       orderCount: 46, rating: 4.9, submittedAt: '2026-10-19 10:20',
       certs: { student: 'approved', qualification: 'approved', ability: 'approved' },
-      intro: '首师大数学师范专业，带过两届初三毕业班，擅长把函数、几何压轴题拆成可复用解题模型。'
+      intro: 'XX大学数学对口专业，带过两届初三毕业班，擅长把函数、几何压轴题拆成可复用解题模型。'
     },
     {
-      id: 'TUT-0102', name: '陈知远', gender: '男', school: '首都师范大学', major: '汉语言文学（师范）',
+      id: 'TUT-0102', name: '陈知远', gender: '男', school: 'XX大学', major: '汉语言文学',
       grade: '大四', certLevel: 3, badgeNo: 'JS-2026-000102', credit: 88, price: 120,
       studentNo: '1201****4471', email: 'chen****@cnu.edu.cn', phone: '139****3382',
       subjects: ['语文', '历史'], grades: ['初一', '初二', '初三'],
       abilityTags: ['作文批改', '阅读提分', '带过毕业班'],
       orderCount: 38, rating: 4.8, submittedAt: '2026-10-19 09:02',
       certs: { student: 'approved', qualification: 'approved', ability: 'pending' },
-      intro: '北京市师范生教学技能大赛二等奖，作文批改按「结构—素材—语言」三层给反馈。'
+      intro: '北京市学生教学技能大赛二等奖，作文批改按「结构—素材—语言」三层给反馈。'
     },
     {
-      id: 'TUT-0103', name: '苏雨萌', gender: '女', school: '首都师范大学', major: '学前教育（师范）',
+      id: 'TUT-0103', name: '苏雨萌', gender: '女', school: 'XX大学', major: '学前教育',
       grade: '大二', certLevel: 2, badgeNo: 'JS-2026-000103', credit: 85, price: 100,
       studentNo: '1203****2276', email: 'su****@cnu.edu.cn', phone: '137****9014',
       subjects: ['美术', '全科'], grades: ['小班', '中班', '大班', '幼小衔接'],
@@ -223,34 +223,34 @@
       intro: '学前教育专业，持有幼儿教师资格证与普通话一级乙等，专注 5-6 岁幼小衔接（素质方向）。'
     },
     {
-      id: 'TUT-0104', name: '赵沐阳', gender: '男', school: '首都师范大学', major: '物理学（师范）',
+      id: 'TUT-0104', name: '赵沐阳', gender: '男', school: 'XX大学', major: '物理学',
       grade: '研一', certLevel: 3, badgeNo: 'JS-2026-000104', credit: 95, price: 160,
       studentNo: '1101****8830', email: 'zhao****@cnu.edu.cn', phone: '186****7752',
       subjects: ['物理', '数学'], grades: ['高一', '高二', '高三'],
       abilityTags: ['高考冲刺', '物理实验'],
       orderCount: 63, rating: 5.0, submittedAt: '2026-10-18 11:15',
       certs: { student: 'approved', qualification: 'approved', ability: 'approved' },
-      intro: '物理师范研究生，累计带过 11 名高三学生，用仿真实验演示抽象概念。'
+      intro: '物理教育研究生，累计带过 11 名高三学生，用仿真实验演示抽象概念。'
     },
     {
-      id: 'TUT-0105', name: '何雨桐', gender: '女', school: '首都师范大学', major: '英语（师范）',
+      id: 'TUT-0105', name: '何雨桐', gender: '女', school: 'XX大学', major: '英语',
       grade: '大三', certLevel: 2, badgeNo: 'JS-2026-000105', credit: 90, price: 115,
       studentNo: '1202****1163', email: 'he****@cnu.edu.cn', phone: '135****4408',
       subjects: ['英语'], grades: ['三年级', '四年级', '五年级', '六年级'],
       abilityTags: ['英语口语', '自然拼读'],
       orderCount: 31, rating: 4.8, submittedAt: '2026-10-17 15:08',
       certs: { student: 'approved', qualification: 'approved', ability: 'pending' },
-      intro: '英语师范专业，专四优秀，曾在附属小学做过一学期英语助教。'
+      intro: '英语对口专业，专四优秀，曾在附属小学做过一学期英语助教。'
     },
     {
-      id: 'TUT-0106', name: '郑一诺', gender: '男', school: '首都师范大学', major: '计算机科学与技术（师范）',
+      id: 'TUT-0106', name: '郑一诺', gender: '男', school: 'XX大学', major: '计算机科学与技术',
       grade: '大二', certLevel: 1, badgeNo: 'JS-2026-000106', credit: 78, price: 140,
       studentNo: '1204****5560', email: 'zheng****@cnu.edu.cn', phone: '131****2277',
       subjects: ['编程', '科学'], grades: ['四年级', '五年级', '六年级'],
       abilityTags: ['竞赛辅导'],
       orderCount: 14, rating: 4.6, submittedAt: '2026-10-17 09:30',
       certs: { student: 'approved', qualification: 'pending', ability: 'pending' },
-      intro: '计算机师范专业，带过少儿编程兴趣班，以做出小项目为目标。'
+      intro: '计算机对口专业，带过少儿编程兴趣班，以做出小项目为目标。'
     }
   ];
 
@@ -284,16 +284,16 @@
     { type: 'info', text: '<b>DEM-0184</b> 生成对接报告，Top1 匹配度 99.2 分', time: '23 分钟前' },
     { type: 'warn', text: '<b>DEM-0183</b> 命中高风险词「日入过千 / 押金」，已强提示家长', time: '41 分钟前' },
     { type: 'ok', text: '<b>林嘉怡</b> 完成 10-19 打卡，家长已确认小结', time: '1 小时前' },
-    { type: 'info', text: '<b>DEM-0175</b> 家长提交评价，等待师范生评价后揭晓', time: '2 小时前' }
+    { type: 'info', text: '<b>DEM-0175</b> 家长提交评价，等待学生评价后揭晓', time: '2 小时前' }
   ];
 
   /* ---------------- 匹配 Top3（DEM-0184 的实算结果） ---------------- */
   var matchTop = [
     {
       rank: 1, tutorId: 'TUT-0101', name: '林嘉怡', score: 99.2, distance: 3.2,
-      school: '首都师范大学 · 数学与应用数学（师范）', credit: 92, certLevel: 3,
+      school: 'XX大学 · 数学与应用数学', credit: 92, certLevel: 3,
       reasons: [
-        '为首都师范大学数学与应用数学（师范）专业，已完成三重认证。',
+        '为XX大学数学与应用数学专业，已完成三重认证。',
         '科目完全对口（数学），带过初三毕业班，年级完全匹配。',
         '同在 haidian（海淀区），通勤方便，可排课时间段吻合。',
         '课时费 130 元在预算内，平台信用分 92，综合匹配度较高。'
@@ -301,7 +301,7 @@
     },
     {
       rank: 2, tutorId: 'TUT-0106', name: '郑一诺', score: 75.3, distance: 12.5,
-      school: '首都师范大学 · 计算机科学与技术（师范）', credit: 78, certLevel: 1,
+      school: 'XX大学 · 计算机科学与技术', credit: 78, certLevel: 1,
       reasons: [
         '学科门类相近，可跨科辅导数学。',
         '已完成学籍认证，认证等级 1 级。',
@@ -310,9 +310,9 @@
     },
     {
       rank: 3, tutorId: 'TUT-0104', name: '赵沐阳', score: 74.0, distance: 6.8,
-      school: '首都师范大学 · 物理学（师范）', credit: 95, certLevel: 3,
+      school: 'XX大学 · 物理学', credit: 95, certLevel: 3,
       reasons: [
-        '为首都师范大学物理学（师范）专业，已完成三重认证。',
+        '为XX大学物理学专业，已完成三重认证。',
         '学科门类相近，可跨科辅导。',
         '平台信用分 95（当前最高），但时段不完全吻合。'
       ]

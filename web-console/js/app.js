@@ -347,7 +347,7 @@
       return;
     }
 
-    // 打开师范生抽屉
+    // 打开学生抽屉
     var openTutor = e.target.closest ? e.target.closest('[data-open-tutor]') : null;
     if (openTutor) {
       var tid = openTutor.getAttribute('data-open-tutor');
@@ -429,7 +429,7 @@
         }
         break;
       case 'batch-approve':
-        Toast.show('已批量通过 3 位师范生的能力认证', 'ok');
+        Toast.show('已批量通过 3 位学生的能力认证', 'ok');
         break;
       case 'confirm-checkin':
         Toast.show('已确认本次履约，小结对家长可见', 'ok');
@@ -461,10 +461,10 @@
       '二、试课建议',
       '  建议先通过线上或在校内认证场地进行首次试课，需监护人知情。',
       '',
-      '三、推荐师范生 Top3',
-      '  1. 林嘉怡（99.2 分）| 首都师范大学 数学与应用数学（师范）| 三重认证 JS-2026-000101',
-      '  2. 郑一诺（75.3 分）| 首都师范大学 计算机科学与技术（师范）| 认证等级 1',
-      '  3. 赵沐阳（74.0 分）| 首都师范大学 物理学（师范）| 三重认证 JS-2026-000104',
+      '三、推荐学生 Top3',
+      '  1. 林嘉怡（99.2 分）| XX大学 数学与应用数学| 三重认证 JS-2026-000101',
+      '  2. 郑一诺（75.3 分）| XX大学 计算机科学与技术| 认证等级 1',
+      '  3. 赵沐阳（74.0 分）| XX大学 物理学| 三重认证 JS-2026-000104',
       '',
       '四、平台性质',
       '  ' + D.meta.platformPosition + '。'

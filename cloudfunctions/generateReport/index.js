@@ -56,7 +56,7 @@ const COMMON_TIPS = [
 const DISCLAIMER = {
   short: '平台仅提供可信对接与能力认证服务，非学历培训、非办学资质、非医疗建议。',
   full: [
-    '本平台由高校学生团队运营，仅提供家长与师范生之间的可信对接与能力认证展示服务。',
+    '本平台由高校学生团队运营，仅提供家长与学生之间的可信对接与能力认证展示服务。',
     '平台非学历培训机构、非办学资质主体、非医疗或心理咨询机构，不提供任何形式的学科培训办学服务。',
     '平台不参与资金往来，不提供支付、担保、结算功能，任何收费要求请谨慎核实（资金担保结算为二期规划）。',
     '认证信息由学生自主提交、平台按规则校验，平台不采集真实身份证号、学号等敏感信息，展示内容已做脱敏处理。',
@@ -170,7 +170,7 @@ function buildReportSummary(demand, topMatches) {
   parts.push(
     '平台共推荐 ' +
       topMatches.length +
-      ' 位师范生，匹配度最高的是' +
+      ' 位学生，匹配度最高的是' +
       (t.name || '') +
       '（' +
       (t.school || '') +
@@ -190,7 +190,7 @@ function buildReportSummary(demand, topMatches) {
     '认证情况：' +
       (Number(t.certLevel || 0) >= 3
         ? '已完成三重认证（编号 ' + (t.certBadgeNo || '待生成') + '）'
-        : '认证等级 ' + Number(t.certLevel || 0) + ' 级，建议优先选择三重认证师范生。')
+        : '认证等级 ' + Number(t.certLevel || 0) + ' 级，建议优先选择三重认证学生。')
   );
 
   parts.push(
@@ -208,9 +208,9 @@ function buildReportSummary(demand, topMatches) {
 /** 下一步建议 */
 function buildNextSteps(demand, topMatches, riskLevel) {
   const steps = [
-    '在平台内向 1-2 位推荐师范生发起沟通，确认可排课时间与授课方式。',
+    '在平台内向 1-2 位推荐学生发起沟通，确认可排课时间与授课方式。',
     '安排一次 30-45 分钟试课（建议线上或校内认证场地），重点观察讲解方式与孩子接受度。',
-    '试课不满意可随时更换师范生，平台不收取任何费用、不收取押金。'
+    '试课不满意可随时更换学生，平台不收取任何费用、不收取押金。'
   ];
   if (demand.teachMode === 'offline') {
     steps.push('线下首次见面请选择公共场所或校内场地，未成年人上课需监护人全程知情。');
@@ -263,7 +263,7 @@ async function listMatches(demandId) {
   return (res && res.data) || [];
 }
 
-/** 批量读取师范生档案 */
+/** 批量读取学生档案 */
 async function listTutorsByIds(tutorIds) {
   const ids = (tutorIds || []).filter(Boolean);
   if (!ids.length) return [];
@@ -359,7 +359,7 @@ exports.main = async (event, context) => {
       return fail('生成报告失败：暂无匹配结果，无法生成报告', 1);
     }
 
-    // ---------- 4. 读取师范生档案 ----------
+    // ---------- 4. 读取学生档案 ----------
     let tutors = [];
     try {
       tutors = await listTutorsByIds(
@@ -369,7 +369,7 @@ exports.main = async (event, context) => {
       );
     } catch (err) {
       console.error('[generateReport] 读取 tutors 失败：', err);
-      return fail('生成报告失败：师范生档案读取异常（' + err.message + '）');
+      return fail('生成报告失败：学生档案读取异常（' + err.message + '）');
     }
 
     const tutorMap = {};
@@ -383,7 +383,7 @@ exports.main = async (event, context) => {
       const m = matches[i];
       const tutor = tutorMap[m.tutorId];
       if (!tutor) {
-        console.warn('[generateReport] 匹配记录对应的师范生档案缺失，已跳过：', m.tutorId);
+        console.warn('[generateReport] 匹配记录对应的学生档案缺失，已跳过：', m.tutorId);
         continue;
       }
       topMatches.push({
@@ -400,7 +400,7 @@ exports.main = async (event, context) => {
     });
 
     if (!topMatches.length) {
-      return fail('生成报告失败：推荐师范生档案已失效，请重新匹配', 1);
+      return fail('生成报告失败：推荐学生档案已失效，请重新匹配', 1);
     }
 
     // ---------- 6. 风险提示 ----------

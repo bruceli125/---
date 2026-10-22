@@ -177,7 +177,7 @@ async function findActiveCheckin(orderId) {
   }
 }
 
-/** 查询师范生档案（拿姓名，失败不阻断） */
+/** 查询学生档案（拿姓名，失败不阻断） */
 async function findTutor(tutorId) {
   try {
     const res = await db.collection(COLLECTIONS.TUTORS).doc(tutorId).get();
@@ -215,9 +215,9 @@ async function handleStart(event) {
   if (demand.status !== DEMAND_STATUS.MATCHED) {
     return fail('该订单尚未成单，暂不能打卡', 1);
   }
-  // 只有成单人能打卡（防止其他师范生误打卡）
+  // 只有成单人能打卡（防止其他学生误打卡）
   if (demand.matchedTutorId && demand.matchedTutorId !== tutorId) {
-    return fail('该订单已成单给其他师范生，你无法打卡', 1);
+    return fail('该订单已成单给其他学生，你无法打卡', 1);
   }
 
   // TODO(二期)：校验 OPENID 对应的 tutors 档案 _id === tutorId，防止代打卡

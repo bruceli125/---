@@ -68,15 +68,27 @@
           "scene": null
         },
         {
-          "name": "师范生-三重认证",
+          "name": "学生-三重认证",
           "pathName": "pages/tutor-verify/tutor-verify",
           "query": "",
           "scene": null
         },
         {
-          "name": "师范生-接单池",
-          "pathName": "pages/tutor-pool/tutor-pool",
+          "name": "学生-接单池",
+          "pathName": "pages/demand-list/demand-list",
           "query": "",
+          "scene": null
+        },
+        {
+          "name": "沟通-会话列表",
+          "pathName": "pages/chat-list/chat-list",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "沟通-聊天室",
+          "pathName": "pages/chat-room/chat-room",
+          "query": "demandId=demo_demand_001&tutorId=tutor_001",
           "scene": null
         }
       ]

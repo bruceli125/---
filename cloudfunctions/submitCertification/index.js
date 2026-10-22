@@ -119,12 +119,12 @@ function buildMockOcr(payload) {
   if (payload.type === 'student') {
     return Object.assign(base, {
       fields: {
-        school: form.school || '首都师范大学',
+        school: form.school || 'XX大学',
         studentNo: maskStudentNo(form.studentNo || '12020000' + Math.floor(Math.random() * 9000 + 1000)),
         email: maskEmail(form.email || 'demo@cnu.edu.cn'),
         verifyChannel: form.email ? '校园邮箱校验（mock）' : '学号规则校验（mock）'
       },
-      reviewNote: 'mock 校验通过：邮箱域名 @cnu.edu.cn / 学号规则符合首师大编码'
+      reviewNote: 'mock 校验通过：邮箱域名 @cnu.edu.cn / 学号规则符合XX大学编码'
     });
   }
 
@@ -173,20 +173,20 @@ async function findCertification(certId) {
   return null;
 }
 
-/** 按 _id 或 id 字段查师范生档案 */
+/** 按 _id 或 id 字段查学生档案 */
 async function findTutor(tutorId) {
   try {
     const res = await db.collection(COLLECTIONS.TUTORS).doc(tutorId).get();
     if (res && res.data) return res.data;
   } catch (err) {
-    console.warn('[submitCertification] 按 _id 查询师范生失败，尝试按 id 字段查询：', err);
+    console.warn('[submitCertification] 按 _id 查询学生失败，尝试按 id 字段查询：', err);
   }
   try {
     const res2 = await db.collection(COLLECTIONS.TUTORS).where({ id: tutorId }).limit(1).get();
     const list = (res2 && res2.data) || [];
     if (list.length) return list[0];
   } catch (err2) {
-    console.error('[submitCertification] 查询师范生档案失败：', err2);
+    console.error('[submitCertification] 查询学生档案失败：', err2);
   }
   return null;
 }
@@ -228,10 +228,10 @@ async function handleCreate(event) {
     return fail('参数错误：学籍认证需填写学号或校园邮箱', 1);
   }
 
-  // 档案存在性校验（保存前先确认师范生档案存在，避免脏数据）
+  // 档案存在性校验（保存前先确认学生档案存在，避免脏数据）
   const tutor = await findTutor(tutorId);
   if (!tutor) {
-    return fail('参数错误：师范生档案不存在，请先完善档案', 1);
+    return fail('参数错误：学生档案不存在，请先完善档案', 1);
   }
 
   // ---------- 写库 ----------
@@ -265,7 +265,7 @@ async function handleCreate(event) {
 }
 
 /**
- * 重算师范生认证等级 / 徽章编号 / 信用分
+ * 重算学生认证等级 / 徽章编号 / 信用分
  * 规则（与 miniprogram/services/api.js recalcTutorCertLevel 一致）：
  *   等级：学籍 1 级；学籍 + 资质 2 级；学籍 + 资质 + 能力 3 级
  *   信用分：70 + 学籍 8 + 资质 8 + 能力 6（上限 100）
@@ -365,13 +365,13 @@ async function handleReview(event) {
     id: cert._id
   });
 
-  // ---------- 重算师范生档案 ----------
+  // ---------- 重算学生档案 ----------
   let tutor = await findTutor(cert.tutorId);
-  if (!tutor) return fail('审核完成，但师范生档案不存在，无法重算认证等级', 1);
+  if (!tutor) return fail('审核完成，但学生档案不存在，无法重算认证等级', 1);
 
   let certs = [];
   try {
-    // 注意：云数据库单次最多返回 100 条，MVP 单个师范生认证记录远小于该上限
+    // 注意：云数据库单次最多返回 100 条，MVP 单个学生认证记录远小于该上限
     const certRes = await db
       .collection(COLLECTIONS.CERTIFICATIONS)
       .where({ tutorId: tutor._id })
@@ -386,7 +386,7 @@ async function handleReview(event) {
   try {
     tutor = await recalcTutor(tutor, certs);
   } catch (err) {
-    console.error('[submitCertification] 重算师范生档案失败：', err);
+    console.error('[submitCertification] 重算学生档案失败：', err);
     return fail('审核完成，但档案重算失败：' + err.message);
   }
 
