@@ -1,164 +1,183 @@
 /**
- * 需求列表（「我的需求」）
+ * 接单池（TabBar 第 2 个 Tab）—— 角色分流
+ * ---------------------------------------------------------------------------
+ * 本次重构的关键页，承担两种身份、两种视图：
  *
- * 【UI 组件库说明】不引入 Vant Weapp / TDesign，用自研 DemandCard + app.wxss 全局类。
+ *   currentRole === 'tutor'  → 接单池：可接订单 + 每行「长按报名」（2 秒）
+ *   currentRole === 'parent' → 拦截：提示"仅学生可访问"并强制回首页
  *
- * 数据来源：services/api.js → getDemandList（云开发 / mock 自动切换），
- * 页面内按 tab 做本地过滤（MVP 数据量小，二期改成分页查询）。
+ * 【为什么有 mineMode】
+ * 家长自己的需求列表（我的需求）也需要入口，但 Tab 只能指向一个页面，
+ * 且需求要求「家长点接单池 Tab 必须被拦截」。所以约定：
+ *   - Tab 进入（无参数）      → 家长一律拦截；
+ *   - 显式入口 ?mine=1（首页/我的）→ 家长可看自己的需求。
+ * 既满足权限隔离，又不把家长的需求管理功能堵死。
  */
 const api = require('../../services/api.js');
-const fmt = require('../../utils/format.js');
-const { DEMAND_STATUS, DEMAND_STATUS_LABEL, RISK_LEVEL_THEME, ROLES } = require('../../utils/constants.js');
+const C = require('../../utils/constants.js');
 
-const app = getApp();
-
-/** 'YYYY-MM-DD HH:mm' 在 iOS 上无法直接 new Date，统一转成 'YYYY/MM/DD HH:mm' */
-function parseTime(value) {
-  if (!value) return 0;
-  if (typeof value === 'number') return value;
-  const s = String(value).replace(/-/g, '/').replace('T', ' ').replace(/\.\d+Z?$/, '');
-  const t = new Date(s).getTime();
-  return isNaN(t) ? 0 : t;
-}
-
-function statusClass(status) {
-  if (status === DEMAND_STATUS.PUBLISHED) return 'tag-green';
-  if (status === DEMAND_STATUS.MATCHING) return 'tag-blue';
-  if (status === DEMAND_STATUS.MATCHED) return 'tag-green';
-  if (status === DEMAND_STATUS.RISK_BLOCKED) return 'tag-red';
-  return '';
-}
+const FALLBACK_TUTOR_ID = 'tutor_001';
 
 Page({
   data: {
-    tabs: [
-      { value: 'all', label: '全部', statuses: [], count: 0 },
-      { value: 'published', label: '招募中', statuses: [DEMAND_STATUS.PUBLISHED], count: 0 },
-      { value: 'matching', label: '匹配中', statuses: [DEMAND_STATUS.MATCHING, DEMAND_STATUS.MATCHED], count: 0 },
-      { value: 'closed', label: '已结束', statuses: [DEMAND_STATUS.CLOSED], count: 0 }
-    ],
-    status: 'all',
-    stat: { total: 0, published: 0, matching: 0, matched: 0, risk: 0 },
-    list: [],
+    role: 'parent',
+    isTutor: false,
+    /** 是否被权限拦截（家长从 Tab 进来） */
+    blocked: false,
     loading: true,
-    isParent: true
+
+    /** 学生视图：可接订单 */
+    pool: [],
+    poolTotal: 0,
+
+    /** 家长视图：我的需求 */
+    mine: [],
+    mineTotal: 0
   },
 
-  onLoad() {
-    this.allList = [];
+  onLoad(options) {
+    const opt = options || {};
+    this._mineMode = opt.mine === '1';
   },
 
   onShow() {
-    // 发布完成 / 详情页操作后返回，需要看到最新数据
-    this.loadList();
+    const app = getApp();
+    const role = app.getRole() || C.ROLES.PARENT;
+
+    /* ---------- 权限闸门（六.1 / 六.2） ---------- */
+    if (role !== C.ROLES.TUTOR && !this._mineMode) {
+      this.setData({ blocked: true, role: role, isTutor: false, pool: [], mine: [] });
+      wx.showToast({ title: '仅学生可访问接单池', icon: 'none', duration: 1600 });
+      setTimeout(function () {
+        wx.switchTab({ url: '/pages/index/index' });
+      }, 900);
+      return;
+    }
+
+    this.setData({ blocked: false, role: role, isTutor: role === C.ROLES.TUTOR });
+    if (role === C.ROLES.TUTOR) {
+      this.loadPool();
+    } else {
+      this.loadMine();
+    }
   },
 
   onPullDownRefresh() {
-    this.loadList().then(() => {
+    const task = this.data.isTutor ? this.loadPool() : this.loadMine();
+    Promise.resolve(task).then(function () {
       wx.stopPullDownRefresh();
-      app.toast('已刷新');
     });
   },
 
-  /** 拉取并渲染 */
-  loadList() {
-    const user = (app.globalData && app.globalData.userInfo) || {};
+  /** 当前学生档案 id */
+  resolveTutorId() {
+    const app = getApp();
+    return (app && app.globalData ? app.globalData.tutorProfileId : '') || FALLBACK_TUTOR_ID;
+  },
+
+  /* ================= 学生视图 ================= */
+
+  loadPool() {
+    const self = this;
     this.setData({ loading: true });
     return api
-      .getDemandList({ parentId: user.parentId || '' })
-      .then((res) => {
+      .getTutorPool({ tutorId: this.resolveTutorId(), pageSize: 50 })
+      .then(function (res) {
         if (!res || res.code !== 0) {
-          this.setData({ loading: false, list: [] });
-          app.toast((res && res.message) || '需求加载失败');
+          self.setData({ loading: false });
           return;
         }
-        this.allList = res.data || [];
-        this.render();
-      })
-      .catch((err) => {
-        console.error('[demand-list] 加载失败：', err);
-        this.setData({ loading: false });
-        app.toast('需求加载失败');
+        const list = (res.data.list || []).map(function (it) {
+          const d = it.demand || {};
+          return {
+            demandId: d.id || it.demandId,
+            title: (d.subject || '') + ' · ' + (d.grade || ''),
+            budgetText: d.budget ? '¥' + d.budget + '/小时' : '面议',
+            timeText: d.timeRangeText || '时间面议',
+            modeText: d.teachMode === 'online' ? '线上' : d.teachMode === 'campus' ? '校内' : '线下',
+            teachTypeText: C.teachTypeLabel(d.teachType),
+            statusLabel: C.DEMAND_STATUS_LABEL[C.normalizeDemandStatus(d.status)] || '',
+            matchScore: it.matchScore || 0,
+            applied: !!it.applied,
+            riskLevel: d.riskLevel || 'low',
+            personText: d.parentName || '家长'
+          };
+        });
+        self.setData({ loading: false, pool: list, poolTotal: list.length });
       });
   },
 
-  /** 统计 + 过滤 + 展示字段预计算 */
-  render() {
-    const all = this.allList || [];
-    const stat = {
-      total: all.length,
-      published: all.filter((d) => d.status === DEMAND_STATUS.PUBLISHED).length,
-      matching: all.filter((d) => d.status === DEMAND_STATUS.MATCHING).length,
-      matched: all.filter((d) => d.status === DEMAND_STATUS.MATCHED).length,
-      risk: all.filter((d) => d.riskLevel && d.riskLevel !== 'low').length
-    };
-
-    const current = this.data.status;
-    const tabs = this.data.tabs.map((t) => {
-      let count = 0;
-      if (!t.statuses.length) count = all.length;
-      else count = all.filter((d) => t.statuses.indexOf(d.status) > -1).length;
-      return Object.assign({}, t, { count: count });
-    });
-
-    const tab = tabs.filter((t) => t.value === current)[0] || tabs[0];
-    const filtered = !tab.statuses.length ? all : all.filter((d) => tab.statuses.indexOf(d.status) > -1);
-
-    this.setData({
-      stat: stat,
-      tabs: tabs,
-      list: filtered.map(this.decorate),
-      loading: false,
-      isParent: app.getRole() !== ROLES.TUTOR
-    });
-  },
-
-  /** 需求展示字段预计算（WXML 中不做复杂表达式 / 不调用工具函数） */
-  decorate(demand) {
-    const d = demand || {};
-    const theme = RISK_LEVEL_THEME[d.riskLevel] || RISK_LEVEL_THEME.low;
-    const hits = d.riskHits || [];
-    const timeRangeText =
-      d.timeRangeText || (d.timeRange || []).map(fmt.timeRangeLabel).filter(Boolean).join(' / ') || '时间面议';
-    return Object.assign({}, d, {
-      statusLabel: DEMAND_STATUS_LABEL[d.status] || d.status || '',
-      statusClass: statusClass(d.status),
-      riskLevelText: theme.text,
-      riskColor: theme.color,
-      riskBg: theme.bg,
-      riskHitText: hits.map((h) => h.word).join('、'),
-      riskHitCount: hits.length,
-      budgetText: fmt.formatBudget(d.budgetMin, d.budgetMax),
-      timeRangeText: timeRangeText,
-      frequencyText: fmt.frequencyLabel(d.frequency),
-      teachModeText: fmt.teachModeLabel(d.teachMode),
-      districtText: d.district ? fmt.districtLabel(d.district) : '地点面议',
-      addressText: d.address || '线上授课，地点待沟通',
-      titleText: (d.grade || '') + (d.subject || '') + '辅导',
-      createdAgo: fmt.timeAgo(d.createdAtTs || parseTime(d.createdAt)),
-      applyCount: Number(d.applyCount || 0)
-    });
-  },
-
-  onSelectTab(e) {
-    const value = e.currentTarget.dataset.value;
-    if (!value || value === this.data.status) return;
-    this.setData({ status: value }, () => this.render());
-  },
-
-  onTapDemand(e) {
-    const detail = e.detail || {};
-    const demandId = detail.demandId || (detail.demand && detail.demand.id) || e.currentTarget.dataset.id || '';
+  /**
+   * 长按报名（2 秒，由 HoldButton 组件计时）
+   * 成功后：订单进入沟通中 → 该学生出现在家长详情页的申请列表 → 直接进聊天室（五.1）
+   */
+  onSignup(e) {
+    const self = this;
+    const demandId = (e.detail && e.detail.demandId) || e.currentTarget.dataset.demandid;
     if (!demandId) return;
-    // 组件自定义 tap 与原生 tap 可能同时到达，这里做一次去重，避免重复压栈
-    const now = Date.now();
-    if (this._navId === demandId && now - this._navAt < 600) return;
-    this._navId = demandId;
-    this._navAt = now;
-    wx.navigateTo({ url: '/pages/demand-detail/demand-detail?id=' + demandId + '&from=parent' });
+
+    api
+      .signupByHold({ demandId: demandId, tutorId: this.resolveTutorId(), tutorName: '' })
+      .then(function (res) {
+        if (!res || (res.code !== 0 && res.code !== 3)) {
+          wx.showToast({ title: (res && res.message) || '报名失败', icon: 'none' });
+          return;
+        }
+        if (res.code === 3) {
+          wx.showToast({ title: res.message, icon: 'none' });
+          return;
+        }
+        wx.showToast({ title: '报名成功，进入沟通', icon: 'none' });
+        self.loadPool();
+        wx.navigateTo({
+          url: '/pages/chat-room/chat-room?demandId=' + demandId + '&tutorId=' + self.resolveTutorId()
+        });
+      });
+  },
+
+  onOpenDemand(e) {
+    const id = e.currentTarget.dataset.demandid;
+    if (!id) return;
+    wx.navigateTo({ url: '/pages/demand-detail/demand-detail?id=' + id + '&from=tutor' });
+  },
+
+  /* ================= 家长视图（我的需求） ================= */
+
+  loadMine() {
+    const self = this;
+    this.setData({ loading: true });
+    return api.getDemandList({ onlyMine: true }).then(function (res) {
+      if (!res || res.code !== 0) {
+        self.setData({ loading: false });
+        return;
+      }
+      const raw = (res.data && res.data.list) || res.data || [];
+      const list = raw.map(function (d) {
+        const status = C.normalizeDemandStatus(d.status);
+        return {
+          id: d.id,
+          title: (d.subject || '') + ' · ' + (d.grade || ''),
+          statusLabel: C.DEMAND_STATUS_LABEL[status] || status,
+          applyCount: d.applyCount || 0,
+          createdAt: d.createdAt || '',
+          budgetText: d.budget ? '¥' + d.budget + '/小时' : '面议'
+        };
+      });
+      self.setData({ loading: false, mine: list, mineTotal: list.length });
+    });
+  },
+
+  onOpenMine(e) {
+    const id = e.currentTarget.dataset.id;
+    if (!id) return;
+    wx.navigateTo({ url: '/pages/demand-detail/demand-detail?id=' + id + '&from=parent' });
   },
 
   goCreate() {
     wx.navigateTo({ url: '/pages/demand-create/demand-create' });
+  },
+
+  goHome() {
+    wx.switchTab({ url: '/pages/index/index' });
   }
 });

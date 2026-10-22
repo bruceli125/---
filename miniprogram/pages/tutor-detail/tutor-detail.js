@@ -1,7 +1,7 @@
 /**
- * 师范生详情页
+ * 学生详情页
  *
- * 数据来源：api.getTutorDetail(id)（含该师范生的 certifications 认证记录）
+ * 数据来源：api.getTutorDetail(id)（含该学生的 certifications 认证记录）
  *
  * TODO(二期)：
  *   1. 「发起对接」目前只记录意向并弹窗说明，站内沟通 / 资金担保结算尚未接入；
@@ -89,7 +89,7 @@ function buildCertRows(certifications) {
         submitted: false,
         statusText: '未提交',
         statusClass: 'tag tag-line',
-        reviewNote: '该师范生尚未提交此项认证材料。',
+        reviewNote: '该学生尚未提交此项认证材料。',
         createdAt: '',
         fieldRows: []
       };
@@ -163,7 +163,7 @@ Page({
     const query = options || {};
     const tutorId = query.id || '';
     if (!tutorId) {
-      toast('未指定师范生，已加载演示档案');
+      toast('未指定学生，已加载演示档案');
     }
     this.setData({ tutorId: tutorId || FALLBACK_TUTOR_ID });
     this.load();
@@ -177,7 +177,7 @@ Page({
         self.setData({
           loading: false,
           notFound: true,
-          errorMsg: (res && res.message) || '师范生档案不存在'
+          errorMsg: (res && res.message) || '学生档案不存在'
         });
         return;
       }
@@ -212,7 +212,7 @@ Page({
       notFound: false,
       tutor: tutor,
       avatarText: tutor.avatarText || (tutor.name ? tutor.name.slice(0, 1) : '师'),
-      name: tutor.name || '师范生',
+      name: tutor.name || '学生',
       genderText: GENDER_TEXT[tutor.gender] || '保密',
       schoolLine:
         (tutor.school || '') + ' · ' + (tutor.major || '') + ' · ' + (tutor.grade || ''),
@@ -247,7 +247,7 @@ Page({
       tags: tutor.tags || [],
       timesText: timesText,
       modesText: modesText,
-      intro: tutor.intro || '该师范生暂未填写个人简介。',
+      intro: tutor.intro || '该学生暂未填写个人简介。',
       privacyRows: [
         { label: '手机号', value: maskIfNeeded(tutor.phone, fmt.maskPhone) },
         { label: '学号', value: maskIfNeeded(tutor.studentNo, fmt.maskStudentNo) },

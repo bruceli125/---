@@ -120,7 +120,7 @@ Page({
   },
 
   onShow() {
-    // 从师范生详情页返回时不需要重算，仅保持页面数据不变；
+    // 从学生详情页返回时不需要重算，仅保持页面数据不变；
     // 若需求被别的页面改动（例如关闭），下拉刷新式的重算交给「重新匹配」按钮。
   },
 
@@ -230,7 +230,7 @@ Page({
     });
   },
 
-  /** 卡片点击 -> 师范生详情 */
+  /** 卡片点击 -> 学生详情 */
   onTutorTap(e) {
     const detail = e.detail || {};
     const tutor = detail.tutor || {};
@@ -316,7 +316,7 @@ Page({
   },
 
   onGoDemandList() {
-    wx.navigateTo({ url: '/pages/demand-list/demand-list' });
+    wx.navigateTo({ url: '/pages/demand-list/demand-list?mine=1' });
   },
 
   onShareAppMessage() {
@@ -327,7 +327,7 @@ Page({
       (demand.subject || '') +
       ' Top' +
       (this.data.totalMatches || 0) +
-      ' 师范生';
+      ' 学生';
     return {
       title: title,
       path: '/pages/match-result/match-result?demandId=' + this.data.demandId

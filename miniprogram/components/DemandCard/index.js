@@ -1,7 +1,7 @@
 /**
  * DemandCard —— 家教需求卡片（二期升级：右上角状态角标 / 五项标签 / 学科类标记 / 已成单与打卡）
  *
- * 用途：需求列表页、我的需求、以及师范生「接单池」（此时传 score + reasons + showApply）。
+ * 用途：需求列表页、我的需求、以及学生「接单池」（此时传 score + reasons + showApply）。
  *
  * 对外契约（一期属性全部保留，向后兼容，只新增两个可选属性）：
  *   properties: demand / showRisk / showStatus / score / reasons / showApply / applyText /
@@ -183,7 +183,7 @@ Component({
         showRiskTag: showRiskTag,
         riskText: isHigh ? '⚠️ 高风险需求' : '⚠️ 中风险需求',
         riskClass: isHigh ? 'risk-high' : 'risk-medium',
-        /* 高风险需求额外展示命中的风险词前 3 个，帮助师范生快速识别 */
+        /* 高风险需求额外展示命中的风险词前 3 个，帮助学生快速识别 */
         riskWordList: showRiskTag
           ? hits.slice(0, 3).map(function (h) {
               return h.word;

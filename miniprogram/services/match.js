@@ -52,7 +52,7 @@ function scoreSubject(demand, tutor) {
     return { score: max, note: '科目完全对口（' + target + '）' };
   }
   if (subjects.indexOf('全科') > -1) {
-    return { score: max * 0.8, note: '该师范生可全科辅导' };
+    return { score: max * 0.8, note: '该学生可全科辅导' };
   }
   // 同门类近似：数学/物理/化学 视为理科相关，语文/英语/历史 视为文科相关
   const science = ['数学', '物理', '化学', '生物', '科学', '编程'];
@@ -296,7 +296,7 @@ function scorePreference(demand, tutor) {
 }
 
 /**
- * 单个师范生打分
+ * 单个学生打分
  * @returns {{score:number, detail:object, reasons:string[], distanceKm:number|null}}
  */
 function scoreTutor(demand, tutor) {
@@ -342,9 +342,9 @@ function scoreTutor(demand, tutor) {
  */
 function buildReasons(demand, tutor, detail) {
   const reasons = [];
-  const name = tutor.name || '该师范生';
-  const school = tutor.school || '首都师范大学';
-  const major = tutor.major || '师范专业';
+  const name = tutor.name || '该学生';
+  const school = tutor.school || 'XX大学';
+  const major = tutor.major || '对口专业';
 
   reasons.push(
     name + '为' + school + major + '，' + (detail.cert ? detail.cert.note : '') + '。'
@@ -443,7 +443,7 @@ function rankTutors(demand, tutors, topN) {
 
 /**
  * 接单池排序：匹配度 50% + 距离 20% + 价格 15% + 信用分 15%
- * @param {object} tutor 当前师范生档案
+ * @param {object} tutor 当前学生档案
  * @param {Array<object>} demands 可接需求
  */
 function rankPoolDemands(tutor, demands) {
@@ -452,7 +452,7 @@ function rankPoolDemands(tutor, demands) {
     const result = scoreTutor(demand, tutor);
     const distance = result.distanceKm === null ? MATCH_CONFIG.maxDistanceKm : result.distanceKm;
     const distanceScore = Math.max(0, 1 - distance / MATCH_CONFIG.maxDistanceKm) * 100;
-    // 价格维度：师范生报价相对家长预算越宽裕得分越高
+    // 价格维度：学生报价相对家长预算越宽裕得分越高
     const budget = Number(demand.budgetMax || demand.budget || 0);
     const price = Number(tutor.price || 0);
     let priceScore = 60;

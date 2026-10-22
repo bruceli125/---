@@ -1,4 +1,4 @@
-<!-- 我的：家长 / 师范生双视角 -->
+<!-- 我的：家长 / 学生双视角 -->
 <view class="page">
 
   <view wx:if="{{loading}}" class="loading">正在加载我的数据…</view>
@@ -102,7 +102,7 @@
       </view>
     </block>
 
-    <!-- ============ 师范生视角 ============ -->
+    <!-- ============ 学生视角 ============ -->
     <block wx:if="{{isTutor}}">
       <view class="card">
         <view class="section-title">我的数据</view>

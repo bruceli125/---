@@ -93,10 +93,10 @@
       </view>
     </view>
 
-    <!-- 师范生入口 -->
+    <!-- 学生入口 -->
     <view class="card" wx:if="{{role === 'tutor'}}">
       <view class="row-between">
-        <view class="card-title">师范生服务</view>
+        <view class="card-title">学生服务</view>
         <view class="tag tag-green">接单</view>
       </view>
       <view class="text-sub mt-8">

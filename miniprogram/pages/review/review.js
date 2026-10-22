@@ -242,7 +242,7 @@ Page({
           self._tutorName = self._tutor.name || '';
           self.setData({
             counterpartText: self.data.isParent
-              ? '评价对象：' + (self._tutorName || '本次授课的师范生')
+              ? '评价对象：' + (self._tutorName || '本次授课的学生')
               : '评价对象：家长 ' + parentName
           });
           return api.getReviewState({ demandId: self.data.demandId, role: self.data.role });
@@ -273,7 +273,7 @@ Page({
       demand: d,
       orderTitle: (d.grade || '') + fmt.subjectLabel(d.subject) + ' · 履约评价',
       orderStatusLabel: C.DEMAND_STATUS_LABEL[d.status] || '状态未知',
-      counterpartText: isParent ? '评价对象：本次授课的师范生' : '评价对象：家长 ' + (d.parentName || ''),
+      counterpartText: isParent ? '评价对象：本次授课的学生' : '评价对象：家长 ' + (d.parentName || ''),
       tagTitle: isParent ? '这位老师给你的印象（可多选）' : '这位家长给你的印象（可多选）',
       commentPlaceholder: isParent
         ? '可以写写孩子的进步、老师授课方式是否合适（选填，200 字以内）'
@@ -382,7 +382,7 @@ Page({
     const isParent = this.data.role === 'parent';
     const tutorId = d.matchedTutorId || (this._tutor && this._tutor.id) || '';
     const parentId = d.parentId || '';
-    const tutorName = this._tutorName || (this._tutor && this._tutor.name) || '师范生';
+    const tutorName = this._tutorName || (this._tutor && this._tutor.name) || '学生';
     const parentName = d.parentName || '家长';
 
     const payload = {

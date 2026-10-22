@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "师范生详情",
+  "navigationBarTitleText": "学生详情",
   "usingComponents": {
     "cert-badge": "/components/CertBadge/index"
   }

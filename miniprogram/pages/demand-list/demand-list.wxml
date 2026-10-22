@@ -1,78 +1,87 @@
-<!-- 需求列表（我的需求） -->
-<view class="page list-page">
+<!-- 接单池：学生看池子，家长看自己的需求（家长从 Tab 进入会被拦截） -->
+<view class="page">
 
-  <!-- 统计条 -->
-  <view class="card stat-card">
-    <view class="row-between">
-      <view class="card-title">我的需求</view>
-      <view class="text-weak">共 {{stat.total}} 条</view>
-    </view>
-    <view class="stat-grid mt-16">
-      <view class="stat-cell">
-        <view class="stat-num">{{stat.published}}</view>
-        <view class="stat-label">招募中</view>
-      </view>
-      <view class="stat-cell">
-        <view class="stat-num">{{stat.matching}}</view>
-        <view class="stat-label">匹配中</view>
-      </view>
-      <view class="stat-cell">
-        <view class="stat-num">{{stat.matched}}</view>
-        <view class="stat-label">已匹配</view>
-      </view>
-      <view class="stat-cell">
-        <view class="stat-num {{stat.risk > 0 ? 'text-red' : ''}}">{{stat.risk}}</view>
-        <view class="stat-label">有风险</view>
-      </view>
-    </view>
+  <!-- 权限拦截占位 -->
+  <view wx:if="{{blocked}}" class="card blocked">
+    <view class="blocked__icon">🔒</view>
+    <view class="blocked__title">仅学生可访问接单池</view>
+    <view class="text-sub mt-8">当前身份为家长，正在为你返回首页。</view>
+    <view class="btn btn-primary btn-sm mt-16" bindtap="goHome">返回首页</view>
   </view>
 
-  <!-- 筛选 -->
-  <view class="tabs">
-    <view
-      class="tab {{status === item.value ? 'tab-active' : ''}}"
-      wx:for="{{tabs}}"
-      wx:key="value"
-      data-value="{{item.value}}"
-      bindtap="onSelectTab"
-    >
-      <text>{{item.label}}</text>
-      <text class="tab-count" wx:if="{{item.count > 0}}">{{item.count}}</text>
-    </view>
-  </view>
+  <block wx:else>
+    <!-- ================= 学生：可接订单 ================= -->
+    <block wx:if="{{isTutor}}">
+      <view class="head">
+        <view class="head__title">接单池</view>
+        <view class="head__sub">共 {{poolTotal}} 条可接订单 · 长按 2 秒报名并开启沟通</view>
+      </view>
 
-  <!-- 列表 -->
-  <block wx:if="{{list.length > 0}}">
-    <demand-card
-      wx:for="{{list}}"
-      wx:key="id"
-      data-id="{{item.id}}"
-      demand="{{item}}"
-      show-risk="{{true}}"
-      show-status="{{true}}"
-      show-meta="{{true}}"
-      bindtap="onTapDemand"
-    />
+      <view wx:if="{{!loading && !pool.length}}" class="card">
+        <view class="empty">
+          <view class="empty-icon">📭</view>
+          <view class="empty-text">暂时没有可接订单，稍后再来看看</view>
+        </view>
+      </view>
+
+      <view class="card pool-item" wx:for="{{pool}}" wx:key="demandId">
+        <view data-demandid="{{item.demandId}}" bindtap="onOpenDemand">
+          <view class="pool-item__top">
+            <text class="pool-item__title">{{item.title}}</text>
+            <text class="pool-item__score">{{item.matchScore}} 分</text>
+          </view>
+          <view class="pool-item__meta">
+            <text class="tag tag-line">{{item.teachTypeText}}</text>
+            <text class="tag tag-line">{{item.modeText}}</text>
+            <text class="tag tag-line">{{item.budgetText}}</text>
+          </view>
+          <view class="pool-item__time">{{item.timeText}} · {{item.personText}}</view>
+          <view class="pool-item__status">
+            <text class="tag tag-line">{{item.statusLabel}}</text>
+            <text class="text-weak" wx:if="{{item.applied}}">已报名</text>
+          </view>
+        </view>
+
+        <!-- 长按报名：仅学生视图渲染，家长根本看不到这个按钮（六.3） -->
+        <view class="pool-item__action">
+          <hold-button
+            label="{{item.applied ? '已报名 · 长按再次进入' : '长按报名'}}"
+            done-label="已报名"
+            duration="{{2000}}"
+            disabled="{{item.applied}}"
+            bind:confirm="onSignup"
+          />
+        </view>
+      </view>
+    </block>
+
+    <!-- ================= 家长：我的需求 ================= -->
+    <block wx:else>
+      <view class="head">
+        <view class="head__title">我的需求</view>
+        <view class="head__sub">共 {{mineTotal}} 条 · 点进去查看申请接单的学生</view>
+      </view>
+
+      <view class="btn btn-primary btn-block create-btn" bindtap="goCreate">＋ 发布新需求</view>
+
+      <view wx:if="{{!loading && !mine.length}}" class="card">
+        <view class="empty">
+          <view class="empty-icon">📝</view>
+          <view class="empty-text">还没有发布需求</view>
+        </view>
+      </view>
+
+      <view class="card mine-item" wx:for="{{mine}}" wx:key="id" data-id="{{item.id}}" bindtap="onOpenMine">
+        <view class="mine-item__top">
+          <text class="mine-item__title">{{item.title}}</text>
+          <text class="tag tag-blue">{{item.statusLabel}}</text>
+        </view>
+        <view class="mine-item__meta">{{item.budgetText}} · {{item.applyCount}} 人申请 · {{item.createdAt}}</view>
+        <view class="mine-item__go">查看申请与沟通 ›</view>
+      </view>
+    </block>
+
+    <view class="loading" wx:if="{{loading}}">正在加载…</view>
+    <platform-notice />
   </block>
-
-  <!-- 空状态 -->
-  <view class="card" wx:elif="{{!loading}}">
-    <view class="empty">
-      <view class="empty-icon">📋</view>
-      <view class="empty-text">还没有发布过家教需求</view>
-      <view class="empty-sub">发布后可获得智能匹配 Top3 与对接避坑报告</view>
-      <view class="btn btn-primary empty-btn" bindtap="goCreate">去发布需求</view>
-    </view>
-  </view>
-
-  <view class="loading" wx:if="{{loading}}">正在加载需求…</view>
-
-  <view class="disclaimer mt-16">
-    <view class="disclaimer-title">提示</view>
-    <view>平台仅提供可信对接与能力认证，不参与资金往来；资金担保结算为二期规划。</view>
-  </view>
-  <platform-notice />
 </view>
-
-<!-- 悬浮发布按钮 -->
-<view class="float-btn" bindtap="goCreate">＋ 发布需求</view>

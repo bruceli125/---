@@ -113,7 +113,7 @@ function ensureSeed() {
       id: 'user_demo_tutor',
       openid: 'mock-openid-tutor-0001',
       role: ROLES.TUTOR,
-      nickname: '林嘉怡（演示师范生）',
+      nickname: '林嘉怡（演示学生）',
       phone: '138****6621',
       tutorProfileId: mockTutors.CURRENT_TUTOR_ID,
       createdAt: fmt.formatDateTime('2026-01-05 09:00')
@@ -125,7 +125,7 @@ function ensureSeed() {
 
 /**
  * 恢复出厂 mock 数据（演示 / 调试用）
- * 保留「家长 / 师范生」身份偏好（ROLE 与 TUTOR_PROFILE_ID），便于反复演示完整流程。
+ * 保留「家长 / 学生」身份偏好（ROLE 与 TUTOR_PROFILE_ID），便于反复演示完整流程。
  * 注意：与本文件其它接口保持一致，返回 Promise<{code,data,message}>（此前返回普通对象，
  *      导致页面侧误用 .then() 报 TypeError、按钮静默失效）。
  */
@@ -240,7 +240,7 @@ function login(options) {
       id: fmt.genId('user'),
       openid: 'mock-openid-' + role + '-' + Date.now().toString(36),
       role: role,
-      nickname: role === ROLES.TUTOR ? '演示师范生' : '演示家长',
+      nickname: role === ROLES.TUTOR ? '演示学生' : '演示家长',
       phone: '',
       parentId: role === ROLES.PARENT ? mockDemands.CURRENT_PARENT_ID : '',
       tutorProfileId: role === ROLES.TUTOR ? mockTutors.CURRENT_TUTOR_ID : '',
@@ -497,10 +497,10 @@ function updateDemandStatus(demandId, status) {
 }
 
 /* ==================================================================
- * 五、师范生档案与认证
+ * 五、学生档案与认证
  * ================================================================== */
 
-/** 师范生列表（可选按科目/学段过滤） */
+/** 学生列表（可选按科目/学段过滤） */
 function getTutorList(query) {
   const q = query || {};
   if (USE_CLOUD) {
@@ -515,7 +515,7 @@ function getTutorList(query) {
   return Promise.resolve(ok(list));
 }
 
-/** 师范生详情 */
+/** 学生详情 */
 function getTutorDetail(tutorId) {
   if (!tutorId) return Promise.resolve(fail('缺少 tutorId'));
   if (USE_CLOUD) {
@@ -530,10 +530,10 @@ function getTutorDetail(tutorId) {
       return Promise.resolve(ok(Object.assign({}, list[i], { certifications: certs })));
     }
   }
-  return Promise.resolve(fail('师范生档案不存在'));
+  return Promise.resolve(fail('学生档案不存在'));
 }
 
-/** 当前登录师范生档案 */
+/** 当前登录学生档案 */
 function getMyTutorProfile(tutorId) {
   const id = tutorId || mockTutors.CURRENT_TUTOR_ID;
   return getTutorDetail(id);
@@ -584,12 +584,12 @@ function buildMockOcr(payload) {
   if (payload.type === 'student') {
     return Object.assign(base, {
       fields: {
-        school: form.school || '首都师范大学',
+        school: form.school || 'XX大学',
         studentNo: fmt.maskStudentNo(form.studentNo || '12020000' + Math.floor(Math.random() * 9000 + 1000)),
         email: fmt.maskEmail(form.email || 'demo@cnu.edu.cn'),
         verifyChannel: form.email ? '校园邮箱校验（mock）' : '学号规则校验（mock）'
       },
-      reviewNote: 'mock 校验通过：邮箱域名 @cnu.edu.cn / 学号规则符合首师大编码'
+      reviewNote: 'mock 校验通过：邮箱域名 @cnu.edu.cn / 学号规则符合XX大学编码'
     });
   }
   if (payload.type === 'qualification') {
@@ -687,12 +687,12 @@ function recalcTutorCertLevel(tutorId) {
       break;
     }
   }
-  if (!tutor) return Promise.resolve(fail('师范生档案不存在'));
+  if (!tutor) return Promise.resolve(fail('学生档案不存在'));
   writeStore(STORAGE_KEYS.TUTORS, tutors);
   return Promise.resolve(ok({ tutor: tutor, level: level }));
 }
 
-/** 查询某师范生的认证记录 */
+/** 查询某学生的认证记录 */
 function getCertifications(tutorId) {
   if (!tutorId) return Promise.resolve(fail('缺少 tutorId'));
   if (USE_CLOUD) {
@@ -704,7 +704,7 @@ function getCertifications(tutorId) {
   return Promise.resolve(ok(certs));
 }
 
-/** 演示用：清空某师范生的认证记录，便于完整走一遍三重认证流程 */
+/** 演示用：清空某学生的认证记录，便于完整走一遍三重认证流程 */
 function resetCertifications(tutorId) {
   const id = tutorId || mockTutors.CURRENT_TUTOR_ID;
   const certs = readStore(STORAGE_KEYS.CERTIFICATIONS, []).filter((c) => c.tutorId !== id);
@@ -745,7 +745,7 @@ function matchTutors(demandId, options) {
     const demand = demandRes.data;
     const tutors = readStore(STORAGE_KEYS.TUTORS, []);
     const list = matchService.rankTutors(demand, tutors, topN);
-    if (!list.length) return fail('暂无可推荐的师范生');
+    if (!list.length) return fail('暂无可推荐的学生');
 
     // 写入 matches 集合（同一需求覆盖上一轮结果）
     const matches = readStore(STORAGE_KEYS.MATCHES, []).filter((m) => m.demandId !== demandId);
@@ -783,7 +783,7 @@ function getMatchesByDemand(demandId) {
 }
 
 /**
- * 师范生接单池：按 匹配度 + 距离 + 价格 + 信用分 排序
+ * 学生接单池：按 匹配度 + 距离 + 价格 + 信用分 排序
  * @param {{tutorId?:string}} query
  */
 function getTutorPool(query) {
@@ -809,7 +809,7 @@ function getTutorPool(query) {
  * 七、申请接单
  * ================================================================== */
 
-/** 师范生申请接单 */
+/** 学生申请接单 */
 function applyDemand(payload) {
   const p = payload || {};
   if (!p.demandId) return Promise.resolve(fail('缺少 demandId'));
@@ -954,7 +954,7 @@ function buildReportSummary(demand, topMatches) {
   parts.push(
     '平台共推荐 ' +
       topMatches.length +
-      ' 位师范生，匹配度最高的是' +
+      ' 位学生，匹配度最高的是' +
       (t.name || '') +
       '（' +
       (t.school || '') +
@@ -967,7 +967,7 @@ function buildReportSummary(demand, topMatches) {
       (best.distanceKm !== null && best.distanceKm !== undefined ? '距离约 ' + fmt.formatDistance(best.distanceKm) : '距离待确认') +
       '）。'
   );
-  parts.push('认证情况：' + (t.certLevel >= 3 ? '已完成三重认证（编号 ' + (t.certBadgeNo || '待生成') + '）' : '认证等级 ' + (t.certLevel || 0) + ' 级，建议优先选择三重认证师范生。'));
+  parts.push('认证情况：' + (t.certLevel >= 3 ? '已完成三重认证（编号 ' + (t.certBadgeNo || '待生成') + '）' : '认证等级 ' + (t.certLevel || 0) + ' 级，建议优先选择三重认证学生。'));
   parts.push('风险提示：' + (demand.riskLevel === RISK_LEVEL.HIGH ? '该需求命中高风险词，平台强烈建议重新确认对接对象。' : demand.riskLevel === RISK_LEVEL.MEDIUM ? '该需求存在敏感表述，请按避坑提示逐条核实。' : '未发现风险词，仍建议按避坑提示完成首次沟通。'));
   return parts.join('\n');
 }
@@ -975,9 +975,9 @@ function buildReportSummary(demand, topMatches) {
 /** 下一步建议 */
 function buildNextSteps(demand, topMatches, riskLevel) {
   const steps = [
-    '在平台内向 1-2 位推荐师范生发起沟通，确认可排课时间与授课方式。',
+    '在平台内向 1-2 位推荐学生发起沟通，确认可排课时间与授课方式。',
     '安排一次 30-45 分钟试课（建议线上或校内认证场地），重点观察讲解方式与孩子接受度。',
-    '试课不满意可随时更换师范生，平台不收取任何费用、不收取押金。'
+    '试课不满意可随时更换学生，平台不收取任何费用、不收取押金。'
   ];
   if (demand.teachMode === 'offline') {
     steps.push('线下首次见面请选择公共场所或校内场地，未成年人上课需监护人全程知情。');
@@ -1051,7 +1051,7 @@ function buildReportText(report) {
   lines.push('二、试课建议');
   lines.push('  ' + (report.trialAdvice || TRIAL_ADVICE));
   lines.push('');
-  lines.push('三、推荐师范生 Top' + (report.topMatches || []).length);
+  lines.push('三、推荐学生 Top' + (report.topMatches || []).length);
   (report.topMatches || []).forEach((m) => {
     const t = m.tutor || {};
     lines.push(
@@ -1112,7 +1112,7 @@ function getParentStats(parentId) {
   );
 }
 
-/** 师范生侧统计 */
+/** 学生侧统计 */
 function getTutorStats(tutorId) {
   ensureSeed();
   const id = tutorId || mockTutors.CURRENT_TUTOR_ID;
@@ -1157,7 +1157,7 @@ module.exports = {
   getDemandDetail: getDemandDetail,
   updateDemandStatus: updateDemandStatus,
 
-  /* 师范生 */
+  /* 学生 */
   getTutorList: getTutorList,
   getTutorDetail: getTutorDetail,
   getMyTutorProfile: getMyTutorProfile,

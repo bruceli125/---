@@ -8,8 +8,8 @@
  *            可切换 TDesign MiniProgram：npm i tdesign-miniprogram + 工具「构建 npm」。
  *
  * 页面职责：
- * 1. 展示平台定位（首师大师范生 · 认证可查 · 试课不满意可换）与信任点；
- * 2. 角色选择：家长 / 师范生，写入 app.setRole 并缓存到本地；
+ * 1. 展示平台定位（XX大学学生 · 认证可查 · 试课不满意可换）与信任点；
+ * 2. 角色选择：家长 / 学生，写入 app.setRole 并缓存到本地；
  * 3. 按角色给出功能入口（接单池、我的均为 tabBar 页面，必须用 wx.switchTab）；
  * 4. 底部固定展示免责声明（合规硬性要求）。
  */
@@ -23,7 +23,7 @@ Page({
     brand: {
       name: APP_INFO.name,
       slogan: APP_INFO.slogan,
-      desc: '高校主导的家教可信对接平台，连接家长 / 机构与首师大师范生',
+      desc: '高校主导的家教可信对接平台，连接家长 / 机构与XX大学学生',
       version: APP_INFO.version
     },
     coreAbility: '核心能力：可靠度认证 · 智能匹配 · 风险过滤',
@@ -39,7 +39,7 @@ Page({
       {
         value: ROLES.TUTOR,
         icon: '🎓',
-        title: '我是师范生',
+        title: '我是学生',
         sub: '我要接单',
         desc: '三重认证 · 认证徽章 · 接单池'
       }
@@ -76,7 +76,7 @@ Page({
     const role = app.getRole();
     this.setData({
       role: role,
-      roleLabel: role === ROLES.TUTOR ? '首师大师范生' : role === ROLES.PARENT ? '家长 / 机构' : '未选择'
+      roleLabel: role === ROLES.TUTOR ? 'XX大学学生' : role === ROLES.PARENT ? '家长 / 机构' : '未选择'
     });
     return app
       .ensureLogin()
@@ -106,9 +106,9 @@ Page({
     const next = app.setRole(role);
     this.setData({
       role: next,
-      roleLabel: next === ROLES.TUTOR ? '首师大师范生' : '家长 / 机构'
+      roleLabel: next === ROLES.TUTOR ? 'XX大学学生' : '家长 / 机构'
     });
-    app.toast(next === ROLES.TUTOR ? '已选择：我是师范生' : '已选择：我是家长', 'success');
+    app.toast(next === ROLES.TUTOR ? '已选择：我是学生' : '已选择：我是家长', 'success');
     this.loadStats();
   },
 
@@ -119,10 +119,10 @@ Page({
   },
 
   goDemandList() {
-    wx.navigateTo({ url: '/pages/demand-list/demand-list' });
+    wx.navigateTo({ url: '/pages/demand-list/demand-list?mine=1' });
   },
 
-  /* ---------- 师范生入口 ---------- */
+  /* ---------- 学生入口 ---------- */
 
   goTutorVerify() {
     wx.navigateTo({ url: '/pages/tutor-verify/tutor-verify' });
@@ -130,7 +130,7 @@ Page({
 
   /** 接单池是 tabBar 页面，必须用 switchTab；navigateTo 会直接失败 */
   goTutorPool() {
-    wx.switchTab({ url: '/pages/tutor-pool/tutor-pool' });
+    wx.switchTab({ url: '/pages/demand-list/demand-list' });
   },
 
   /* ---------- 演示数据 ---------- */

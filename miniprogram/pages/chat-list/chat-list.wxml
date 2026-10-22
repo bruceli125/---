@@ -1,0 +1,33 @@
+<!-- 沟通列表：学生看家长，家长看学生；一行一条会话 -->
+<view class="page chat-page">
+
+  <view class="chat-tip" wx:if="{{!loading && !list.length}}">{{emptyTip}}</view>
+
+  <view
+    class="session"
+    wx:for="{{list}}"
+    wx:key="threadId"
+    data-demandid="{{item.demandId}}"
+    data-tutorid="{{item.tutorId}}"
+    data-peername="{{item.peerName}}"
+    bindtap="onOpenChat"
+  >
+    <view class="session__avatar">{{item.peerAvatarText}}</view>
+
+    <view class="session__main">
+      <view class="session__top">
+        <text class="session__name">{{item.peerName}}</text>
+        <text class="session__time">{{item.lastMessageAt}}</text>
+      </view>
+      <view class="session__demand">
+        <text class="session__tag">{{item.statusLabel}}</text>
+        {{item.demandTitle}}
+      </view>
+      <view class="session__last">{{item.lastMessage}}</view>
+    </view>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">正在加载会话…</view>
+
+  <platform-notice />
+</view>

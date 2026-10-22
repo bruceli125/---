@@ -1,0 +1,94 @@
+<!-- 聊天室：顶部协商状态 + 消息流 + 底部确认匹配 -->
+<view class="room">
+
+  <!-- 顶部：需求与协商状态 -->
+  <view class="room-head" bindtap="onOpenDemand">
+    <view class="room-head__main">
+      <view class="room-head__title">协商中 · {{demandTitle}}</view>
+      <view class="room-head__sub">
+        对方：{{peerName}} ·
+        <text class="room-head__state room-head__state--{{negotiation.status}}">{{negotiation.statusLabel}}</text>
+      </view>
+    </view>
+    <view class="room-head__arrow">›</view>
+  </view>
+
+  <!-- 双方确认进度 -->
+  <view class="nego">
+    <view class="nego__who">
+      <text class="nego__dot {{negotiation.studentConfirmed ? 'nego__dot--on' : ''}}"></text>
+      学生已确认{{negotiation.studentConfirmed ? '' : '（待）'}}
+    </view>
+    <view class="nego__who">
+      <text class="nego__dot {{negotiation.parentConfirmed ? 'nego__dot--on' : ''}}"></text>
+      家长已确认{{negotiation.parentConfirmed ? '' : '（待）'}}
+    </view>
+  </view>
+
+  <view wx:if="{{negotiation.bothConfirmed}}" class="nego__done">
+    ✅ 双方已达成共识，订单已匹配，可进入打卡与评价流程
+  </view>
+
+  <!-- 消息流 -->
+  <scroll-view class="room-body" scroll-y scroll-top="{{scrollTop}}" scroll-with-animation>
+    <view wx:if="{{loading}}" class="room-empty">会话加载中…</view>
+    <view wx:elif="{{!messages.length}}" class="room-empty">还没有消息，先打个招呼吧</view>
+
+    <block wx:for="{{messages}}" wx:key="id">
+      <view wx:if="{{item.isSystem}}" class="room-sys">{{item.text}}</view>
+      <block wx:else>
+        <view class="room-row {{item.mine ? 'room-row--mine' : ''}}">
+          <view class="room-bubble {{item.mine ? 'room-bubble--mine' : ''}}">
+            <text class="room-text">{{item.text}}</text>
+            <view wx:if="{{item.auto}}" class="room-auto">系统代发</view>
+          </view>
+        </view>
+        <view class="room-time {{item.mine ? 'room-time--mine' : ''}}">{{item.createdAt}}</view>
+      </block>
+    </block>
+  </scroll-view>
+
+  <!-- 预设话术 -->
+  <scroll-view class="room-presets" scroll-x>
+    <view
+      class="room-preset"
+      wx:for="{{presets}}"
+      wx:key="*this"
+      data-text="{{item}}"
+      bindtap="onPreset"
+    >{{item}}</view>
+  </scroll-view>
+
+  <!-- 输入区 -->
+  <view class="room-input">
+    <input
+      class="room-input__box"
+      value="{{draft}}"
+      maxlength="{{maxLen}}"
+      placeholder="说说课时、时间或孩子的情况…"
+      confirm-type="send"
+      bindinput="onInput"
+      bindconfirm="send"
+    />
+    <view class="room-input__send {{sending ? 'room-input__send--off' : ''}}" bindtap="send">
+      {{sending ? '发送中' : '发送'}}
+    </view>
+  </view>
+
+  <!-- 底部：确认匹配（学生=确认接单 / 家长=确认雇佣） -->
+  <view class="room-footer">
+    <view
+      wx:if="{{negotiation.bothConfirmed}}"
+      class="room-btn room-btn--done"
+    >已匹配成功，无需再确认</view>
+
+    <view
+      wx:elif="{{isParent ? negotiation.parentConfirmed : negotiation.studentConfirmed}}"
+      class="room-btn room-btn--wait"
+    >{{isParent ? '已确认雇佣，等待学生确认' : '已确认接单，等待家长确认'}}</view>
+
+    <view wx:else class="room-btn" bindtap="onConfirm">
+      {{isParent ? '确认雇佣' : '确认接单'}}
+    </view>
+  </view>
+</view>

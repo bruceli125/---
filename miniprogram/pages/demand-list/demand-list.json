@@ -5,6 +5,7 @@
   "enablePullDownRefresh": true,
   "backgroundTextStyle": "dark",
   "usingComponents": {
-    "demand-card": "/components/DemandCard/index"
+    "demand-card": "/components/DemandCard/index",
+    "hold-button": "/components/HoldButton/index"
   }
 }

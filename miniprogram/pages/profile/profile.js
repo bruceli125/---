@@ -2,7 +2,7 @@
  * 我的（tabBar 页面）
  *
  * 家长视角：我的需求 / 发布中 / 对接报告 / 风险提示 -> 需求列表、发布需求、报告列表
- * 师范生视角：信用分 / 认证等级 / 累计接单 / 我的认证 / 我的接单 / 认证徽章
+ * 学生视角：信用分 / 认证等级 / 累计接单 / 我的认证 / 我的接单 / 认证徽章
  *
  * 数据来源：api.getProfile / getParentStats / getReportList / getMyTutorProfile /
  *          getCertifications / getTutorStats / getMyApplications / getDemandDetail
@@ -78,7 +78,7 @@ Page({
     reportToggleText: '展开',
     reports: [],
 
-    /* 师范生视角 */
+    /* 学生视角 */
     tutorId: '',
     /* 三期：接单偏好 / 性格特点（学生端可编辑） */
     prefOptions: [],
@@ -146,7 +146,7 @@ Page({
    * 三期：接单标签（偏好 / 性格）
    * ================================================================== */
 
-  /** 解析当前师范生 id（本页 data 未就绪时回落到全局登录态） */
+  /** 解析当前学生 id（本页 data 未就绪时回落到全局登录态） */
   resolveTutorId() {
     const app = getApp();
     return this.data.tutorId || (app && app.globalData ? app.globalData.tutorProfileId : '') || '';
@@ -197,7 +197,7 @@ Page({
     if (this.data.savingTags) return;
     const tutorId = this.resolveTutorId();
     if (!tutorId) {
-      toast('请先完成师范生认证');
+      toast('请先完成学生认证');
       return;
     }
 
@@ -257,7 +257,7 @@ Page({
         const user = data.user || {};
         const role = app.getRole() || user.role || C.ROLES.PARENT;
         const openid = data.openid || user.openid || '';
-        const nickname = user.nickname || (role === C.ROLES.TUTOR ? '演示师范生' : '演示家长');
+        const nickname = user.nickname || (role === C.ROLES.TUTOR ? '演示学生' : '演示家长');
 
         self.setData({
           loading: false,
@@ -325,7 +325,7 @@ Page({
     );
   },
 
-  /* ================= 师范生视角 ================= */
+  /* ================= 学生视角 ================= */
 
   loadTutor(user) {
     const self = this;
@@ -422,7 +422,7 @@ Page({
     const self = this;
     const app = getApp();
     wx.showActionSheet({
-      itemList: ['我是家长 / 机构', '我是首师大师范生'],
+      itemList: ['我是家长 / 机构', '我是XX大学学生'],
       success: function (res) {
         const role = res.tapIndex === 1 ? C.ROLES.TUTOR : C.ROLES.PARENT;
         app.setRole(role);
@@ -435,7 +435,7 @@ Page({
   },
 
   onGoDemandList() {
-    wx.navigateTo({ url: '/pages/demand-list/demand-list' });
+    wx.navigateTo({ url: '/pages/demand-list/demand-list?mine=1' });
   },
 
   onGoCreate() {
@@ -459,7 +459,7 @@ Page({
 
   onGoPool() {
     // 接单池是 tabBar 页面，必须用 switchTab
-    wx.switchTab({ url: '/pages/tutor-pool/tutor-pool' });
+    wx.switchTab({ url: '/pages/demand-list/demand-list' });
   },
 
   onApplicationTap(e) {
@@ -524,7 +524,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '京师家教可信对接平台：首师大师范生 · 认证可查 · 试错不满意可换',
+      title: '京师家教可信对接平台：XX大学学生 · 认证可查 · 试错不满意可换',
       path: '/pages/index/index'
     };
   }

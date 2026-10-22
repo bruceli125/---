@@ -11,16 +11,17 @@
  * 二期新增（本次改造）：
  *   1. 「履约与互评」区块：已成单 -> 成单信息（成单人 + 认证徽章 + 成单时间）、上课打卡入口、
  *      最近 1 条打卡摘要、双向评价状态；
- *   2. 匹配中（家长视角）-> 可成单候选师范生列表 + 「确认成单」（二次确认，成单后不可再确认他人）；
+ *   2. 匹配中（家长视角）-> 可成单候选学生列表 + 「确认成单」（二次确认，成单后不可再确认他人）；
  *   3. 页面底部平台定位声明 <platform-notice />。
  *
  * 状态 / 角色矩阵（履约区块）：
  *   status=matched｜tutor  -> 成单信息 + 上课打卡（仅当 canCheckin）+ 填写/查看小结 + 双向评价
  *   status=matched｜parent -> 成单信息 + 查看打卡与小结 + 双向评价
- *   status=matching/published｜parent -> 候选师范生列表 + 确认成单
+ *   status=matching/published｜parent -> 候选学生列表 + 确认成单
  *   status=matching/published｜tutor  -> 不显示履约区块（还未成单）
  */
 const api = require('../../services/api.js');
+const C = require('../../utils/constants.js');
 const fmt = require('../../utils/format.js');
 const riskService = require('../../services/risk.js');
 const {
@@ -108,7 +109,7 @@ Page({
     applyBtnText: '申请接单',
     applyBtnClass: 'btn-green',
 
-    /* 师范生档案 */
+    /* 学生档案 */
     tutorId: '',
     tutorName: '',
     tutorCredit: 0,
@@ -136,11 +137,11 @@ Page({
     holdRingStyle: 'background: conic-gradient(#0A0A0C 0%, #E6E8EF 0)',
     /** 沟通面板可见性 */
     chatVisible: false,
-    /** 当前面板对应的师范生（学生看自己，家长看被点开的那位） */
+    /** 当前面板对应的学生（学生看自己，家长看被点开的那位） */
     chatTutorId: '',
     chatPeerName: '',
-    /** 家长端：该需求下的沟通会话列表 */
-    chatList: [],
+    /** 家长端：申请接单的学生列表 */
+    applicants: [],
 
     /* 打卡摘要 */
     checkinCount: 0,
@@ -155,7 +156,7 @@ Page({
     reviewCanSubmit: false,
     reviewRevealed: false,
 
-    /* 候选师范生（匹配中，家长视角） */
+    /* 候选学生（匹配中，家长视角） */
     candidates: [],
     candidatesEmpty: true,
     accepting: false,
@@ -266,7 +267,7 @@ Page({
     this.loadFulfillment(d);
   },
 
-  /** 师范生视角：档案信息 + 是否已申请 */
+  /** 学生视角：档案信息 + 是否已申请 */
   loadTutorState(demand) {
     if (!this.data.isTutor) return;
     // TODO(真实环境)：tutorId 应从登录态（login 云函数返回的 tutorProfileId）获取；
@@ -277,7 +278,7 @@ Page({
     api.getMyTutorProfile(tutorId).then((res) => {
       if (res && res.code === 0 && res.data) {
         this.setData({
-          tutorName: res.data.name || '师范生',
+          tutorName: res.data.name || '学生',
           tutorCredit: res.data.creditScore || 0,
           tutorCertLevel: res.data.certLevel || 0
         });
@@ -323,7 +324,7 @@ Page({
       return;
     }
 
-    // 未成单：清空履约数据；家长视角展示候选师范生以便确认成单
+    // 未成单：清空履约数据；家长视角展示候选学生以便确认成单
     this.setData({
       matchedTutorName: '',
       matchedTutorMajor: '',
@@ -368,7 +369,7 @@ Page({
   /** 成单信息：成单人档案 + 认证徽章 + 是否可打卡 */
   loadMatchedTutor(demand) {
     const tutorId = demand.matchedTutorId || '';
-    // 师范生视角用登录态档案 id 判定「是否本次成单人」；家长视角传空串（不参与该判定）
+    // 学生视角用登录态档案 id 判定「是否本次成单人」；家长视角传空串（不参与该判定）
     const viewerTutorId = this.data.isTutor ? this.data.tutorId || '' : '';
 
     if (!tutorId) {
@@ -388,7 +389,7 @@ Page({
         if (res && res.code === 0 && res.data) {
           const t = res.data;
           this.setData({
-            matchedTutorName: t.name || '师范生',
+            matchedTutorName: t.name || '学生',
             matchedTutorMajor: [t.school, t.major, t.grade].filter(Boolean).join(' · '),
             matchedTutorCredit: Number(t.creditScore || 0),
             matchedTutorCertLevel: Number(t.certLevel || 0),
@@ -400,14 +401,14 @@ Page({
         }
         // 档案取不到时降级展示，不阻断页面
         this.setData({
-          matchedTutorName: '师范生（档案 ' + String(tutorId).slice(-4) + '）',
+          matchedTutorName: '学生（档案 ' + String(tutorId).slice(-4) + '）',
           hasMatchedTutorProfile: false
         });
       })
       .catch((err) => {
         console.warn('[demand-detail] 读取成单人档案失败：', err);
         this.setData({
-          matchedTutorName: '师范生（档案 ' + String(tutorId).slice(-4) + '）',
+          matchedTutorName: '学生（档案 ' + String(tutorId).slice(-4) + '）',
           hasMatchedTutorProfile: false
         });
       });
@@ -486,7 +487,7 @@ Page({
           const level = Number(t.certLevel || 0);
           return {
             tutorId: item.tutorId,
-            name: t.name || '师范生',
+            name: t.name || '学生',
             score: item.score,
             creditScore: Number(t.creditScore || 0),
             certLevel: level,
@@ -497,50 +498,17 @@ Page({
         this.setData({ candidates: candidates, candidatesEmpty: candidates.length === 0 });
       })
       .catch((err) => {
-        console.warn('[demand-detail] 读取候选师范生失败：', err);
+        console.warn('[demand-detail] 读取候选学生失败：', err);
         this.setData({ candidates: [], candidatesEmpty: true });
       });
   },
 
-  /** 确认成单（家长）：二次确认，成单后不可再确认其他师范生 */
-  onConfirmTutor(e) {
-    if (this.data.accepting) return;
-    if (this.data.isMatched) {
-      app.toast('该需求已成单，不能重复确认');
-      return;
-    }
-    const tutorId = e.currentTarget.dataset.tutorid;
-    const name = e.currentTarget.dataset.name || '该师范生';
-    if (!tutorId) return;
-
-    wx.showModal({
-      title: '确认成单',
-      content:
-        '确认与「' + name + '」成单？\n成单后需求进入「已匹配」，不可再确认其他师范生，并可开始上课打卡。',
-      confirmText: '确认成单',
-      confirmColor: '#17B26A',
-      success: (modal) => {
-        if (!modal.confirm) return;
-        this.setData({ accepting: true, acceptingTutorId: tutorId });
-        api
-          .acceptApplication({ demandId: this.data.demandId, tutorId: tutorId })
-          .then((res) => {
-            this.setData({ accepting: false, acceptingTutorId: '' });
-            if (res && res.code === 0) {
-              app.toast('已成单，可开始上课打卡', 'success');
-              this.loadDetail();
-              return;
-            }
-            app.toast((res && res.message) || '确认失败，请稍后重试');
-          })
-          .catch((err) => {
-            console.error('[demand-detail] 确认成单失败：', err);
-            this.setData({ accepting: false, acceptingTutorId: '' });
-            app.toast('确认失败，请稍后重试');
-          });
-      }
-    });
-  },
+  /**
+   * 【已删除】onConfirmTutor —— 家长端「确认成单」
+   * 本次重构按需求三彻底移除：家长不能再一键成单。
+   * 成单唯一路径：双方在 chat-room 内分别点【确认接单】/【确认雇佣】，
+   * 由 services/phase2.js 的 settleIfBothConfirmed 在双向确认后置 matched。
+   */
 
   /** 履约页跳转（打卡页 / 评价页由二期并行任务提供，失败时给出可读提示） */
   goFulfillmentPage(url, failMsg) {
@@ -553,7 +521,7 @@ Page({
     });
   },
 
-  /** 上课打卡 / 填写查看小结（师范生）与查看打卡（家长）共用 */
+  /** 上课打卡 / 填写查看小结（学生）与查看打卡（家长）共用 */
   onGoCheckin() {
     const role = this.data.from === 'tutor' ? 'tutor' : 'parent';
     this.goFulfillmentPage(
@@ -605,7 +573,7 @@ Page({
   onCloseDemand() {
     wx.showModal({
       title: '关闭需求',
-      content: '关闭后该需求不再出现在接单池，也无法继续匹配新的师范生。是否继续？',
+      content: '关闭后该需求不再出现在接单池，也无法继续匹配新的学生。是否继续？',
       confirmText: '确认关闭',
       confirmColor: '#F04438',
       success: (modal) => {
@@ -632,7 +600,7 @@ Page({
   },
 
   /* ================================================================
-   * 四、师范生申请
+   * 四、学生申请
    * ================================================================ */
 
   /* ================================================================
@@ -711,7 +679,7 @@ Page({
     const tutorId = this.data.tutorId;
     if (!tutorId) {
       this.setData({ holding: false });
-      wx.showToast({ title: '请先完成师范生认证', icon: 'none' });
+      wx.showToast({ title: '请先完成学生认证', icon: 'none' });
       return;
     }
 
@@ -741,45 +709,36 @@ Page({
         wx.showToast({ title: '报名成功，已开启沟通', icon: 'none' });
         self.setData({ applied: true, applying: false, applyBtnText: '沟通中' });
         self.loadDetail();
-        // 报名成功直接打开沟通面板，减少一次点击
-        self.openChat();
+        // 五.1：报名成功直接进入聊天室
+        self.goChatRoom();
       });
   },
 
-  /** 打开沟通面板（学生：与家长；家长：与指定学生） */
-  openChat() {
-    const demand = this.data.demand || {};
-    const tutorId = this.data.isParent ? this.data.chatTutorId : this.data.tutorId;
+  /** 学生：进入与家长的聊天室 */
+  goChatRoom() {
+    const tutorId = this.data.tutorId;
     if (!tutorId) {
-      wx.showToast({ title: '缺少沟通对象', icon: 'none' });
+      wx.showToast({ title: '缺少学生档案', icon: 'none' });
       return;
     }
-    this.setData({
-      chatVisible: true,
-      chatTutorId: tutorId,
-      chatPeerName: this.data.isParent ? this.data.chatPeerName : demand.parentName || '家长'
+    wx.navigateTo({
+      url: '/pages/chat-room/chat-room?demandId=' + this.data.demandId + '&tutorId=' + tutorId
     });
   },
 
-  /** 家长从沟通列表里点开某位学生 */
-  openChatWith(e) {
+  /** 家长：与某位申请学生进入聊天室 */
+  goChatWithStudent(e) {
     const ds = e.currentTarget.dataset || {};
-    this.setData({ chatTutorId: ds.tutorid, chatPeerName: ds.name || '学生' });
-    this.openChat();
-  },
-
-  closeChat() {
-    this.setData({ chatVisible: false });
-  },
-
-  /** 面板里确认 / 发消息后：刷新本页状态（状态机由服务端推进，页面只跟随） */
-  onChatUpdated(e) {
-    const detail = e.detail || {};
-    this.loadDetail();
-    if (this.data.isParent) this.loadChatList();
-    if (detail.matched) {
-      wx.showToast({ title: '已正式匹配，可开始打卡', icon: 'none' });
-    }
+    if (!ds.tutorid) return;
+    wx.navigateTo({
+      url:
+        '/pages/chat-room/chat-room?demandId=' +
+        this.data.demandId +
+        '&tutorId=' +
+        ds.tutorid +
+        '&peerName=' +
+        encodeURIComponent(ds.name || '')
+    });
   },
 
   /**
@@ -798,10 +757,12 @@ Page({
           return Object.assign({}, it, {
             avatarText: (it.tutorName || '?').slice(0, 1),
             certLevelText: certText[it.certLevel] || '平台认证',
-            lastMessage: (it.lastMessage || '').slice(0, 40)
+            prefLabels: C.labelsOf(C.TUTOR_PREFERENCES, it.preferences || []),
+            personaLabels: C.labelsOf(C.PERSONALITY_TAGS, it.personality || []),
+            lastMessage: (it.lastMessage || '').slice(0, 30)
           });
         });
-        self.setData({ chatList: list });
+        self.setData({ applicants: list });
       });
   },
 

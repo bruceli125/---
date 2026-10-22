@@ -1,5 +1,5 @@
 /**
- * mock 师范生档案数据（6 条）
+ * mock 学生档案数据（6 条）
  *
  * 字段对齐数据库集合 tutors：userId, name, gender, school, major, grade, subjects,
  * grades, tags, price, location, creditScore, certLevel, certBadgeNo, intro, avatar
@@ -16,8 +16,8 @@ const tutors = [
     personality: ['patient', 'guide'],    userId: 'user_demo_tutor_001',
     name: '林嘉怡',
     gender: 'female',
-    school: '首都师范大学',
-    major: '数学与应用数学（师范）',
+    school: 'XX大学',
+    major: '数学与应用数学',
     grade: '大三',
     subjects: ['数学', '物理'],
     grades: ['初二', '初三', '高一'],
@@ -34,7 +34,7 @@ const tutors = [
     certBadgeNo: 'JS-2026-000101',
     abilityTags: ['初三数学提分', '带过毕业班', '中考冲刺'],
     intro:
-      '首师大数学师范专业在读，带过两届初三毕业班，擅长把函数、几何压轴题拆成可复用解题模型；2025 年带的初三学生数学从 82 分提升到 108 分。上课前会先做 30 分钟学情诊断，课后提供错题本整理。',
+      'XX大学数学对口专业在读，带过两届初三毕业班，擅长把函数、几何压轴题拆成可复用解题模型；2025 年带的初三学生数学从 82 分提升到 108 分。上课前会先做 30 分钟学情诊断，课后提供错题本整理。',
     avatar: '/assets/avatar/tutor-01.png',
     avatarText: '林',
     rating: 4.9,
@@ -54,8 +54,8 @@ const tutors = [
     personality: ['humorous', 'warm'],    userId: 'user_demo_tutor_002',
     name: '陈知远',
     gender: 'male',
-    school: '首都师范大学',
-    major: '汉语言文学（师范）',
+    school: 'XX大学',
+    major: '汉语言文学',
     grade: '大四',
     subjects: ['语文', '历史'],
     grades: ['初一', '初二', '初三'],
@@ -72,7 +72,7 @@ const tutors = [
     certBadgeNo: 'JS-2026-000102',
     abilityTags: ['作文批改', '习惯养成', '带过毕业班'],
     intro:
-      '首师大中文师范专业，北京市师范生教学技能大赛二等奖。作文批改按「结构—素材—语言」三层给反馈，每次课留 20 分钟当堂修改，帮助学生建立自己的素材库。',
+      'XX大学中文对口专业，北京市学生教学技能大赛二等奖。作文批改按「结构—素材—语言」三层给反馈，每次课留 20 分钟当堂修改，帮助学生建立自己的素材库。',
     avatar: '/assets/avatar/tutor-02.png',
     avatarText: '陈',
     rating: 4.8,
@@ -92,8 +92,8 @@ const tutors = [
     personality: ['patient', 'warm'],    userId: 'user_demo_tutor_003',
     name: '苏雨萌',
     gender: 'female',
-    school: '首都师范大学',
-    major: '学前教育（师范）',
+    school: 'XX大学',
+    major: '学前教育',
     grade: '大二',
     subjects: ['全科', '美术'],
     grades: ['小班', '中班', '大班', '幼小衔接'],
@@ -130,8 +130,8 @@ const tutors = [
     personality: ['strict', 'guide'],    userId: 'user_demo_tutor_004',
     name: '赵沐阳',
     gender: 'male',
-    school: '首都师范大学',
-    major: '物理学（师范）',
+    school: 'XX大学',
+    major: '物理学',
     grade: '研一',
     subjects: ['物理', '数学'],
     grades: ['高一', '高二', '高三'],
@@ -148,7 +148,7 @@ const tutors = [
     certBadgeNo: 'JS-2026-000104',
     abilityTags: ['高考冲刺', '物理实验'],
     intro:
-      '首师大物理师范专业研究生，本科阶段连续三年家教，累计带过 11 名高三学生，擅长力学与电磁学建模；会用仿真实验演示抽象概念，帮助学生建立物理图像。',
+      'XX大学物理对口专业研究生，本科阶段连续三年家教，累计带过 11 名高三学生，擅长力学与电磁学建模；会用仿真实验演示抽象概念，帮助学生建立物理图像。',
     avatar: '/assets/avatar/tutor-04.png',
     avatarText: '赵',
     rating: 5.0,
@@ -168,8 +168,8 @@ const tutors = [
     personality: ['humorous', 'patient'],    userId: 'user_demo_tutor_005',
     name: '何雨桐',
     gender: 'female',
-    school: '首都师范大学',
-    major: '英语（师范）',
+    school: 'XX大学',
+    major: '英语',
     grade: '大三',
     subjects: ['英语'],
     grades: ['三年级', '四年级', '五年级', '六年级', '初一'],
@@ -186,7 +186,7 @@ const tutors = [
     certBadgeNo: 'JS-2026-000105',
     abilityTags: ['英语口语', '习惯养成'],
     intro:
-      '英语师范专业，专业四级优秀，曾在附属小学做过一学期英语助教。课上以自然拼读 + 情景对话为主，尽量减少中文翻译，帮助学生敢开口。',
+      '英语对口专业，专业四级优秀，曾在附属小学做过一学期英语助教。课上以自然拼读 + 情景对话为主，尽量减少中文翻译，帮助学生敢开口。',
     avatar: '/assets/avatar/tutor-05.png',
     avatarText: '何',
     rating: 4.8,
@@ -206,8 +206,8 @@ const tutors = [
     personality: ['guide', 'humorous'],    userId: 'user_demo_tutor_006',
     name: '郑一诺',
     gender: 'male',
-    school: '首都师范大学',
-    major: '计算机科学与技术（师范）',
+    school: 'XX大学',
+    major: '计算机科学与技术',
     grade: '大二',
     subjects: ['编程', '数学', '科学'],
     grades: ['四年级', '五年级', '六年级', '初一', '初二'],
@@ -224,7 +224,7 @@ const tutors = [
     certBadgeNo: 'JS-2026-000106',
     abilityTags: ['竞赛辅导'],
     intro:
-      '计算机师范专业，带过少儿编程兴趣班，讲解 Scratch 与 Python 入门，课程以做出小项目为目标（小游戏、简易计算器），帮助孩子建立编程成就感。',
+      '计算机对口专业，带过少儿编程兴趣班，讲解 Scratch 与 Python 入门，课程以做出小项目为目标（小游戏、简易计算器），帮助孩子建立编程成就感。',
     avatar: '/assets/avatar/tutor-06.png',
     avatarText: '郑',
     rating: 4.6,
@@ -238,10 +238,10 @@ const tutors = [
   }
 ];
 
-/** 当前登录师范生（demo 角色为师范生时的档案 id） */
+/** 当前登录学生（demo 角色为学生时的档案 id） */
 const CURRENT_TUTOR_ID = 'tutor_001';
 
-/** 师范生三重认证记录（mock，与 certifications 集合字段一致） */
+/** 学生三重认证记录（mock，与 certifications 集合字段一致） */
 const certifications = [
   {
     id: 'cert_001',
@@ -249,7 +249,7 @@ const certifications = [
     type: 'student',
     status: 'approved',
     files: [{ name: '校园邮箱验证记录.txt', url: '' }],
-    ocrResult: { verified: true, fields: { studentNo: '1202****0918', email: 'lin****@cnu.edu.cn', school: '首都师范大学' } },
+    ocrResult: { verified: true, fields: { studentNo: '1202****0918', email: 'lin****@cnu.edu.cn', school: 'XX大学' } },
     reviewNote: '校园邮箱 @cnu.edu.cn 校验通过，学籍信息与院系一致。',
     createdAt: '2025-09-10 09:12'
   },

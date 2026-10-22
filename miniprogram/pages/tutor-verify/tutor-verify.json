@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "师范生三重认证",
+  "navigationBarTitleText": "学生三重认证",
   "usingComponents": {
     "cert-badge": "/components/CertBadge/index"
   }

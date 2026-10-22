@@ -1,4 +1,4 @@
-<!-- 师范生三重认证：学籍 -> 资质 -> 能力 -> 认证徽章 -->
+<!-- 学生三重认证：学籍 -> 资质 -> 能力 -> 认证徽章 -->
 <view class="page">
 
   <view wx:if="{{loading}}" class="loading">正在加载认证档案…</view>
@@ -71,7 +71,7 @@
         <view class="step-mark {{ui.student.markClass}}">{{ui.student.mark}}</view>
         <view class="flex-1">
           <view class="step-title">1. 学籍认证</view>
-          <view class="text-weak">校验在校学籍，确认首师大师范生身份</view>
+          <view class="text-weak">校验在校学籍，确认XX大学学生身份</view>
         </view>
         <view class="step-status {{studentCert.statusTextClass}}">{{studentCert.statusText}}</view>
         <text class="step-toggle">{{ui.student.toggleText}}</text>
@@ -81,7 +81,7 @@
         <view class="form-item">
           <view class="form-label">学校</view>
           <input class="form-input" value="{{studentForm.school}}" disabled />
-          <view class="form-tip">MVP 只支持首都师范大学（高校白名单，二期开放更多合作高校）。</view>
+          <view class="form-tip">MVP 只支持XX大学（高校白名单，二期开放更多合作高校）。</view>
         </view>
 
         <view class="form-item">

@@ -404,6 +404,61 @@ function section(title) {
     '过滤后=' + JSON.stringify(badTags.code === 0 ? badTags.data.preferences : [])
   );
 
+  /* ================= I. UI 重构的结构性验收 ================= */
+  section('I. UI 重构（tabBar / 文案 / 页面 / 一键成单）');
+  const fsI = require('fs');
+  const pathI = require('path');
+  const MP_ROOT = pathI.join(__dirname, '../miniprogram');
+
+  const appJson = JSON.parse(fsI.readFileSync(pathI.join(MP_ROOT, 'app.json'), 'utf8'));
+  const tabs = (appJson.tabBar && appJson.tabBar.list) || [];
+  check(
+    'tabBar 为 4 个 Tab 且含沟通',
+    tabs.length === 4 && tabs.some(function (t) { return t.pagePath === 'pages/chat-list/chat-list'; }),
+    tabs.map(function (t) { return t.text; }).join(' / ')
+  );
+  check(
+    '接单池 Tab 指向 demand-list',
+    tabs[1] && tabs[1].pagePath === 'pages/demand-list/demand-list',
+    tabs[1] && tabs[1].pagePath
+  );
+  check(
+    'chat-room 与 chat-list 已注册',
+    appJson.pages.indexOf('pages/chat-room/chat-room') > -1 &&
+      appJson.pages.indexOf('pages/chat-list/chat-list') > -1,
+    'pages=' + appJson.pages.length
+  );
+  check(
+    'tutor-pool 已下线',
+    appJson.pages.indexOf('pages/tutor-pool/tutor-pool') === -1,
+    'pages=' + appJson.pages.length
+  );
+
+  // 文案：全库不应再出现"师范"
+  const walk = function (dir, acc) {
+    fsI.readdirSync(dir, { withFileTypes: true }).forEach(function (e) {
+      const f = pathI.join(dir, e.name);
+      if (e.isDirectory()) {
+        if (e.name === 'node_modules' || e.name === '.preview') return;
+        walk(f, acc);
+      } else if (/\.(js|wxml|json|wxss)$/.test(e.name)) acc.push(f);
+    });
+    return acc;
+  };
+  const allFiles = walk(MP_ROOT, []);
+  const dirty = allFiles.filter(function (f) {
+    return fsI.readFileSync(f, 'utf8').indexOf('师范') > -1;
+  });
+  check('全局文案无「师范」残留', dirty.length === 0, dirty.length ? dirty.slice(0, 3).map(function (f) { return pathI.basename(f); }).join(',') : '共扫描 ' + allFiles.length + ' 个文件');
+
+  // 一键成单：家长端页面不应再出现确认成单入口
+  const detailWxml = fsI.readFileSync(pathI.join(MP_ROOT, 'pages/demand-detail/demand-detail.wxml'), 'utf8');
+  check(
+    '家长端无「确认成单」按钮',
+    detailWxml.indexOf('onConfirmTutor') === -1 && detailWxml.indexOf('确认成单') === -1
+  );
+  check('家长端有「申请接单的学生」列表', detailWxml.indexOf('申请接单的学生') > -1);
+
   /* ================= 汇总 ================= */
   console.log('');
   const total = pass + failures.length;

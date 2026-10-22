@@ -53,9 +53,9 @@
         </view>
       </view>
 
-      <!-- 二、推荐师范生 Top3 -->
+      <!-- 二、推荐学生 Top3 -->
       <view class="card">
-        <view class="section-title">二、推荐师范生 Top{{matchList.length}}</view>
+        <view class="section-title">二、推荐学生 Top{{matchList.length}}</view>
 
         <view wx:if="{{!matchList.length}}" class="empty">
           <view class="empty-icon">🙋</view>

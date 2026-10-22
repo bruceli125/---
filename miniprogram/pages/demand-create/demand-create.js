@@ -21,7 +21,7 @@
 const api = require('../../services/api.js');
 const fmt = require('../../utils/format.js');
 const riskService = require('../../services/risk.js');
-/* 三期：灵活岗位与性格期望的选项表（值域与师范生接单偏好一致，才能做交集匹配） */
+/* 三期：灵活岗位与性格期望的选项表（值域与学生接单偏好一致，才能做交集匹配） */
 const { TEACH_TYPES, EXPECTED_PERSONALITY } = require('../../utils/constants.js');
 const {
   SUBJECTS,

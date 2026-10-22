@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "接单池",
-  "enablePullDownRefresh": true,
-  "backgroundTextStyle": "dark",
-  "usingComponents": {
-    "demand-card": "/components/DemandCard/index",
-    "cert-badge": "/components/CertBadge/index"
-  }
-}

@@ -128,7 +128,7 @@ Page({
         rank: m.rank,
         score: m.score,
         scoreText: m.score + ' 分',
-        name: t.name || '师范生',
+        name: t.name || '学生',
         school: t.school || '',
         major: t.major || '',
         grade: t.grade || '',

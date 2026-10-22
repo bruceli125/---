@@ -61,7 +61,7 @@
 
       <!-- 3. Top3 推荐列表 -->
       <view class="list-head">
-        <view class="section-title-plain">推荐师范生 Top{{totalMatches}}</view>
+        <view class="section-title-plain">推荐学生 Top{{totalMatches}}</view>
         <text class="text-weak">共匹配到 {{totalMatches}} 位，按匹配度从高到低排序</text>
       </view>
 
@@ -87,7 +87,7 @@
         bindcancel="onTutorCancel"
       />
 
-      <view wx:if="{{list.length}}" class="tip-line">点击卡片可查看师范生详情、认证材料与信用分</view>
+      <view wx:if="{{list.length}}" class="tip-line">点击卡片可查看学生详情、认证材料与信用分</view>
     </block>
   </block>
 

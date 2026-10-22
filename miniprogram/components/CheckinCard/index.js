@@ -142,7 +142,7 @@ Component({
       this.triggerEvent('confirm', { checkinId: c.id || c._id || '' });
     },
 
-    /** 师范生结束打卡的快捷入口（页面负责聚焦小结输入框） */
+    /** 学生结束打卡的快捷入口（页面负责聚焦小结输入框） */
     onFinish() {
       const c = this.data.checkin || {};
       this.triggerEvent('finish', { checkinId: c.id || c._id || '' });

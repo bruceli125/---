@@ -113,7 +113,7 @@
 
     <!-- 成单信息 -->
     <view class="matched-box">
-      <view class="matched-name">已成单 · 服务师范生：{{matchedTutorName}}</view>
+      <view class="matched-name">已成单 · 服务学生：{{matchedTutorName}}</view>
       <view class="text-weak" wx:if="{{acceptedAtText}}">成单时间：{{acceptedAtText}}</view>
       <view class="text-weak" wx:if="{{matchedTutorMajor}}">{{matchedTutorMajor}}</view>
       <view class="text-weak" wx:if="{{hasMatchedTutorProfile}}">信用分 {{matchedTutorCredit}}</view>
@@ -160,13 +160,13 @@
     <view class="text-weak">双向盲评：双方都提交后才能看到对方评价内容。</view>
   </view>
 
-  <!-- ============ 二期：确认成单（匹配中 / 招募中，家长视角） ============ -->
+  <!-- ============ 二期：匹配推荐（家长视角，只做推荐，不再一键成单） ============ -->
   <view class="card" wx:if="{{isMatching && isParent}}">
     <view class="row-between">
-      <view class="section-title-plain">确认成单</view>
-      <view class="tag tag-blue">可成单</view>
+      <view class="section-title-plain">平台推荐学生</view>
+      <view class="tag tag-blue">按匹配度排序</view>
     </view>
-    <view class="text-weak">以下为平台推荐的可成单师范生（按匹配度排序）。确认后需求进入「已匹配」，不可再确认其他师范生。</view>
+    <view class="text-weak">以下为按匹配度排序的推荐结果。是否成单不在这里点，请到「申请接单的学生」里发消息协商，双方都确认后才会匹配。</view>
 
     <view class="cand-item" wx:for="{{candidates}}" wx:key="tutorId">
       <view class="cand-main">
@@ -174,54 +174,59 @@
         <view class="text-weak">匹配度 {{item.score}} 分 · 信用分 {{item.creditScore}} · {{item.certLevelText}}</view>
         <view class="cand-reason" wx:if="{{item.reasonText}}">{{item.reasonText}}</view>
       </view>
-      <view
-        class="btn btn-green btn-sm cand-btn"
-        data-tutorid="{{item.tutorId}}"
-        data-name="{{item.name}}"
-        bindtap="onConfirmTutor"
-      >{{acceptingTutorId === item.tutorId ? '确认中…' : '确认成单'}}</view>
+      <text class="text-weak cand-hint">需先沟通协商</text>
     </view>
 
     <view class="text-weak" wx:if="{{candidatesEmpty}}">暂无推荐名单，可点击下方「查看智能匹配 Top3」先生成匹配结果。</view>
   </view>
 
-  <!-- 师范生视角 -->
+  <!-- 学生视角 -->
   <view class="card" wx:if="{{isTutor}}">
     <view class="section-title">接单信息</view>
     <view class="text-sub">申请人：{{tutorName}}（信用分 {{tutorCredit}} · 认证等级 {{tutorCertLevel}} 级）</view>
     <view class="text-weak mt-8">平台不收取中介费与押金；请勿向家长索要或提供身份证、学生证原件。</view>
   </view>
 
-  <!-- 家长视角：沟通列表（三期，报名学生在这里逐个沟通与确认雇佣） -->
+  <!-- 家长视角：申请接单的学生（本次重构重点） -->
   <view class="card" wx:if="{{isParent}}">
     <view class="row-between">
-      <view class="section-title" style="margin-bottom:0">沟通列表</view>
-      <view class="chat-list-count">{{chatList.length}} 人报名</view>
+      <view class="section-title applicants__title">申请接单的学生</view>
+      <view class="applicants__count">{{applicants.length}} 人</view>
     </view>
 
-    <view class="text-weak mt-16" wx:if="{{!chatList.length}}">
-      还没有师范生报名。可先生成智能匹配，再把 Top3 推荐给对方。
+    <view class="text-weak mt-16" wx:if="{{!applicants.length}}">
+      还没有学生报名。学生长按报名后会出现在这里，点【发消息】即可开始协商。
     </view>
 
-    <view
-      class="chat-item"
-      wx:for="{{chatList}}"
-      wx:key="threadId"
-      data-tutorid="{{item.tutorId}}"
-      data-name="{{item.tutorName}}"
-      bindtap="openChatWith"
-    >
-      <view class="chat-item__avatar">{{item.avatarText}}</view>
-      <view class="chat-item__main">
-        <view class="chat-item__name">
-          {{item.tutorName}}
-          <text class="chat-item__cert">{{item.certLevelText}}</text>
+    <view class="applicant" wx:for="{{applicants}}" wx:key="tutorId">
+      <view class="applicant__head">
+        <view class="applicant__avatar">{{item.avatarText}}</view>
+        <view class="applicant__main">
+          <view class="applicant__name">
+            {{item.tutorName}}
+            <text class="applicant__cert">{{item.certLevelText}}</text>
+          </view>
+          <view class="applicant__school">{{item.school}} · {{item.tutorMajor}}</view>
         </view>
-        <view class="chat-item__last">{{item.lastMessage || '已报名，等待与您沟通'}}</view>
       </view>
-      <view class="chat-item__side">
-        <view class="chat-item__badge">{{item.messageCount}} 条</view>
-        <view class="chat-item__enter">进入 ›</view>
+
+      <view class="applicant__tags" wx:if="{{item.prefLabels.length || item.personaLabels.length}}">
+        <text class="tag tag-prism" wx:for="{{item.prefLabels}}" wx:for-item="p" wx:key="*this">{{p}}</text>
+        <text class="tag tag-line" wx:for="{{item.personaLabels}}" wx:for-item="q" wx:key="*this">{{q}}</text>
+      </view>
+
+      <view class="applicant__hint" wx:if="{{item.studentConfirmed}}">
+        对方已确认，等待您确认 —— 进入聊天室点【确认雇佣】
+      </view>
+
+      <view class="applicant__foot">
+        <text class="applicant__last">{{item.lastMessage || '已报名，等待沟通'}}</text>
+        <view
+          class="btn btn-primary btn-sm"
+          data-tutorid="{{item.tutorId}}"
+          data-name="{{item.tutorName}}"
+          bindtap="goChatWithStudent"
+        >发消息</view>
       </view>
     </view>
   </view>
@@ -257,11 +262,11 @@
   <view class="btn btn-primary flex-1" bindtap="goMatch">查看智能匹配 Top3</view>
 </view>
 
-<!-- 底部操作：师范生 —— 长按 2 秒报名，报名成功即开启沟通（三期） -->
+<!-- 底部操作：学生 —— 长按 2 秒报名，报名成功即开启沟通（三期） -->
 <view class="footer-bar" wx:if="{{!loading && !notFound && isTutor}}">
 
   <!-- 已报名：按钮变成「沟通中，点击进入对话」 -->
-  <view wx:if="{{applied}}" class="btn btn-primary flex-1" bindtap="openChat">
+  <view wx:if="{{applied}}" class="btn btn-primary flex-1" bindtap="goChatRoom">
     沟通中，点击进入对话
   </view>
 
@@ -288,14 +293,4 @@
   </view>
 </view>
 
-<!-- 沟通面板（学生 / 家长共用同一个组件） -->
-<chat-panel
-  visible="{{chatVisible}}"
-  demand-id="{{demandId}}"
-  tutor-id="{{chatTutorId}}"
-  role="{{isParent ? 'parent' : 'tutor'}}"
-  peer-name="{{chatPeerName}}"
-  demand-title="{{titleText}}"
-  bind:close="closeChat"
-  bind:updated="onChatUpdated"
-/>
+

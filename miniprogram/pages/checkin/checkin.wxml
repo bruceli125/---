@@ -1,4 +1,4 @@
-<!-- 履约打卡页：师范生打卡 + 写小结，家长确认履约 -->
+<!-- 履约打卡页：学生打卡 + 写小结，家长确认履约 -->
 <view class="page">
   <view class="loading" wx:if="{{loading}}">加载中…</view>
 
@@ -42,7 +42,7 @@
       </view>
     </view>
 
-    <!-- 师范生：打卡入口 / 进行中 / 不可打卡 -->
+    <!-- 学生：打卡入口 / 进行中 / 不可打卡 -->
     <block wx:if="{{isTutor}}">
       <view class="card action-card" wx:if="{{canStart}}">
         <view class="action-title">{{checkinTitle}}</view>

@@ -3,7 +3,6 @@
   "navigationBarBackgroundColor": "#1F4FBF",
   "navigationBarTextStyle": "white",
   "usingComponents": {
-    "cert-badge": "/components/CertBadge/index",
-    "chat-panel": "/components/ChatPanel/index"
+    "cert-badge": "/components/CertBadge/index"
   }
 }

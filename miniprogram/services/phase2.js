@@ -206,10 +206,15 @@ function getCredit(query) {
 }
 
 /* ==================================================================
- * 二、确认成单（家长确认某位师范生 -> 订单进入「已匹配」）
+ * 二、确认成单（家长确认某位学生 -> 订单进入「已匹配」）
  * ================================================================== */
 
 /**
+ * @internal 仅供履约测试与运营初始化使用
+ *
+ * 家长端「一键成单」入口已在本次重构中彻底删除，页面不得再调用本函数。
+ * 正常的成单路径是：学生报名 → 沟通 → 双方在 chat-room 分别确认 → settleIfBothConfirmed。
+ *
  * @param {{demandId:string, tutorId:string}} payload
  */
 function acceptApplication(payload) {
@@ -244,7 +249,7 @@ function acceptApplication(payload) {
  * 三、履约打卡 + 课后小结
  * ================================================================== */
 
-/** 订单是否可打卡（已匹配 + 该师范生是成单人） */
+/** 订单是否可打卡（已匹配 + 该学生是成单人） */
 function canCheckin(demand, tutorId) {
   if (!demand) return false;
   if (demand.status !== DEMAND_STATUS.MATCHED) return false;
@@ -584,7 +589,7 @@ function getTutorPool(query) {
   const q = query || {};
   const tutorId = q.tutorId || mockTutors.CURRENT_TUTOR_ID;
   const tutor = findById(loadTutors(), tutorId);
-  if (!tutor) return Promise.resolve(fail('师范生档案不存在'));
+  if (!tutor) return Promise.resolve(fail('学生档案不存在'));
 
   const all = loadDemands().filter(function (d) {
     return (
@@ -910,7 +915,7 @@ function signupByHold(payload) {
   if (ensured.created) {
     const tutor = findById(loadTutors(), p.tutorId) || {};
     const text = renderTemplate(NEGOTIATION.templates.signup, {
-      university: tutor.school || '首都师范大学',
+      university: tutor.school || 'XX大学',
       name: tutor.name || p.tutorName || '同学',
       certLevel: certLevelText(tutor.certLevel),
       demandTitle: thread.demandTitle
@@ -1115,13 +1120,20 @@ function getDemandChats(query) {
       tutorId: c.tutorId,
       tutorName: tutor.name || c.tutorName || '同学',
       tutorMajor: tutor.major || '',
+      /* 三期重构：家长端「申请接单的学生」列表要展示这些 */
+      school: tutor.school || '',
+      grade: tutor.grade || '',
+      avatarText: String(tutor.name || '同').slice(0, 1),
+      preferences: tutor.preferences || [],
+      personality: tutor.personality || [],
       certLevel: tutor.certLevel || 1,
       creditScore: tutor.creditScore || 0,
       lastMessage: c.lastMessage || '',
       lastMessageAt: c.lastMessageAt || '',
       messageCount: msgs.length,
-      /** 该学生是否已确认接单 */
-      studentConfirmed: !!demand.studentConfirmed
+      /** 该学生是否已确认匹配（家长据此显示「对方已确认，等待您确认」） */
+      studentConfirmed: !!demand.studentConfirmed,
+      parentConfirmed: !!demand.parentConfirmed
     };
   });
 
@@ -1137,7 +1149,7 @@ function getDemandChats(query) {
 
 
 /**
- * 三期：更新师范生的「接单偏好」与「性格特点」
+ * 三期：更新学生的「接单偏好」与「性格特点」
  * ------------------------------------------------------------------
  * 这两个标签同时服务于：① 匹配算法加分；② 家长在推荐理由里看到差异化信息。
  * 只允许写入 constants 里定义的合法值，防止前端传脏数据进来。
@@ -1148,7 +1160,7 @@ function updateTutorTags(payload) {
 
   const tutors = loadTutors();
   const tutor = findById(tutors, p.tutorId);
-  if (!tutor) return Promise.resolve(fail('师范生档案不存在'));
+  if (!tutor) return Promise.resolve(fail('学生档案不存在'));
 
   if (Array.isArray(p.preferences)) {
     tutor.preferences = p.preferences.filter(function (v) {
@@ -1172,11 +1184,64 @@ function updateTutorTags(payload) {
   );
 }
 
-/** 读取师范生的接单偏好与性格标签（档案页编辑用） */
+/**
+ * 会话列表（沟通 Tab）
+ * ------------------------------------------------------------------
+ * 学生看：我与各位家长的会话；家长看：我名下需求的所有学生会话。
+ * 排序按最后一条消息时间倒序，符合"微信首页"的使用直觉。
+ */
+function getChatList(query) {
+  const q = query || {};
+  const role = q.role === 'parent' ? 'parent' : 'tutor';
+  const chats = loadChats();
+  const demands = loadDemands();
+  const tutors = loadTutors();
+  const currentParentId = q.parentId || mockDemands.CURRENT_PARENT_ID;
+
+  let picked = chats;
+  if (role === 'tutor') {
+    if (!q.tutorId) return Promise.resolve(fail('缺少 tutorId'));
+    picked = chats.filter(function (c) {
+      return c.tutorId === q.tutorId;
+    });
+  } else {
+    picked = chats.filter(function (c) {
+      const d = findById(demands, c.demandId);
+      return d && d.parentId === currentParentId;
+    });
+  }
+
+  const items = picked
+    .map(function (c) {
+      const d = findById(demands, c.demandId) || {};
+      const t = findById(tutors, c.tutorId) || {};
+      const status = normalizeDemandStatus(d.status);
+      const peerName = role === 'tutor' ? d.parentName || '家长' : t.name || c.tutorName || '学生';
+      return {
+        threadId: c.id,
+        demandId: c.demandId,
+        tutorId: c.tutorId,
+        peerName: peerName,
+        peerAvatarText: String(peerName).slice(0, 1),
+        demandTitle: c.demandTitle || (d.subject || '') + ' / ' + (d.grade || ''),
+        lastMessage: c.lastMessage || '已开启沟通',
+        lastMessageAt: c.lastMessageAt || c.createdAt || '',
+        status: status,
+        statusLabel: DEMAND_STATUS_LABEL[status] || status
+      };
+    })
+    .sort(function (a, b) {
+      return String(b.lastMessageAt).localeCompare(String(a.lastMessageAt));
+    });
+
+  return Promise.resolve(ok({ list: items, total: items.length, role: role }));
+}
+
+/** 读取学生的接单偏好与性格标签（档案页编辑用） */
 function getTutorTags(tutorId) {
   if (!tutorId) return Promise.resolve(fail('缺少 tutorId'));
   const tutor = findById(loadTutors(), tutorId);
-  if (!tutor) return Promise.resolve(fail('师范生档案不存在'));
+  if (!tutor) return Promise.resolve(fail('学生档案不存在'));
   return Promise.resolve(
     ok({
       tutorId: tutorId,
@@ -1219,7 +1284,8 @@ module.exports = {
   confirmByParent: confirmByParent,
   getDemandChats: getDemandChats,
   updateTutorTags: updateTutorTags,
-  getTutorTags: getTutorTags
+  getTutorTags: getTutorTags,
+  getChatList: getChatList
 };
 
 /* ==================================================================

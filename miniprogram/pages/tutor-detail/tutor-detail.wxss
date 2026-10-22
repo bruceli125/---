@@ -1,4 +1,4 @@
-/* 师范生详情页样式 */
+/* 学生详情页样式 */
 .page-with-footer {
   padding-bottom: 220rpx;
 }

@@ -1,4 +1,4 @@
-/* TutorCard 师范生卡片：干净、可信、卡片式 */
+/* TutorCard 学生卡片：干净、可信、卡片式 */
 
 .tutor-card {
   position: relative;

@@ -15,7 +15,7 @@ App({
   globalData: {
     openid: '',
     userInfo: null,          // { id, openid, role, nickname, phone, createdAt }
-    tutorProfileId: '',      // 当前师范生档案 tutors._id（mock 模式下即 tutorId）
+    tutorProfileId: '',      // 当前学生档案 tutors._id（mock 模式下即 tutorId）
     /**
      * 当前角色（唯一事实来源）
      * 三期修正：一期只有 role 一个字段，页面各自从 storage 读，出现过"首页已切换成家长、
@@ -140,7 +140,7 @@ App({
     return '';
   },
 
-  /** 当前是否师范生 */
+  /** 当前是否学生 */
   isTutor() {
     return this.getRole() === ROLES.TUTOR;
   },
@@ -216,7 +216,7 @@ App({
 
     const tip =
       opts.tip ||
-      (required === ROLES.TUTOR ? '仅师范生可进入接单池' : '该功能仅家长可用');
+      (required === ROLES.TUTOR ? '仅学生可进入接单池' : '该功能仅家长可用');
     wx.showToast({ title: tip, icon: 'none', duration: 1600 });
 
     const mode = opts.redirect || 'home';

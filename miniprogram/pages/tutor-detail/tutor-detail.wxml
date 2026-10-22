@@ -1,7 +1,7 @@
-<!-- 师范生详情：档案 + 认证徽章 + 认证详情 + 教学信息 + 隐私合规 -->
+<!-- 学生详情：档案 + 认证徽章 + 认证详情 + 教学信息 + 隐私合规 -->
 <view class="page page-with-footer">
 
-  <view wx:if="{{loading}}" class="loading">正在加载师范生档案…</view>
+  <view wx:if="{{loading}}" class="loading">正在加载学生档案…</view>
 
   <block wx:else>
     <view wx:if="{{notFound}}" class="empty">
@@ -69,9 +69,9 @@
           <text class="{{certLevelClass}}">认证等级 {{certLevel}} 级 · {{certLevelText}}</text>
         </view>
         <view wx:if="{{certLevel < 3}}" class="cert-warning">
-          该师范生尚未完成三重认证，建议优先选择三重认证师范生，或与家长沟通后先安排线上试课。
+          该学生尚未完成三重认证，建议优先选择三重认证学生，或与家长沟通后先安排线上试课。
         </view>
-        <view wx:else class="cert-pass">该师范生已完成学籍 + 资质 + 能力三重认证，认证编号可在「我的」页面核验。</view>
+        <view wx:else class="cert-pass">该学生已完成学籍 + 资质 + 能力三重认证，认证编号可在「我的」页面核验。</view>
       </view>
 
       <!-- 认证详情 -->

@@ -1,91 +1,127 @@
-/* 需求列表 */
-.list-page {
-  padding-bottom: 180rpx;
+/* 接单池：学生池子 / 家长我的需求 / 权限占位 */
+.head {
+  padding: 8rpx 4rpx 24rpx;
 }
 
-.stat-card {
-  margin-bottom: 20rpx;
-}
-
-.stat-grid {
-  display: flex;
-  background-color: var(--bg-gray);
-  border-radius: 16rpx;
-  padding: 20rpx 0;
-}
-
-.stat-cell {
-  flex: 1;
-  text-align: center;
-}
-
-.stat-num {
-  font-size: 36rpx;
+.head__title {
+  font-size: 44rpx;
   font-weight: 700;
-  color: var(--brand-primary);
-  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--ink, #0a0a0c);
 }
 
-.stat-label {
-  margin-top: 6rpx;
-  font-size: 22rpx;
-  color: var(--text-weak);
-}
-
-/* ---------- 筛选 tabs ---------- */
-.tabs {
-  display: flex;
-  gap: 16rpx;
-  margin-bottom: 20rpx;
-}
-
-.tab {
-  flex: 1;
-  text-align: center;
-  padding: 14rpx 0;
-  border-radius: 999rpx;
-  background-color: #ffffff;
-  color: var(--text-sub);
-  font-size: 26rpx;
-  border: 2rpx solid var(--border-color);
-}
-
-.tab-active {
-  background-color: var(--brand-primary-soft);
-  color: var(--brand-primary);
-  font-weight: 600;
-  border-color: var(--brand-primary);
-}
-
-.tab-count {
-  font-size: 22rpx;
-  margin-left: 6rpx;
-  color: var(--text-weak);
-}
-
-/* ---------- 空状态 ---------- */
-.empty-sub {
+.head__sub {
   margin-top: 8rpx;
-  font-size: 24rpx;
-  color: var(--text-weak);
+  font-size: 22rpx;
+  color: var(--ink-4, #8e929e);
 }
 
-.empty-btn {
-  width: 320rpx;
-  margin: 28rpx auto 0;
+/* ---------- 权限占位 ---------- */
+.blocked {
+  text-align: center;
+  padding: 64rpx 40rpx;
 }
 
-/* ---------- 悬浮按钮 ---------- */
-.float-btn {
-  position: fixed;
-  right: 32rpx;
-  bottom: 60rpx;
-  z-index: 30;
-  padding: 22rpx 36rpx;
-  border-radius: 999rpx;
-  background: linear-gradient(135deg, var(--brand-primary-light), var(--brand-primary));
-  color: #ffffff;
-  font-size: 28rpx;
+.blocked__icon {
+  font-size: 76rpx;
+  line-height: 1;
+}
+
+.blocked__title {
+  margin-top: 22rpx;
+  font-size: 32rpx;
   font-weight: 600;
-  box-shadow: 0 12rpx 28rpx rgba(31, 79, 191, 0.32);
+  color: var(--ink, #0a0a0c);
+}
+
+.blocked .btn {
+  display: inline-flex;
+  margin-top: 26rpx;
+}
+
+/* ---------- 学生：订单卡片 ---------- */
+.pool-item {
+  padding: 26rpx 28rpx;
+}
+
+.pool-item__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.pool-item__title {
+  font-size: 31rpx;
+  font-weight: 600;
+  color: var(--ink, #0a0a0c);
+}
+
+.pool-item__score {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--violet, #6d4aff);
+  flex: 0 0 auto;
+}
+
+.pool-item__meta {
+  margin-top: 14rpx;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.pool-item__time {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: var(--ink-4, #8e929e);
+}
+
+.pool-item__status {
+  margin-top: 12rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.pool-item__action {
+  margin-top: 20rpx;
+  padding-top: 18rpx;
+  border-top: 1rpx solid var(--line, #e6e8ef);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ---------- 家长：我的需求 ---------- */
+.create-btn {
+  margin-bottom: 24rpx;
+}
+
+.mine-item {
+  padding: 26rpx 28rpx;
+}
+
+.mine-item__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.mine-item__title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--ink, #0a0a0c);
+}
+
+.mine-item__meta {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  color: var(--ink-4, #8e929e);
+}
+
+.mine-item__go {
+  margin-top: 12rpx;
+  font-size: 23rpx;
+  color: var(--violet, #6d4aff);
 }

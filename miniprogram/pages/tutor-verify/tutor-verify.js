@@ -1,5 +1,5 @@
 /**
- * 师范生三重认证页：学籍认证 -> 资质认证 -> 能力认证 -> 生成认证徽章
+ * 学生三重认证页：学籍认证 -> 资质认证 -> 能力认证 -> 生成认证徽章
  *
  * 数据来源：只通过 services/api.js（mock + storage，或云函数模式）。
  *
@@ -277,7 +277,7 @@ Page({
     abilityCert: buildCertSummary(null),
 
     /* 学籍认证表单 */
-    studentForm: { school: '首都师范大学', studentNo: '', email: '' },
+    studentForm: { school: 'XX大学', studentNo: '', email: '' },
 
     /* 资质认证表单 */
     qualForm: { certType: '教师资格证', certName: '', certSubject: '', certLevel: '高级中学' },
@@ -316,7 +316,7 @@ Page({
     if (app.getRole() !== C.ROLES.TUTOR) {
       app.setRole(C.ROLES.TUTOR);
       app.ensureLogin(true).catch(function () {});
-      wx.showToast({ title: '已切换为师范生身份', icon: 'none' });
+      wx.showToast({ title: '已切换为学生身份', icon: 'none' });
     }
     /** 页面内所有 setTimeout 句柄，onUnload 时统一清理 */
     this._timers = [];
@@ -339,7 +339,7 @@ Page({
       .then(function (res) {
         if (!res || res.code !== 0 || !res.data) {
           self.setData({ loading: false });
-          toast((res && res.message) || '师范生档案加载失败');
+          toast((res && res.message) || '学生档案加载失败');
           return null;
         }
         const tutor = res.data;
@@ -380,7 +380,7 @@ Page({
     });
 
     /* 表单回填：把上一次提交的内容填回来，方便继续修改 */
-    const studentForm = Object.assign({ school: '首都师范大学', studentNo: '', email: '' }, (certMap.student || {}).form || {});
+    const studentForm = Object.assign({ school: 'XX大学', studentNo: '', email: '' }, (certMap.student || {}).form || {});
     const qualForm = Object.assign(
       { certType: '教师资格证', certName: '', certSubject: '', certLevel: '高级中学' },
       (certMap.qualification || {}).form || {}
@@ -470,7 +470,7 @@ Page({
     const hasCampusEmail = /@cnu\.edu\.cn$/i.test(email);
 
     if (!studentNo && !email) {
-      toast('请填写学号或首师大校园邮箱');
+      toast('请填写学号或XX大学校园邮箱');
       return;
     }
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -485,7 +485,7 @@ Page({
 
     this.submitCert(
       'student',
-      { school: form.school || '首都师范大学', studentNo: studentNo, email: email },
+      { school: form.school || 'XX大学', studentNo: studentNo, email: email },
       '学籍认证',
       []
     );
@@ -718,7 +718,7 @@ Page({
 
   onGoPool() {
     // 接单池是 tabBar 页面，必须用 switchTab
-    wx.switchTab({ url: '/pages/tutor-pool/tutor-pool' });
+    wx.switchTab({ url: '/pages/demand-list/demand-list' });
   },
 
   onGoProfile() {
@@ -730,7 +730,7 @@ Page({
     const self = this;
     wx.showModal({
       title: '重置认证（演示用）',
-      content: '将清空当前师范生的三重认证记录与徽章编号，便于完整重走一遍认证流程。确认继续？',
+      content: '将清空当前学生的三重认证记录与徽章编号，便于完整重走一遍认证流程。确认继续？',
       confirmText: '确认重置',
       success: function (res) {
         if (!res.confirm) return;

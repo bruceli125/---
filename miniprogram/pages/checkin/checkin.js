@@ -7,7 +7,7 @@
  *   api.getDemandDetail / api.getCheckins / api.canCheckin(同步) / api.startCheckin /
  *   api.finishCheckin / api.confirmCheckin
  *
- * 闭环：师范生「上课打卡」→ 下课「结束打卡 + 授课小结(≥10字)」→ 家长「确认本次履约」。
+ * 闭环：学生「上课打卡」→ 下课「结束打卡 + 授课小结(≥10字)」→ 家长「确认本次履约」。
  * mock 边界：定位为 MOCK_CHECKIN_LOCATION（界面统一标注「mock 定位」），不采集真实位置；
  *           资金担保与课时费结算为二期规划，本页不涉及任何支付。
  *
@@ -243,7 +243,7 @@ Page({
     if (!hasMatched) {
       blockedReason = '该订单尚未成单。家长确认成单后，你才能开始上课打卡。';
     } else if (!isMatchedTutor) {
-      blockedReason = '该订单已由其他师范生接单，你无法为其打卡。';
+      blockedReason = '该订单已由其他学生接单，你无法为其打卡。';
     } else {
       blockedReason = '当前订单状态不支持打卡。';
     }
@@ -274,7 +274,7 @@ Page({
       activeStartText: activeStartText,
       activeLocationText: activeLocationText,
       emptyText: this.data.isParent
-        ? '师范生还没有提交打卡记录，待其打卡后在此查看履约凭证。'
+        ? '学生还没有提交打卡记录，待其打卡后在此查看履约凭证。'
         : '还没有打卡记录，上课后点「上课打卡」开始记录。'
     });
 
@@ -287,7 +287,7 @@ Page({
     this.refreshSubmitBtn();
   },
 
-  /** 当前师范生 id：优先登录态，其次订单成单人（演示环境兜底） */
+  /** 当前学生 id：优先登录态，其次订单成单人（演示环境兜底） */
   resolveTutorId() {
     const app = getApp();
     const fromApp = (app && app.globalData && app.globalData.tutorProfileId) || '';

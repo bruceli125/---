@@ -7,10 +7,11 @@
     "pages/match-result/match-result",
     "pages/report-detail/report-detail",
     "pages/tutor-verify/tutor-verify",
-    "pages/tutor-pool/tutor-pool",
     "pages/tutor-detail/tutor-detail",
     "pages/checkin/checkin",
     "pages/review/review",
+    "pages/chat-list/chat-list",
+    "pages/chat-room/chat-room",
     "pages/profile/profile"
   ],
   "usingComponents": {
@@ -37,10 +38,16 @@
         "selectedIconPath": "assets/tab/home-on.png"
       },
       {
-        "pagePath": "pages/tutor-pool/tutor-pool",
+        "pagePath": "pages/demand-list/demand-list",
         "text": "接单池",
         "iconPath": "assets/tab/pool.png",
         "selectedIconPath": "assets/tab/pool-on.png"
+      },
+      {
+        "pagePath": "pages/chat-list/chat-list",
+        "text": "沟通",
+        "iconPath": "assets/tab/chat.png",
+        "selectedIconPath": "assets/tab/chat-on.png"
       },
       {
         "pagePath": "pages/profile/profile",
