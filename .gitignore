@@ -28,3 +28,9 @@ _bgtest/
 .dsh-*/
 _tmp_*
 miniprogram/.preview/
+docs/.preview-pdf/
+docs/.checks.json
+docs/.control-*.docx
+tools/.risk-words-full.json
+tools/.risk-compare.json
+tools/.risk-words-dump.json
