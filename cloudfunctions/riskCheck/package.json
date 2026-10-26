@@ -1,7 +1,7 @@
 {
   "name": "riskCheck",
   "version": "1.0.0",
-  "description": "京师家教 - 风险词检测云函数：返回风险等级、命中词与避坑提示",
+  "description": "青拾对接 - 风险词检测云函数：返回风险等级、命中词与避坑提示",
   "main": "index.js",
   "dependencies": {
     "wx-server-sdk": "~2.6.3"

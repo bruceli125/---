@@ -1,0 +1,307 @@
+{
+  "schemaVersion": 1,
+  "backend": "native",
+  "rasterEngine": "pdfium",
+  "source": "saved",
+  "inputPath": "D:\\2026大挑京师家教\\docs\\.qv\\q.pdf",
+  "sourceSha256": "ad0aaa646787d1f2c1967d41cefd38b5fc389b3beab38a6de451618260eba5f2",
+  "dpi": 110,
+  "pageCount": 21,
+  "images": [
+    {
+      "index": 1,
+      "page": 1,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0001.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 219014
+    },
+    {
+      "index": 2,
+      "page": 2,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0002.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 240882
+    },
+    {
+      "index": 3,
+      "page": 3,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0003.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 214283
+    },
+    {
+      "index": 4,
+      "page": 4,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0004.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 238023
+    },
+    {
+      "index": 5,
+      "page": 5,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0005.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 228820
+    },
+    {
+      "index": 6,
+      "page": 6,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0006.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 244881
+    },
+    {
+      "index": 7,
+      "page": 7,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0007.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 234878
+    },
+    {
+      "index": 8,
+      "page": 8,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0008.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 153544
+    },
+    {
+      "index": 9,
+      "page": 9,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0009.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 215033
+    },
+    {
+      "index": 10,
+      "page": 10,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0010.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 125348
+    },
+    {
+      "index": 11,
+      "page": 11,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0011.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 129560
+    },
+    {
+      "index": 12,
+      "page": 12,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0012.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 151181
+    },
+    {
+      "index": 13,
+      "page": 13,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0013.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 252914
+    },
+    {
+      "index": 14,
+      "page": 14,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0014.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 230045
+    },
+    {
+      "index": 15,
+      "page": 15,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0015.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 199785
+    },
+    {
+      "index": 16,
+      "page": 16,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0016.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 39936
+    },
+    {
+      "index": 17,
+      "page": 17,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0017.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 124416
+    },
+    {
+      "index": 18,
+      "page": 18,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0018.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 101762
+    },
+    {
+      "index": 19,
+      "page": 19,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0019.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 95129
+    },
+    {
+      "index": 20,
+      "page": 20,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0020.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 84781
+    },
+    {
+      "index": 21,
+      "page": 21,
+      "path": "D:\\2026大挑京师家教\\docs\\.qv\\png\\page-0021.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 93606
+    }
+  ],
+  "missingFonts": []
+}

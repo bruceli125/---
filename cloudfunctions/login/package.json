@@ -1,7 +1,7 @@
 {
   "name": "login",
   "version": "1.0.0",
-  "description": "京师家教 - 登录云函数：获取 openid，创建或查询用户",
+  "description": "青拾对接 - 登录云函数：获取 openid，创建或查询用户",
   "main": "index.js",
   "dependencies": {
     "wx-server-sdk": "~2.6.3"

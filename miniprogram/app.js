@@ -1,5 +1,5 @@
 /**
- * 京师家教可信对接平台 —— 小程序入口
+ * 青拾对接 —— 小程序入口
  *
  * 职责：
  * 1. 初始化系统信息、恢复本地角色缓存；
@@ -28,6 +28,12 @@ App({
     avatarUrl: '',
     /** 用户自定义昵称（nickname 输入） */
     nickname: '',
+    /**
+     * 接单池 Tab 的进入意图：true = 家长看「我的需求」，false/undefined = 学生看接单池
+     * 为什么用全局标记：demand-list 是 tabBar 页，微信禁止 navigateTo 到 tabBar 页
+     * （会被静默拒绝，表现为“点了没反应”），只能用 switchTab，而 switchTab 不支持 query。
+     */
+    demandListMine: false,
     /** 沟通 Tab 的未读数总量（用于 TabBar 角标） */
     unreadTotal: 0,
     useCloud: APP_INFO.useCloud,

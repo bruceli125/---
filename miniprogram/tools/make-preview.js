@@ -99,7 +99,7 @@ const html = `<!DOCTYPE html>
     <div class="hero-ring"><div class="prism-halo"></div><div class="prism-ring"></div></div>
     <div class="hero-inner">
       <div class="hero-eyebrow">LIGHTCORE PRISM</div>
-      <div class="hero-title">京师家教可信对接平台</div>
+      <div class="hero-title">青拾对接</div>
       <div class="prism-bar hero-bar"></div>
       <div class="hero-slogan">XX大学学生 · 认证可查 · 试课不满意可换</div>
       <div class="hero-desc">高校主导的家教可信对接平台，连接家长 / 机构与XX大学学生</div>

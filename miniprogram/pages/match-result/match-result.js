@@ -316,13 +316,14 @@ Page({
   },
 
   onGoDemandList() {
-    wx.navigateTo({ url: '/pages/demand-list/demand-list?mine=1' });
+    getApp().globalData.demandListMine = true;
+    wx.switchTab({ url: '/pages/demand-list/demand-list' });
   },
 
   onShareAppMessage() {
     const demand = this.data.demand || {};
     const title =
-      '京师家教推荐：' +
+      '青拾对接推荐：' +
       (demand.grade || '') +
       (demand.subject || '') +
       ' Top' +

@@ -119,7 +119,8 @@ Page({
   },
 
   goDemandList() {
-    wx.navigateTo({ url: '/pages/demand-list/demand-list?mine=1' });
+    getApp().globalData.demandListMine = true;
+    wx.switchTab({ url: '/pages/demand-list/demand-list' });
   },
 
   /* ---------- 学生入口 ---------- */

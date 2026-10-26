@@ -243,7 +243,7 @@ Page({
   onShareAppMessage() {
     const demand = (this.data.report && this.data.report.demand) || {};
     return {
-      title: '京师家教对接报告：' + (demand.grade || '') + (demand.subject || '') + ' Top' + this.data.matchList.length,
+      title: '青拾对接对接报告：' + (demand.grade || '') + (demand.subject || '') + ' Top' + this.data.matchList.length,
       path: '/pages/report-detail/report-detail?demandId=' + (this.data.demandId || '')
     };
   }

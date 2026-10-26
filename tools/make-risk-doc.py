@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-生成《京师家教可信对接平台 · 风险词库与内容合规规则》Word 文档
+生成《青拾对接 · 风险词库与内容合规规则》Word 文档
 数据来源：cloudfunctions/common/riskWords.js（权威）
          miniprogram/utils/constants.js（小程序副本）
          database/risk_words.json（云数据库种子，JSONL）
@@ -8,7 +8,7 @@
 生成前必须先产出数据快照（三步都不可省）：
     node tools/export-risk-words.js    # -> tools/.risk-words-full.json
     node tools/compare-risk-words.js   # -> tools/.risk-compare.json
-    python tools/make-risk-doc.py      # -> docs/京师家教-风险词库说明.docx
+    python tools/make-risk-doc.py      # -> docs/青拾对接-风险词库说明.docx
 
 校验与预览（docx->png 这条路径会横向裁切，务必先转 PDF 再栅格化）：
     python <checker> <docx> --out docs/.checks.json
@@ -31,7 +31,7 @@ from docx.shared import Cm, Pt, RGBColor
 ROOT = r"D:/2026大挑京师家教"
 DATA = json.load(open(os.path.join(ROOT, "tools/.risk-words-full.json"), encoding="utf-8"))
 CMP = json.load(open(os.path.join(ROOT, "tools/.risk-compare.json"), encoding="utf-8"))
-OUT = os.path.join(ROOT, "docs/京师家教-风险词库说明.docx")
+OUT = os.path.join(ROOT, "docs/青拾对接-风险词库说明.docx")
 
 FONT = "微软雅黑"
 INK = RGBColor(0x0A, 0x0A, 0x0C)
@@ -184,7 +184,7 @@ def make_table(headers, rows, widths, align_map=None, header_fill="F2F4F8", zebr
 
 
 # ============================ 封面区 ============================
-para("京师家教可信对接平台", size=9, bold=True, color=VIOLET, space_after=2)
+para("青拾对接", size=9, bold=True, color=VIOLET, space_after=2)
 para("风险词库与内容合规规则", size=24, bold=True, color=INK, space_after=6)
 para(
     "版本 v%s · 生效现状说明 · 生成日期 %s" % (DATA.get("version") or "0.2.0", date.today().isoformat()),

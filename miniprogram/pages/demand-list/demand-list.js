@@ -66,6 +66,12 @@ Page({
     const app = getApp();
     const role = app.getRole() || C.ROLES.PARENT;
 
+    /* 读取「我的需求」进入意图（switchTab 无法带参数，用全局标记传递），读完即清空 */
+    if (app.globalData.demandListMine) {
+      this._mineMode = true;
+      app.globalData.demandListMine = false;
+    }
+
     /* ---------- 权限闸门 ---------- */
     if (role !== C.ROLES.TUTOR && !this._mineMode) {
       this.setData({ blocked: true, role: role, isTutor: false, pool: [], mine: [] });

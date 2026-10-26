@@ -1026,7 +1026,7 @@ function buildReportText(report) {
   if (!report) return '';
   const lines = [];
   const demand = report.demand || {};
-  lines.push('【京师家教可信对接平台 · 对接报告】');
+  lines.push('【青拾对接 · 对接报告】');
   lines.push('生成时间：' + (report.createdAt || ''));
   lines.push('');
   lines.push('一、需求摘要');

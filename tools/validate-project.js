@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 京师家教可信对接平台 —— 工程自检脚本
+ * 青拾对接 —— 工程自检脚本
  *
  * 用法：node tools/validate-project.js
  *
@@ -390,7 +390,7 @@ listDirs(path.join(MP, 'components')).forEach((c) =>
 );
 
 /* ---------------- 输出 ---------------- */
-console.log('=== 京师家教可信对接平台 · 工程自检 ===');
+console.log('=== 青拾对接 · 工程自检 ===');
 console.log('错误 ' + errors.length + ' 项，警告 ' + warnings.length + ' 项');
 if (errors.length) {
   console.log('\n--- 错误 ---');

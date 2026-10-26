@@ -1,7 +1,7 @@
 {
   "name": "common",
   "version": "1.0.0",
-  "description": "京师家教云函数公共模块（权威副本：ok/fail/validate + 风险词库）",
+  "description": "青拾对接云函数公共模块（权威副本：ok/fail/validate + 风险词库）",
   "main": "index.js",
   "private": true
 }

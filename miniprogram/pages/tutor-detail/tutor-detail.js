@@ -292,7 +292,7 @@ Page({
         this.data.schoolLine +
         ' · ' +
         this.data.certLevelText +
-        '（京师家教可信对接平台）',
+        '（青拾对接）',
       path: '/pages/tutor-detail/tutor-detail?id=' + this.data.tutorId
     };
   }

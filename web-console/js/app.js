@@ -244,7 +244,7 @@
     el.views.innerHTML = V[key]();
     el.crumb.textContent = page ? page.group + ' / ' + page.label : '运营总览';
     el.title.textContent = page ? page.title : '平台运行概览';
-    document.title = '京师家教 · ' + (page ? page.title : '运营控制台');
+    document.title = '青拾对接 · ' + (page ? page.title : '运营控制台');
 
     // 激活当前视图（CSS 用 .view.is-active 控制显示）
     var node = $('[data-view="' + key + '"]', el.views);
@@ -451,7 +451,7 @@
   function buildReportText() {
     var d = D.demands[0];
     return [
-      '【京师家教可信对接平台 · 对接报告】',
+      '【青拾对接 · 对接报告】',
       '需求编号：' + d.id + '　生成时间：' + D.meta.updatedAt,
       '',
       '一、需求摘要',

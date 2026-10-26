@@ -9,8 +9,8 @@
 
 /** 应用级配置 */
 const APP_INFO = {
-  name: '京师家教可信对接平台',
-  shortName: '京师家教',
+  name: '青拾对接',
+  shortName: '青拾对接',
   slogan: 'XX大学学生 · 认证可查 · 试课不满意可换',
   version: '0.2.0',
   /** true = 走微信云开发；false = 走本地 mock + storage（默认，免配置即可演示） */

@@ -550,7 +550,8 @@ Page({
   },
 
   onGoDemandList() {
-    wx.navigateTo({ url: '/pages/demand-list/demand-list?mine=1' });
+    getApp().globalData.demandListMine = true;
+    wx.switchTab({ url: '/pages/demand-list/demand-list' });
   },
 
   onGoCreate() {
@@ -639,7 +640,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '京师家教可信对接平台：XX大学学生 · 认证可查 · 试错不满意可换',
+      title: '青拾对接：XX大学学生 · 认证可查 · 试错不满意可换',
       path: '/pages/index/index'
     };
   }

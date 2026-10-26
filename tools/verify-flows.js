@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 京师家教可信对接平台 —— 业务链路验收脚本
+ * 青拾对接 —— 业务链路验收脚本
  *
  * 用法：node tools/verify-flows.js
  *

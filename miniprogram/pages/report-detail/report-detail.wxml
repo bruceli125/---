@@ -14,7 +14,7 @@
       <!-- 报告头 -->
       <view class="card report-head">
         <view class="row-between">
-          <view class="title-md">京师家教 · 对接报告</view>
+          <view class="title-md">青拾对接 · 对接报告</view>
           <view class="tag" style="background:{{riskTheme.bg}};color:{{riskTheme.color}}">{{riskTheme.text}}</view>
         </view>
         <view class="head-row">

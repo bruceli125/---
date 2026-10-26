@@ -202,7 +202,7 @@ Page({
   onShareAppMessage() {
     const d = this.data.demand || {};
     return {
-      title: '京师家教｜' + (this.data.titleText || '家长家教需求') + '，' + this.data.budgetText,
+      title: '青拾对接｜' + (this.data.titleText || '家长家教需求') + '，' + this.data.budgetText,
       path: '/pages/demand-detail/demand-detail?id=' + this.data.demandId + '&from=tutor'
     };
   },

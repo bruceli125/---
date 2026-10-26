@@ -1,7 +1,7 @@
 {
   "name": "matchTutors",
   "version": "1.0.0",
-  "description": "京师家教 - 智能匹配云函数：规则打分输出 TopN 推荐，并支持学生接单池排序",
+  "description": "青拾对接 - 智能匹配云函数：规则打分输出 TopN 推荐，并支持学生接单池排序",
   "main": "index.js",
   "dependencies": {
     "wx-server-sdk": "~2.6.3"
