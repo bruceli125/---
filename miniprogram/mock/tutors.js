@@ -21,7 +21,7 @@ const tutors = [
     grade: '大三',
     subjects: ['数学', '物理'],
     grades: ['初二', '初三', '高一'],
-    tags: ['初三数学提分', '带过毕业班', '中考冲刺'],
+    tags: ['初三数学提升', '带过毕业班', '中考复习'],
     price: 130,
     priceRange: [120, 150],
     location: '北京市海淀区西三环北路105号',
@@ -32,7 +32,7 @@ const tutors = [
     creditScore: 92,
     certLevel: 3,
     certBadgeNo: 'JS-2026-000101',
-    abilityTags: ['初三数学提分', '带过毕业班', '中考冲刺'],
+    abilityTags: ['初三数学提升', '带过毕业班', '中考复习'],
     intro:
       'XX大学数学对口专业在读，带过两届初三毕业班，擅长把函数、几何压轴题拆成可复用解题模型；2025 年带的初三学生数学从 82 分提升到 108 分。上课前会先做 30 分钟学情诊断，课后提供错题本整理。',
     avatar: '/assets/avatar/tutor-01.png',
@@ -59,7 +59,7 @@ const tutors = [
     grade: '大四',
     subjects: ['语文', '历史'],
     grades: ['初一', '初二', '初三'],
-    tags: ['作文批改', '阅读提分', '中考语文'],
+    tags: ['作文批改', '阅读提升', '中考语文'],
     price: 120,
     priceRange: [110, 140],
     location: '北京市海淀区北洼路',
@@ -135,7 +135,7 @@ const tutors = [
     grade: '研一',
     subjects: ['物理', '数学'],
     grades: ['高一', '高二', '高三'],
-    tags: ['高考冲刺', '物理实验', '强基计划'],
+    tags: ['高考复习', '物理实验', '强基计划'],
     price: 160,
     priceRange: [150, 200],
     location: '北京市西城区新街口外大街',
@@ -146,7 +146,7 @@ const tutors = [
     creditScore: 95,
     certLevel: 3,
     certBadgeNo: 'JS-2026-000104',
-    abilityTags: ['高考冲刺', '物理实验'],
+    abilityTags: ['高考复习', '物理实验'],
     intro:
       'XX大学物理对口专业研究生，本科阶段连续三年家教，累计带过 11 名高三学生，擅长力学与电磁学建模；会用仿真实验演示抽象概念，帮助学生建立物理图像。',
     avatar: '/assets/avatar/tutor-04.png',
@@ -269,7 +269,7 @@ const certifications = [
     type: 'ability',
     status: 'approved',
     files: [{ name: '试讲视频链接.txt', url: 'https://example.com/mock-trial-video' }],
-    ocrResult: { verified: true, fields: { tags: ['初三数学提分', '带过毕业班'], durationMin: 8 } },
+    ocrResult: { verified: true, fields: { tags: ['初三数学提升', '带过毕业班'], durationMin: 8 } },
     reviewNote: '试讲视频 8 分钟，讲解清晰，板书完整（mock 评审结果）。',
     createdAt: '2025-09-12 10:20'
   }

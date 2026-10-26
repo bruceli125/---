@@ -83,7 +83,7 @@
 
   <!-- 底部操作 -->
   <view class="tc-footer" wx:if="{{showApply}}">
-    <view class="tc-hint">平台不收押金 · 试课不满意可换</view>
+    <view class="tc-hint">平台不收押金 · 试课安排双方协商</view>
     <view class="tc-actions">
       <text wx:if="{{applied}}" class="tc-cancel" catchtap="onCancel">取消接单</text>
       <!-- 长按确认接单：按住环形进度增长，松手完成；中途松手取消复位 -->

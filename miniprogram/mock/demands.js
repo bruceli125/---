@@ -275,7 +275,7 @@ const demands = [
     budget: 130,
     budgetMin: 120,
     budgetMax: 130,
-    specialRequirements: '中考化学冲刺，需要老师梳理实验题答题模板。',
+    specialRequirements: '中考化学复习，需要老师梳理实验题答题模板。',
     riskLevel: RISK_LEVEL.LOW,
     riskHits: [],
     policyChecked: true,

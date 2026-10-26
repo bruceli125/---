@@ -18,7 +18,7 @@
       <view class="hero-tags">
         <text class="tag tag-prism">认证可查</text>
         <text class="tag tag-line">试课可换</text>
-        <text class="tag tag-line">学生零押金</text>
+        <text class="tag tag-line">学生不收取费用</text>
       </view>
       <view class="hero-version">v{{brand.version}} · 可信对接 · 智能匹配</view>
     </view>
@@ -100,7 +100,7 @@
         <view class="tag tag-green">接单</view>
       </view>
       <view class="text-sub mt-8">
-        完成「学籍 + 资质 + 能力」三重认证后可获得认证徽章，并在接单池按匹配度优先接单。学生零押金、平台不收取任何中介费。
+        完成「学籍 + 资质 + 能力」三重认证后可获得认证徽章，并在接单池按匹配度优先接单。学生不收取费用、平台不收取任何中介费。
       </view>
       <view class="btn btn-green mt-16" bindtap="goTutorVerify">完成三重认证</view>
       <view class="btn btn-ghost mt-16" bindtap="goTutorPool">进入接单池</view>

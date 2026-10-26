@@ -197,7 +197,7 @@ Page({
     wx.showModal({
       title: isPref ? '自定义接单偏好' : '自定义性格特点',
       editable: true,
-      placeholderText: isPref ? '例如：只接初三冲刺' : '例如：擅长鼓励式教学',
+      placeholderText: isPref ? '例如：只接初三复习' : '例如：擅长鼓励式教学',
       confirmText: '添加',
       success(res) {
         if (!res.confirm) return;

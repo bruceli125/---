@@ -25,7 +25,7 @@ const reviews = [
     revieweeRole: 'tutor',
     revieweeName: '林嘉怡',
     rating: 5,
-    tags: ['准时', '专业', '提分帮助'],
+    tags: ['准时', '专业', '提升帮助'],
     comment: '老师每次提前 10 分钟到，错题复盘的资料整理得很清楚，孩子这学期数学明显有信心了。',
     status: REVIEW_STATUS.PENDING,
     visible: false,

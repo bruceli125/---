@@ -11,7 +11,7 @@
 const APP_INFO = {
   name: '青拾对接',
   shortName: '青拾对接',
-  slogan: 'XX大学学生 · 认证可查 · 试课不满意可换',
+  slogan: '在校学生 · 认证可查 · 信息撮合',
   version: '0.2.0',
   /** true = 走微信云开发；false = 走本地 mock + storage（默认，免配置即可演示） */
   useCloud: false,
@@ -148,10 +148,10 @@ const CERT_LEVELS = [
 
 /** 能力标签（能力认证可多选） */
 const ABILITY_TAGS = [
-  '初三数学提分',
+  '初三数学提升',
   '幼小衔接',
   '带过毕业班',
-  '高考冲刺',
+  '高考复习',
   '竞赛辅导',
   '作业辅导',
   '习惯养成',
@@ -346,8 +346,8 @@ const DISCLAIMER = {
 /** 平台信任文案（首页展示） */
 const TRUST_POINTS = [
   { icon: '✅', title: '认证可查', desc: '三重认证编号可核验' },
-  { icon: '🔁', title: '试课可换', desc: '试课不满意可换人' },
-  { icon: '🛡️', title: '学生零押金', desc: '平台不收任何押金' }
+  { icon: '🔁', title: '试课可换', desc: '试课安排双方协商人' },
+  { icon: '🛡️', title: '学生不收取费用', desc: '平台不收任何押金' }
 ];
 
 /** 页码/数量限制 */
@@ -474,7 +474,7 @@ const MOCK_CHECKIN_LOCATION = {
 
 /** 双向盲评标签 */
 const REVIEW_TAGS = {
-  parent_to_tutor: ['准时', '专业', '耐心', '提分帮助', '沟通顺畅'],
+  parent_to_tutor: ['准时', '专业', '耐心', '提升帮助', '沟通顺畅'],
   tutor_to_parent: ['尊重老师', '付款及时', '环境安全', '诉求合理']
 };
 

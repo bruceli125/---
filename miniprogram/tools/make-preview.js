@@ -101,12 +101,12 @@ const html = `<!DOCTYPE html>
       <div class="hero-eyebrow">LIGHTCORE PRISM</div>
       <div class="hero-title">青拾对接</div>
       <div class="prism-bar hero-bar"></div>
-      <div class="hero-slogan">XX大学学生 · 认证可查 · 试课不满意可换</div>
+      <div class="hero-slogan">在校学生 · 认证可查 · 信息撮合</div>
       <div class="hero-desc">高校主导的家教可信对接平台，连接家长 / 机构与XX大学学生</div>
       <div class="hero-tags">
         <span class="tag tag-prism">认证可查</span>
         <span class="tag tag-line">试课可换</span>
-        <span class="tag tag-line">学生零押金</span>
+        <span class="tag tag-line">学生不收取费用</span>
       </div>
       <div class="hero-version">v0.2.0 · 可信对接 · 智能匹配</div>
     </div>
